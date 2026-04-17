@@ -43,15 +43,54 @@ class LLMClient:
             "stream": stream,
         }
         if stream:
-            await self._stream_response(client, kwargs) # private method
+            async for event in self._stream_response(client, kwargs): # private method
+                yield event
         else:
             event = await self._non_stream_response(client, kwargs) # private method
             yield event # different between yield and return is yield will go back to control(caller) and do what ever function need to complete the task then give the result and continue doing it until there no event
         return
     
             
-    async def _stream_response(self, client: AsyncOpenAI, kwargs: dict[str, Any]):
-        pass
+    async def _stream_response(
+        self, 
+        client: AsyncOpenAI, 
+        kwargs: dict[str, Any]
+    ) -> AsyncGenerator[StreamEvent, None]:
+        response = await client.chat.completions.create(**kwargs) 
+        
+        finish_reason: str | None = None
+        usage: TokenUsage | None = None
+        
+        async for chunk in response: 
+            if hasattr(chunk, "usage") and chunk.usage:
+                usage = TokenUsage(
+                    prompt_tokens=chunk.usage.prompt_tokens,
+                    completion_tokens=chunk.usage.completion_tokens,
+                    total_tokens=chunk.usage.total_tokens,
+                    cached_tokens=chunk.usage.prompt_tokens_details.cached_tokens # system prompt must be static because of KV-cache architect inside the model // WOW
+                )
+                
+            if not chunk.choices:
+                continue
+            
+            choice = chunk.choices[0]
+            delta = choice.delta
+            
+            if choice.finish_reason:
+                finish_reason = choice.finish_reason
+            
+            if delta.content:
+                yield StreamEvent(
+                    type=EventType.TEXT_DELTA,
+                    text_delta=TextDelta(content=delta.content),
+                )
+                
+        yield StreamEvent(
+            type=EventType.MESSAGE_COMPLETE,
+            finish_reason=finish_reason,
+            usage=usage,
+        )
+            
 
     async def _non_stream_response(
         self, 
