@@ -13,6 +13,7 @@ class Agent:
         yield AgentEvent.agent_start(message)
         # add user message to context
 
+        final_response: str | None = None
         async for event in self._agentic_loop():
             yield event
 

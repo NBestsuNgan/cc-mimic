@@ -5,7 +5,6 @@ from typing import Any
 
 from src.client.response import TokenUsage
 
-@dataclass
 class AgentEventType(str, Enum):
     # Agent lifecycle
     AGENT_START = "agent_start"

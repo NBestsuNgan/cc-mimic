@@ -9,7 +9,7 @@ class TextDelta: # can be extend later, like content is not enough and want to a
     def __str__(self):
         return self.content
 
-@dataclass
+
 class StreamEventType(str, Enum):
     TEXT_DELTA = "text_delta"
     MESSAGE_COMPLETE = "message_complete"
