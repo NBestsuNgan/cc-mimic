@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing import AsyncGenerator
+from src.context.manager import ContextManager
 from src.agent.events import AgentEvent, AgentEventType
 from src.client.llm_client import LLMClient
 from src.client.response import StreamEventType
@@ -8,10 +9,13 @@ from src.client.response import StreamEventType
 class Agent:
     def __init__(self):
         self.client = LLMClient()
+        self.context_manager = ContextManager()
 
     async def run(self, message: str):
         yield AgentEvent.agent_start(message)
+
         # add user message to context
+        self.context_manager.add_user_message(message)
 
         final_response: str | None = None
         async for event in self._agentic_loop():
@@ -26,9 +30,10 @@ class Agent:
         # agent will have microscopic detail that need to send to the UI in differnet actions
         # like start turning conversation, Ending turn conversation, tool calling
 
-        messages = [{"role": "user", "content": "hey what is going on?"}]
         response_text = ""
-        async for event in self.client.chat_completion(messages, True):
+        async for event in self.client.chat_completion(
+            self.context_manager.get_messages(), True
+        ):
             if event.type == StreamEventType.TEXT_DELTA:
                 if event.text_delta:
                     content = event.text_delta.content
@@ -41,6 +46,9 @@ class Agent:
                     event.error or "Unkown error occured."
                 )
 
+        self.context_manager.add_assistant_message(
+            response_text or None,
+        )
         if response_text:
             yield AgentEvent.text_complete(response_text)
 
@@ -49,9 +57,9 @@ class Agent:
 
     async def __aexit__(
         self,
-        exc_type, # exception type
+        exc_type,  # exception type
         exc_val,  # exception value
-        exc_tb,   # exception traceback
+        exc_tb,  # exception traceback
     ) -> None:
         if self.client:
             await self.client.close()
