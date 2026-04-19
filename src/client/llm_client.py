@@ -1,7 +1,7 @@
 from openai import AsyncOpenAI, RateLimitError, APIConnectionError, APIError
 from dotenv import load_dotenv
 from typing import Any, AsyncGenerator
-from src.client.response import EventType, StreamEvent, TextDelta, TokenUsage
+from src.client.response import StreamEventType, StreamEvent, TextDelta, TokenUsage
 import asyncio
 import os
 
@@ -57,7 +57,7 @@ class LLMClient:
                     await asyncio.sleep(wait_time)
                 else:
                     yield StreamEvent(
-                        type=EventType.ERROR,
+                        type=StreamEventType.ERROR,
                         error=f"Rate limit exceeded {e}",
                     )
                     return
@@ -67,13 +67,13 @@ class LLMClient:
                     await asyncio.sleep(wait_time)
                 else:
                     yield StreamEvent(
-                        type=EventType.ERROR,
+                        type=StreamEventType.ERROR,
                         error=f"Connection error: {e}",
                     )
                     return
             except APIError as e:       
                 yield StreamEvent(
-                    type=EventType.ERROR,
+                    type=StreamEventType.ERROR,
                     error=f"API error: {e}",
                 )
                 return
@@ -109,12 +109,12 @@ class LLMClient:
             
             if delta.content:
                 yield StreamEvent(
-                    type=EventType.TEXT_DELTA,
+                    type=StreamEventType.TEXT_DELTA,
                     text_delta=TextDelta(content=delta.content),
                 )
                 
         yield StreamEvent(
-            type=EventType.MESSAGE_COMPLETE,
+            type=StreamEventType.MESSAGE_COMPLETE,
             finish_reason=finish_reason,
             usage=usage,
         )
@@ -143,7 +143,7 @@ class LLMClient:
             )
             
         return StreamEvent(
-            type=EventType.MESSAGE_COMPLETE, # message complet because it non-streaming response so that whole meta data come at once
+            type=StreamEventType.MESSAGE_COMPLETE, # message complet because it non-streaming response so that whole meta data come at once
             text_delta=text_delta,
             finish_reason=choice.finish_reason,
             usage=usage,
