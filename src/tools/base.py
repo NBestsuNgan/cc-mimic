@@ -3,6 +3,7 @@ import abc
 from enum import Enum
 from typing import Any
 from pydantic import BaseModel, ValidationError
+from pydantic.json_schema import model_json_schema
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -23,6 +24,42 @@ class ToolResult:
     error: str | None = None
     metadata: dict[str, Any] = field(default_factory=dict)
 
+    @classmethod
+    def error_result(
+        cls, # mean the class it self "cls(...)  is the same as  ToolResult(...)"
+        error: str,
+        output: str = ""
+    ):
+        return cls(
+            success=False,
+            output=output,
+            error=error,
+        )
+    # # without classmethod — verbose, repeating success=False every time
+    # result = ToolResult(success=False, output="", error="something went wrong")
+
+    # # with classmethod — cleaner shortcut
+    # result = ToolResult.error_result(error="something went wrong")
+
+    @classmethod
+    def success_result(
+        cls, 
+        output: str,
+        **kwargs: Any,
+    ):
+        return cls(
+            success=True,
+            output=output,
+            error=None,
+            **kwargs,
+        )
+    
+@dataclass
+class ToolConfirmation:
+    tool_name: str
+    params: dict[str, Any]
+    description: str
+
 
 @dataclass
 class ToolInvocation:
@@ -30,7 +67,7 @@ class ToolInvocation:
     cwd: Path
 
 
-class Tool(abc.ABC):
+class  Tool(abc.ABC):
     name: str = "base_tool"
     description: str = "Base tool"
     kind: ToolKind = ToolKind.READ
@@ -77,3 +114,50 @@ class Tool(abc.ABC):
             ToolKind.NETWORK,
             ToolKind.MEMORY,
         }
+
+    async def get_confirmation(
+        self, invocation: ToolInvocation
+    ) -> ToolInvocation | None:
+        if not self.is_mutating(invocation.params):
+            return False
+
+        return ToolConfirmation(
+            tool_name=self.name,
+            params=invocation.params,
+            description=f"Exceute {self.name}",
+        )
+
+    def to_openai_schema(self) -> dict[str, Any]:
+        schema = self.schema
+        if isinstance(schema, type) and issubclass(schema, BaseModel):
+            json_schema = model_json_schema(schema, mode="serialization")
+            
+            # OpenAI Expecting tool passing schema
+            return { 
+                "name": self.name,
+                "description": self.description,
+                "parameters": {
+                    "type": "object",
+                    "properties": json_schema.get("properties", {}),
+                    "required": json_schema.get("required", []),
+                }
+            }
+            
+        # mcp cases
+        if isinstance(schema, dict):
+            result = {
+                "name": self.name,
+                "description": self.description,
+            }
+            
+            if "parameters" in schema:
+                result["parameters"] = schema["parameters"]
+            else:
+                result["parameters"] = schema
+        
+            return result
+        
+        raise ValueError(f"Invalid schema type for tool {schema}: {type(schema)}")
+        
+            
+    

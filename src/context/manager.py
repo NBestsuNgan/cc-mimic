@@ -14,16 +14,17 @@ class MessageItem:
         result: dict[str, Any] = {
             "role": self.role,
         }
-        
+
         if self.content:
             result["content"] = self.content
-        
+
         return result
+
 
 class ContextManager:
     def __init__(self) -> None:
         self._system_prompt = get_system_prompt()
-        self._model_name = "openrouter/elephant-alpha"
+        self._model_name = "nvidia/nemotron-3-super-120b-a12b:free"
         self._messages: list[MessageItem] = []
 
     def add_user_message(self, content: str) -> None:
@@ -51,7 +52,7 @@ class ContextManager:
         self._messages.append(item)
 
     # use to pass to agent later on
-    def get_messages(self) -> list[dict[str, Any]]: 
+    def get_messages(self) -> list[dict[str, Any]]:
         messages = []
 
         if self._system_prompt:
@@ -64,5 +65,5 @@ class ContextManager:
 
         for item in self._messages:
             messages.append(item.to_dict())
-        
+
         return messages

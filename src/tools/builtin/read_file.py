@@ -1,0 +1,112 @@
+from pydantic import BaseModel, Field
+from src.tools.base import Tool, ToolInvocation, ToolKind, ToolResult
+from src.utils.paths import resolve_path, is_binary_file
+from src.utils.text import count_tokens
+
+class ReadFileParams(BaseModel):
+    path: str = Field(
+        ...,
+        description="Path to the file to read (relative to working directory or absolute)",
+    )
+
+    # offset refer to from where do i need to start reading the file, ge=1 mean grater or equal to 1
+    offset: int = Field(
+        1,
+        ge=1,
+        description="Line number to start reading from (2-based), Defaulta to 1",
+    ) 
+
+    limit: int | None = Field(
+        None,
+        ge=1,
+        description="Maximum number of lines to read, If not specified, reads entire file.",
+    )
+
+
+class ReadFileTool(Tool):
+    name = "read_file"
+    description = (
+        "Read the contents of a text file. Returns the file content with line numbers. "
+        "For large files, use offset and limit to read specific portions. "
+        "Cannot read binary files (images, executab les, etc.)."
+    )
+    kind = ToolKind.READ
+    
+    schema = ReadFileParams
+    
+    MAX_FILE_SIZE = 1024 * 1024 * 10 # 10 MB
+    MAX_OUTPUT_TOKENS = 25000
+    
+    async def execute(self, invocation: ToolInvocation) -> ToolResult:
+        params = ReadFileParams(**invocation.params)
+        path = resolve_path(invocation.cwd, params.path)
+    
+        if not path.exists():
+            # technically, we try to execute the command but whatever
+            # the llm give us was kind of hallucination or it did not 
+            # understand the folder structure really well.
+            # that why we returning an error and that will be given to the llm
+            return ToolResult.error_result(
+                f"File not found: {path}"
+            )
+
+        if not path.is_file():
+            return ToolResult.error_result(
+                f"Path is not a file: {path}"
+            )
+    
+        file_size = path.stat().st_size
+        
+        if file_size > self.MAX_FILE_SIZE:
+            return ToolResult.error_result(
+                f"File is too large: ({file_size/(1024*1024):.1f}MB)."
+                f"Maximum  is {self.MAX_FILE_SIZE/(1024*1024):.0f}MB."
+            )
+        
+        if is_binary_file(path): 
+            file_size_mb = file_size / (1024*1024)
+            size_str = f"({file_size_mb:.2f}MB)" if file_size_mb > 1 else f"{file_size} bytes" # if greater than 1 MB it will be write in MB else writing in bytes
+            return ToolResult.error_result(
+                f"Cannot read bianry file: {path.name} ({size_str})"
+                f"This tool only reads text files."
+            )
+        
+        try:
+            content = path.read_text(encoding="utf-8")
+        except UnicodeDecodeError:
+            content = path.read_text(encoding="latin-1")
+        
+        lines = content.splitlines() # return list and it is index come into play
+        total_lines = len(lines)
+        
+        if total_lines == 0:
+            return ToolResult.success_result(
+                "File is empty.",
+                metadata={
+                    "lines": 0,
+                }
+            )
+        
+        start_idx = max(0, params.offset - 1) # use index because of lines 
+        lines[start_idx]
+        
+        if params.limit is not None:
+            end_idx = min(start_idx + params.limit, total_lines) # 0-100, 100 -> 100 | 0-1000, 100 -> 100
+        else:
+            end_idx = total_lines
+        
+        selected_lines = lines[start_idx: end_idx]
+        formatted_lines = []
+
+        for idx, line in enumerate(selected_lines, start=start_idx + 1):
+            # with "width formatter"
+            #     1: some code
+            #     2: more code
+            #   100: another line
+            formatted_lines.append(f"{idx:6}: {line}")
+            
+        output = "\n".join(formatted_lines)
+        token_count = count_tokens(output)
+        
+        if token_count > self.MAX_OUTPUT_TOKENS:
+            pass
