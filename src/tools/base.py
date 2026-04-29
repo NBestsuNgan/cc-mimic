@@ -24,6 +24,8 @@ class ToolResult:
     error: str | None = None
     metadata: dict[str, Any] = field(default_factory=dict)
 
+    truncated: bool = False
+
     @classmethod
     def error_result(
         cls, # mean the class it self "cls(...)  is the same as  ToolResult(...)"
