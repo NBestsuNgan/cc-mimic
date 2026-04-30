@@ -44,7 +44,7 @@ class ContextManager:
             role="assistant",
             content=content or "",
             token_count=count_tokens(
-                content,
+                content or "",
                 self._model_name,
             ),
         )

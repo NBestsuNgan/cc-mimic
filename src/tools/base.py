@@ -30,18 +30,20 @@ class ToolResult:
     def error_result(
         cls, # mean the class it self "cls(...)  is the same as  ToolResult(...)"
         error: str,
-        output: str = ""
+        output: str = "",
+        **kwargs: Any
     ):
         return cls(
             success=False,
             output=output,
             error=error,
+            **kwargs,
         )
-    # # without classmethod — verbose, repeating success=False every time
-    # result = ToolResult(success=False, output="", error="something went wrong")
+        # # without classmethod — verbose, repeating success=False every time
+        # result = ToolResult(success=False, output="", error="something went wrong")
 
-    # # with classmethod — cleaner shortcut
-    # result = ToolResult.error_result(error="something went wrong")
+        # # with classmethod — cleaner shortcut
+        # result = ToolResult.error_result(error="something went wrong")
 
     @classmethod
     def success_result(

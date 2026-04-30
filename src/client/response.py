@@ -1,7 +1,8 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum
-
+from typing import Any
+import json
 
 @dataclass
 class TextDelta: # can be extend later, like content is not enough and want to add more
@@ -14,6 +15,10 @@ class StreamEventType(str, Enum):
     TEXT_DELTA = "text_delta"
     MESSAGE_COMPLETE = "message_complete"
     ERROR = "error"
+    
+    TOOL_CALL_START = "tool_call_start"
+    TOOL_CALL_DELTA = "tool_call_delta"
+    TOOL_CALL_COMPLETE = "tool_call_complete"
 
 @dataclass
 class TokenUsage:
@@ -31,16 +36,35 @@ class TokenUsage:
         )
 
 @dataclass
+class ToolCallDelta:
+    call_id: str
+    name: str | None = None
+    argument_delta: str = ""
+    
+@dataclass
+class ToolCall:
+    call_id: str
+    name: str | None = None
+    argument: str = ""
+
+@dataclass
 class StreamEvent:
     type: StreamEventType
     text_delta: TextDelta | None = None # text delta is any text text that model has provide to you
     error: str | None = None
     finish_reason : str | None = None
+    tool_call_delta: ToolCallDelta | None = None
+    tool_call: ToolCall | None = None
     usage: TokenUsage | None = None
     
+def parse_tool_call_argument(arguments_str: str) -> dict[str, Any]:
+    if not arguments_str:
+        return {}
     
-    
-    
+    try:
+        return json.loads(arguments_str)
+    except json.JSONDecodeError:
+        return {"raw_arguments" : arguments_str}
     
     
     
