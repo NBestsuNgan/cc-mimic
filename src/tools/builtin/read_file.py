@@ -107,7 +107,7 @@ class ReadFileTool(Tool):
                 formatted_lines.append(f"{idx:6}: {line}")
                 
             output = "\n".join(formatted_lines)
-            token_count = count_tokens(output)
+            token_count = count_tokens(output, "ibm-granite/granite-4.1-8b")
             
             truncated = False
             if token_count > self.MAX_OUTPUT_TOKENS:

@@ -17,6 +17,6 @@ def is_binary_file(
     try:
         with open(path, "rb") as f:
             chuck = f.read(8192)
-            return f"\x00" in chuck # logic to checking binary file
+            return b"\x00" in chuck # logic to checking binary file
     except (OSError, IOError):
         return False

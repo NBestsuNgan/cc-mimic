@@ -8,7 +8,7 @@ from src.client.response import (
     TokenUsage,
     ToolCall,
     ToolCallDelta,
-    parse_tool_call_argument
+    parse_tool_call_argument,
 )
 import asyncio
 import os
@@ -70,7 +70,7 @@ class LLMClient:
         # yield — pauses the function, hands a value to the caller, then resumes from that exact point next time the caller asks for the next value. It can do this many times.
         client = self.get_client()
         kwargs = {
-            "model": "nvidia/nemotron-3-super-120b-a12b:free",
+            "model": "ibm-granite/granite-4.1-8b",
             "messages": messages,
             "stream": stream,
         }
@@ -166,7 +166,9 @@ class LLMClient:
 
                         if tool_call_delta.function:
                             if tool_call_delta.function.name:
-                                tool_calls[idx]["name"] = tool_call_delta.function.name
+                                tool_calls[idx][
+                                    "name"
+                                ] = tool_call_delta.function.name
                                 yield StreamEvent(
                                     type=StreamEventType.TOOL_CALL_START,
                                     tool_call_delta=ToolCallDelta(
@@ -176,7 +178,9 @@ class LLMClient:
                                 )
 
                             if tool_call_delta.function.arguments:
-                                tool_calls[idx]["arguments"] += tool_call_delta.function.arguments
+                                tool_calls[idx][
+                                    "arguments"
+                                ] += tool_call_delta.function.arguments
                                 yield StreamEvent(
                                     type=StreamEventType.TOOL_CALL_DELTA,
                                     tool_call_delta=ToolCallDelta(
@@ -216,12 +220,16 @@ class LLMClient:
         tool_calls: list[ToolCall] = []
         if message.tool_calls:
             for tc in message.tool_calls:
-                tool_calls.append(ToolCall(
-                    call_id=tc.id,
-                    name=tc.function.name,
-                    argument=parse_tool_call_argument(tc.function.arguments),
-                ))
-            
+                tool_calls.append(
+                    ToolCall(
+                        call_id=tc.id,
+                        name=tc.function.name,
+                        argument=parse_tool_call_argument(
+                            tc.function.arguments
+                        ),
+                    )
+                )
+
         usage = None
         if response.usage:
             usage = TokenUsage(

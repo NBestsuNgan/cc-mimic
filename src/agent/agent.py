@@ -4,7 +4,7 @@ from typing import AsyncGenerator
 from src.context.manager import ContextManager
 from src.agent.events import AgentEvent, AgentEventType
 from src.client.llm_client import LLMClient
-from src.client.response import StreamEventType, ToolCall
+from src.client.response import StreamEventType, ToolCall, ToolResultMessage
 from src.tools.registry import create_default_registry
 
 
@@ -42,7 +42,9 @@ class Agent:
             self.context_manager.get_messages(), 
             tools=tools_schemas if tools_schemas else None, 
         ):
-            print(event)
+            print("="*50)
+            print(event.type)
+            print("="*50)
             if event.type == StreamEventType.TEXT_DELTA:
                 if event.text_delta:
                     content = event.text_delta.content
@@ -59,11 +61,16 @@ class Agent:
                     event.error or "Unkown error occured."
                 )
 
+        print("="*50)
+        print(f"tool_calls : {tool_calls}")
+        print("="*50)
         self.context_manager.add_assistant_message(
             response_text or None,
         )
         if response_text:
             yield AgentEvent.text_complete(response_text)
+        
+        tool_call_results: list[ToolResultMessage] = []
         
         for tool_call in tool_calls:
             yield AgentEvent.tool_call_start(
@@ -75,7 +82,7 @@ class Agent:
             result = await self.tool_registry.invoke(
                 name=tool_call.name,
                 params=tool_call.argument,
-                cwd=Path.cwd,
+                cwd=Path.cwd(),
             )
             
             yield AgentEvent.tool_call_complete(
@@ -84,7 +91,22 @@ class Agent:
                 result=result
             )
             
+            tool_call_results.append(
+                ToolResultMessage(
+                    tool_call_id=tool_call.call_id,
+                    content=result.to_model_output(),
+                    is_error=not result.success
+                )
+            )
             
+        print("="*50)
+        print(tool_call_results)
+        print("="*50)
+        for tool_result in tool_call_results:
+            self.context_manager.add_tool_result(
+                tool_result.tool_call_id,
+                tool_result.content,
+            )
 
     async def __aenter__(self) -> Agent:
         return self

@@ -1,7 +1,6 @@
 from typing import Any
 from pathlib import Path
 
-from rich.prompt import result
 from src.tools.base import Tool, ToolResult, ToolInvocation
 from src.tools.builtin import ReadFileTool, get_all_builtin_tools
 import logging
