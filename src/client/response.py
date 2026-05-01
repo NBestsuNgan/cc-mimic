@@ -39,13 +39,13 @@ class TokenUsage:
 class ToolCallDelta:
     call_id: str
     name: str | None = None
-    argument_delta: str = ""
+    arguments_delta: str = ""
     
 @dataclass
 class ToolCall:
     call_id: str
     name: str | None = None
-    argument: str = ""
+    arguments: str = ""
 
 @dataclass
 class StreamEvent:
@@ -71,7 +71,7 @@ class ToolResultMessage:
             "content": self.content,
         }
 
-def parse_tool_call_argument(arguments_str: str) -> dict[str, Any]:
+def parse_tool_call_arguments(arguments_str: str) -> dict[str, Any]:
     if not arguments_str:
         return {}
     

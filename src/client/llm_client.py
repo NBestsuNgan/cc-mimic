@@ -8,7 +8,7 @@ from src.client.response import (
     TokenUsage,
     ToolCall,
     ToolCallDelta,
-    parse_tool_call_argument,
+    parse_tool_call_arguments,
 )
 import asyncio
 import os
@@ -21,7 +21,7 @@ CC_API_KEY = os.getenv("CC_API_KEY")
 class LLMClient:
     def __init__(self) -> None:
         self._client: AsyncOpenAI | None = None
-        self._max_retires: int = 3
+        self._max_retries: int = 3
 
     def get_client(self) -> AsyncOpenAI:
         if self._client is None:
@@ -37,7 +37,7 @@ class LLMClient:
             await self._client.close()
             self._client = None
 
-    def _built_tools(self, tools: list[dict[str, Any]]):
+    def _build_tools(self, tools: list[dict[str, Any]]):
         return [
             {
                 "type": "function",
@@ -76,10 +76,10 @@ class LLMClient:
         }
 
         if tools:
-            kwargs["tools"] = self._built_tools(tools)
+            kwargs["tools"] = self._build_tools(tools)
             kwargs["tool_choice"] = "auto"
 
-        for attempt in range(self._max_retires + 1):
+        for attempt in range(self._max_retries + 1):
             try:
                 if stream:
                     async for event in self._stream_response(
@@ -93,17 +93,17 @@ class LLMClient:
                     yield event  # different between yield and return is yield will go back to control(caller) and do what ever function need to complete the task then give the result and continue doing it until there no event
                 return
             except RateLimitError as e:
-                if attempt < self._max_retires:
+                if attempt < self._max_retries:
                     wait_time = 2**attempt
                     await asyncio.sleep(wait_time)
                 else:
                     yield StreamEvent(
                         type=StreamEventType.ERROR,
-                        error=f"Rate limit exceeded {e}",
+                        error=f"Rate limit exceeded: {e}",
                     )
                     return
             except APIConnectionError as e:
-                if attempt < self._max_retires:
+                if attempt < self._max_retries:
                     wait_time = 2**attempt
                     await asyncio.sleep(wait_time)
                 else:
@@ -126,7 +126,7 @@ class LLMClient:
 
         finish_reason: str | None = None
         usage: TokenUsage | None = None
-        tool_calls: dict[int, dict[str:Any]] = {}
+        tool_calls: dict[int, dict[str, Any]] = {}
 
         async for chunk in response:
             if hasattr(chunk, "usage") and chunk.usage:
@@ -163,40 +163,42 @@ class LLMClient:
                             "name": "",
                             "arguments": "",
                         }
-
-                        if tool_call_delta.function:
-                            if tool_call_delta.function.name:
-                                tool_calls[idx][
-                                    "name"
-                                ] = tool_call_delta.function.name
-                                yield StreamEvent(
-                                    type=StreamEventType.TOOL_CALL_START,
-                                    tool_call_delta=ToolCallDelta(
-                                        call_id=tool_calls[idx]["id"],
-                                        name=tool_call_delta.function.name,
-                                    ),
-                                )
-
-                            if tool_call_delta.function.arguments:
-                                tool_calls[idx][
-                                    "arguments"
-                                ] += tool_call_delta.function.arguments
-                                yield StreamEvent(
-                                    type=StreamEventType.TOOL_CALL_DELTA,
-                                    tool_call_delta=ToolCallDelta(
-                                        call_id=tool_calls[idx]["id"],
-                                        name=tool_call_delta.function.name,
-                                        argument_delta=tool_call_delta.function.arguments,
-                                    ),
-                                )
-
+                    
+                    # instead of taping indentation into idx not in tool_calls -> we will use this instead because of
+                    # case1: argument attach with the same chunk that return tool_name calling -> taping indentation work because it is the same chunk
+                    # case2: argument attach with the next chunk that return tool_name calling -> taping indentation not work because it is the next chunk and need to extent taping to catch arguments variable
+                    if tool_call_delta.function:
+                        if tool_call_delta.function.name:
+                            tool_calls[idx][
+                                "name"
+                            ] = tool_call_delta.function.name
+                            yield StreamEvent(
+                                type=StreamEventType.TOOL_CALL_START,
+                                tool_call_delta=ToolCallDelta(
+                                    call_id=tool_calls[idx]["id"],
+                                    name=tool_call_delta.function.name,
+                                ),
+                            )
+                    if tool_call_delta.function.arguments:
+                        tool_calls[idx][
+                            "arguments"
+                        ] += tool_call_delta.function.arguments
+                        yield StreamEvent(
+                            type=StreamEventType.TOOL_CALL_DELTA,
+                            tool_call_delta=ToolCallDelta(
+                                call_id=tool_calls[idx]["id"],
+                                name=tool_call_delta.function.name,
+                                arguments_delta=tool_call_delta.function.arguments,
+                            ),
+                        )
+                        
         for idx, tc in tool_calls.items():
             yield StreamEvent(
                 type=StreamEventType.TOOL_CALL_COMPLETE,
-                tool_call_delta=ToolCall(
+                tool_call=ToolCall(
                     call_id=tc["id"],
                     name=tc["name"],
-                    argument=parse_tool_call_argument(tc["arguments"]),
+                    arguments=parse_tool_call_arguments(tc["arguments"]),
                 ),
             )
 
@@ -224,7 +226,7 @@ class LLMClient:
                     ToolCall(
                         call_id=tc.id,
                         name=tc.function.name,
-                        argument=parse_tool_call_argument(
+                        arguments=parse_tool_call_arguments(
                             tc.function.arguments
                         ),
                     )

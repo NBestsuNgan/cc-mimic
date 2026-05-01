@@ -42,9 +42,6 @@ class Agent:
             self.context_manager.get_messages(), 
             tools=tools_schemas if tools_schemas else None, 
         ):
-            print("="*50)
-            print(event.type)
-            print("="*50)
             if event.type == StreamEventType.TEXT_DELTA:
                 if event.text_delta:
                     content = event.text_delta.content
@@ -61,9 +58,7 @@ class Agent:
                     event.error or "Unkown error occured."
                 )
 
-        print("="*50)
-        print(f"tool_calls : {tool_calls}")
-        print("="*50)
+   
         self.context_manager.add_assistant_message(
             response_text or None,
         )
@@ -76,12 +71,12 @@ class Agent:
             yield AgentEvent.tool_call_start(
                 call_id=tool_call.call_id,
                 name=tool_call.name,
-                arguments=tool_call.argument,
+                arguments=tool_call.arguments,
             )
             
             result = await self.tool_registry.invoke(
                 name=tool_call.name,
-                params=tool_call.argument,
+                params=tool_call.arguments,
                 cwd=Path.cwd(),
             )
             
@@ -99,9 +94,7 @@ class Agent:
                 )
             )
             
-        print("="*50)
-        print(tool_call_results)
-        print("="*50)
+        
         for tool_result in tool_call_results:
             self.context_manager.add_tool_result(
                 tool_result.tool_call_id,
