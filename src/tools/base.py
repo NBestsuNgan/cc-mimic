@@ -8,7 +8,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 
-class ToolKind(Enum):
+class ToolKind(str, Enum):
     READ = "read"
     WRITE = "write"
     SHELL = "shell"
