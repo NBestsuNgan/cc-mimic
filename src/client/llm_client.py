@@ -70,7 +70,7 @@ class LLMClient:
         # yield — pauses the function, hands a value to the caller, then resumes from that exact point next time the caller asks for the next value. It can do this many times.
         client = self.get_client()
         kwargs = {
-            "model": "ibm-granite/granite-4.1-8b",
+            "model": "openrouter/owl-alpha",
             "messages": messages,
             "stream": stream,
         }
@@ -163,7 +163,7 @@ class LLMClient:
                             "name": "",
                             "arguments": "",
                         }
-                    
+
                     # instead of taping indentation into idx not in tool_calls -> we will use this instead because of
                     # case1: argument attach with the same chunk that return tool_name calling -> taping indentation work because it is the same chunk
                     # case2: argument attach with the next chunk that return tool_name calling -> taping indentation not work because it is the next chunk and need to extent taping to catch arguments variable
@@ -191,7 +191,7 @@ class LLMClient:
                                 arguments_delta=tool_call_delta.function.arguments,
                             ),
                         )
-                        
+
         for idx, tc in tool_calls.items():
             yield StreamEvent(
                 type=StreamEventType.TOOL_CALL_COMPLETE,

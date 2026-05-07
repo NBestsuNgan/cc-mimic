@@ -32,7 +32,7 @@ class MessageItem:
 class ContextManager:
     def __init__(self) -> None:
         self._system_prompt = get_system_prompt()
-        self._model_name = "ibm-granite/granite-4.1-8b"
+        self._model_name = "openrouter/owl-alpha"
         self._messages: list[MessageItem] = []
 
     def add_user_message(self, content: str) -> None:
