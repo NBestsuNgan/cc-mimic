@@ -79,9 +79,9 @@ class LLMClient:
             kwargs["tools"] = self._build_tools(tools)
             kwargs["tool_choice"] = "auto"
 
-        print("\n===== OUTGOING API PAYLOAD =====", flush=True)
-        print(json.dumps(kwargs, indent=2, default=str), flush=True)
-        print("===== END PAYLOAD =====\n", flush=True)
+        # print("\n===== OUTGOING API PAYLOAD =====", flush=True)
+        # print(json.dumps(kwargs, indent=2, default=str), flush=True)
+        # print("===== END PAYLOAD =====\n", flush=True)
 
         for attempt in range(self._max_retries + 1):
             try:
