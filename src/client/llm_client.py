@@ -11,6 +11,7 @@ from src.client.response import (
     parse_tool_call_arguments,
 )
 import asyncio
+import json
 import os
 
 load_dotenv()
@@ -49,7 +50,6 @@ class LLMClient:
                         {
                             "type": "object",
                             "properties": {},
-                            # "required": [],
                         },
                     ),
                 },
@@ -78,6 +78,10 @@ class LLMClient:
         if tools:
             kwargs["tools"] = self._build_tools(tools)
             kwargs["tool_choice"] = "auto"
+
+        print("\n===== OUTGOING API PAYLOAD =====", flush=True)
+        print(json.dumps(kwargs, indent=2, default=str), flush=True)
+        print("===== END PAYLOAD =====\n", flush=True)
 
         for attempt in range(self._max_retries + 1):
             try:
@@ -113,9 +117,13 @@ class LLMClient:
                     )
                     return
             except APIError as e:
+                error_detail = f"API error: {e} | status={getattr(e, 'status_code', '?')} | body={getattr(e, 'body', '?')} | message={getattr(e, 'message', '?')}"
+                print(
+                    error_detail, flush=True
+                )  # print directly to stderr so you see it in CLI
                 yield StreamEvent(
                     type=StreamEventType.ERROR,
-                    error=f"API error: {e}",
+                    error=error_detail,
                 )
                 return
 
@@ -179,10 +187,12 @@ class LLMClient:
                                     name=tool_call_delta.function.name,
                                 ),
                             )
+
                     if tool_call_delta.function.arguments:
                         tool_calls[idx][
                             "arguments"
                         ] += tool_call_delta.function.arguments
+
                         yield StreamEvent(
                             type=StreamEventType.TOOL_CALL_DELTA,
                             tool_call_delta=ToolCallDelta(
@@ -209,7 +219,9 @@ class LLMClient:
         )
 
     async def _non_stream_response(
-        self, client: AsyncOpenAI, kwargs: dict[str, Any]
+        self,
+        client: AsyncOpenAI,
+        kwargs: dict[str, Any],
     ) -> StreamEvent:
         response = await client.chat.completions.create(**kwargs)
         choice = response.choices[0]
