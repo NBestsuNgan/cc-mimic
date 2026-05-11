@@ -16,7 +16,7 @@ import os
 
 load_dotenv()
 
-CC_API_KEY = os.getenv("CC_API_KEY")
+API_KEY = os.getenv("API_KEY")
 
 
 class LLMClient:
@@ -27,7 +27,7 @@ class LLMClient:
     def get_client(self) -> AsyncOpenAI:
         if self._client is None:
             self._client = AsyncOpenAI(
-                api_key=CC_API_KEY,
+                api_key=API_KEY,
                 base_url="https://openrouter.ai/api/v1",
             )
         return self._client
