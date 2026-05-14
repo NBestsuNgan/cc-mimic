@@ -16,8 +16,9 @@ console = get_console()
 class CLI:
     def __init__(self, config: Config):
         self.agent: Agent | None = None
-        self.tui = TUI(console)
         self.config = config
+        self.tui = TUI(self.config, console)
+        
 
     async def run_single(self, message: str) -> str | None:
         async with Agent(config=self.config) as agent:
@@ -29,7 +30,7 @@ class CLI:
             title="AI Agent",
             lines=[
                 f"model: {self.config.model_name}",
-                f"cwd: {Path.cwd()}",
+                f"cwd: {self.config.cwd}",
                 f"command: /help /config /approve /model /exit",
             ],
         )

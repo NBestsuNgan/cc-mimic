@@ -96,7 +96,7 @@ class Agent:
             result = await self.tool_registry.invoke(
                 name=tool_call.name,
                 params=tool_call.arguments,
-                cwd=Path.cwd(),
+                cwd=self.config.cwd,
             )
             
             yield AgentEvent.tool_call_complete(
