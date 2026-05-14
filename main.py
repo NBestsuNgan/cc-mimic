@@ -7,6 +7,7 @@ from src.agent.events import AgentEventType
 from src.agent.agent import Agent
 from src.client.llm_client import LLMClient
 from src.ui.tui import TUI, get_console
+from src.config.loader import load_config
 
 console = get_console()
 
@@ -107,8 +108,31 @@ class CLI:
 
 @click.command()  # denote that this is a command executable
 @click.argument("prompt", required=False)
-def main(prompt: str | None):
+@click.option(
+    "--cwd",
+    "-c" ,
+    type=click.Path(exists=True, file_okay=False, path_type=Path),
+    help="Current working directory"
+)
+def main(
+    prompt: str | None,
+    cwd: Path | None,
+):
+    
+    try:
+        config = load_config(cwd=cwd)
+    except Exception as e:
+        console.print(f"[error]Configuration Error: {e}[\error]")
+    
+    errors = config.validate()
+    if errors:
+        for error in errors:
+            console.print(f"[error]Configuration Error: {e}[\error]")
+        
+        sys.exit(1)
+
     cli = CLI()
+    
     # messages = [{"role": "user", "content": prompt}]
     if prompt:
         result = asyncio.run(cli.run_single(prompt))
