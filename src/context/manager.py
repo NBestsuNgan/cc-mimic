@@ -1,5 +1,6 @@
 from src.prompts.system import get_system_prompt
 from src.utils.text import count_tokens
+from src.config.config import Config
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -30,9 +31,10 @@ class MessageItem:
 
 
 class ContextManager:
-    def __init__(self) -> None:
+    def __init__(self, config: Config) -> None:
+        self.config = config
         self._system_prompt = get_system_prompt()
-        self._model_name = "openrouter/owl-alpha"
+        self._model_name = self.config.model_name
         self._messages: list[MessageItem] = []
 
     def add_user_message(self, content: str) -> None:

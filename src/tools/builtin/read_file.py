@@ -112,7 +112,7 @@ class ReadFileTool(Tool):
                 formatted_lines.append(f"{idx:6}|{line}")
 
             output = "\n".join(formatted_lines)
-            token_count = count_tokens(output, "openrouter/owl-alpha")
+            token_count = count_tokens(output)
 
             truncated = False
             if token_count > self.MAX_OUTPUT_TOKENS:

@@ -7,13 +7,16 @@ from src.agent.events import AgentEvent, AgentEventType
 from src.client.llm_client import LLMClient
 from src.client.response import StreamEventType, ToolCall, ToolResultMessage
 from src.tools.registry import create_default_registry
-
+from src.config.config import Config
 
 class Agent:
-    def __init__(self):
+    def __init__(self, config: Config):
         # all of params encapsulated in session.
-        self.client = LLMClient()
-        self.context_manager = ContextManager()
+        self.config=config
+        self.client = LLMClient(
+            config=self.config,
+        )
+        self.context_manager = ContextManager(config=config)
         self.tool_registry = create_default_registry()
 
     async def run(self, message: str):

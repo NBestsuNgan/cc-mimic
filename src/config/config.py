@@ -3,13 +3,15 @@ from dotenv import load_dotenv
 from pathlib import Path
 import os
 
+load_dotenv(override=True)
+
 class ModelConfig(BaseModel): # separate for "Modle" configuration params, easily to extendable in the future
     name: str = "openrouter/owl-alpha" 
     temperature: float = Field(default=1, ge=0.0, le=2.0) 
     context_window: int = 1_000_000
 
 class Config(BaseModel):
-    model = ModelConfig = Field(default_factory=ModelConfig)
+    model: ModelConfig = Field(default_factory=ModelConfig)
     cwd: Path = Field(default_factory=Path.cwd)
 
     max_turns: int = 100
@@ -45,7 +47,6 @@ class Config(BaseModel):
     def temperature(self, value: float) -> None:
         self.model.temperature = value
 
-    @classmethod
     def validate(self) -> list[str]:
         # usage in validating the config
         errors: list[str] = []
@@ -57,11 +58,3 @@ class Config(BaseModel):
             errors.append(f"Current working directory does not exist: {self.cwd}")
 
         return errors
-
-
-
-
-
-
-
-

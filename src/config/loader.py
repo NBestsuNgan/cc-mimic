@@ -59,9 +59,11 @@ def _merge_dicts(base: dict[str, Any], override: dict[str, Any]) -> dict[str, An
 
 def load_config(cwd: Path | None) -> Config:
     # ~/.config/ai-agent/config.toml
+    # Win + R -> %LOCALAPPDATA%
+    # Users/user_name/Library/Application Support/ai-agent/config.toml
     cwd = cwd or Path.cwd()
     system_path = get_system_config_path()
-    config_dict = dict[str, Any] = {}
+    config_dict: dict[str, Any] = {}
 
     if system_path.is_file():
         try:
@@ -93,6 +95,6 @@ def load_config(cwd: Path | None) -> Config:
         config = Config(**config_dict) # add cwd and developer_instructions
     except Exception as e:
         raise ConfigError(f"Invalid configuration: {e}") from e
-    
+
     return config
 

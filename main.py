@@ -8,17 +8,19 @@ from src.agent.agent import Agent
 from src.client.llm_client import LLMClient
 from src.ui.tui import TUI, get_console
 from src.config.loader import load_config
+from src.config.config import Config
 
 console = get_console()
 
 
 class CLI:
-    def __init__(self):
+    def __init__(self, config: Config):
         self.agent: Agent | None = None
         self.tui = TUI(console)
+        self.config = config
 
     async def run_single(self, message: str) -> str | None:
-        async with Agent() as agent:
+        async with Agent(config=self.config) as agent:
             self.agent = agent
             return await self._process_message(message)
 
@@ -26,12 +28,12 @@ class CLI:
         self.tui.print_welcome(
             title="AI Agent",
             lines=[
-                f"model: openrouter/owl-alpha",
+                f"model: {self.config.model_name}",
                 f"cwd: {Path.cwd()}",
                 f"command: /help /config /approve /model /exit",
             ],
         )
-        async with Agent() as agent:
+        async with Agent(config=self.config) as agent:
             self.agent = agent
             while True:
                 try:
@@ -110,9 +112,9 @@ class CLI:
 @click.argument("prompt", required=False)
 @click.option(
     "--cwd",
-    "-c" ,
+    "-c",
     type=click.Path(exists=True, file_okay=False, path_type=Path),
-    help="Current working directory"
+    help="Current working directory",
 )
 def main(
     prompt: str | None,
@@ -122,16 +124,17 @@ def main(
     try:
         config = load_config(cwd=cwd)
     except Exception as e:
-        console.print(f"[error]Configuration Error: {e}[\error]")
+        console.print(f"[error]Configuration Error: {e}[/error]")
     
     errors = config.validate()
     if errors:
         for error in errors:
-            console.print(f"[error]Configuration Error: {e}[\error]")
+            console.print(f"[error]Configuration Error: {error}[/error]")
         
         sys.exit(1)
 
-    cli = CLI()
+    cli = CLI(config=config) # dependency management solution
+
     
     # messages = [{"role": "user", "content": prompt}]
     if prompt:
