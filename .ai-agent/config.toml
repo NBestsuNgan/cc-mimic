@@ -1,2 +1,3 @@
 [model]
 name="openrouter/owl-alpha"
+temperature=0

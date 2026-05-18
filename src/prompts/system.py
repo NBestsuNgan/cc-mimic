@@ -647,8 +647,8 @@ def get_system_prompt(
     if config.user_instructions:
         parts.append(_get_user_instructions_section(config.user_instructions))
 
-    if user_memory:
-        parts.append(_get_memory_section(user_memory))
+    # if user_memory:
+    #     parts.append(_get_memory_section(user_memory))
     
     # Operational guidelines
     parts.append(_get_operational_section())
