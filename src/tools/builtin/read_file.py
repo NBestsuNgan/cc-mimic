@@ -7,7 +7,7 @@ from src.utils.text import count_tokens, truncate_text
 class ReadFileParams(BaseModel):
     path: str = Field(
         ...,
-        description="Path to the file to read (relative to working directory or absolute)",
+        description="Path to the file to read (relative to working directory or absolute path)",
     )
 
     # offset refer to from where do i need to start reading the file, ge=1 mean grater or equal to 1
@@ -32,7 +32,6 @@ class ReadFileTool(Tool):
         "Cannot read binary files (images, executab les, etc.)."
     )
     kind = ToolKind.READ
-
     schema = ReadFileParams
 
     MAX_FILE_SIZE = 1024 * 1024 * 10  # 10 MB

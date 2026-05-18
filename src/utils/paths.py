@@ -3,12 +3,15 @@ from pathlib import Path
 
 def resolve_path(
     base: str | Path,
-    path: str, # path that tool thrown at us like cwd
+    path: str,  # path that tool thrown at us like cwd
 ):
     path = Path(path)
     if path.is_absolute():
         return path.resolve()
-    return Path(base).resolve() / path #user/nbest/Desktop/cc-mimic + tools/base.py -> base + path
+    return (
+        Path(base).resolve() / path
+    )  # user/nbest/Desktop/cc-mimic + tools/base.py -> base + path
+
 
 def display_path_rel_to_cwd(path: str, cwd: Path | None) -> str:
     try:
@@ -21,20 +24,20 @@ def display_path_rel_to_cwd(path: str, cwd: Path | None) -> str:
             return str(p.relative_to(cwd))
         except ValueError:
             pass
-    
+
     return str(p)
-    
-def ensure_parent_directories(path: str | Path) -> Path:
+
+
+def ensure_parent_directory(path: str | Path) -> Path:
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     return path
 
-def is_binary_file(
-    path: str| Path
-) -> bool:
+
+def is_binary_file(path: str | Path) -> bool:
     try:
         with open(path, "rb") as f:
             chuck = f.read(8192)
-            return b"\x00" in chuck # logic to checking binary file
+            return b"\x00" in chuck  # logic to checking binary file
     except (OSError, IOError):
         return False

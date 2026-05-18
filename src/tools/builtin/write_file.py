@@ -1,12 +1,17 @@
 from pydantic import BaseModel, Field
 from src.tools.base import Tool, ToolInvocation, ToolKind, ToolResult, FileDiff
-from src.utils.paths import ensure_parent_directories, resolve_path, is_binary_file
+from src.utils.paths import (
+    ensure_parent_directory,
+    resolve_path,
+    is_binary_file,
+)
 from src.utils.text import count_tokens, truncate_text
+
 
 class WriteFileParams(BaseModel):
     path: str = Field(
         ...,
-        description="Path to the file to write (relative to working directory or absolute)",
+        description="Path to the file to write (relative to working directory or absolute path)",
     )
     content: str = Field(
         ...,
@@ -41,18 +46,20 @@ class WriteFileTool(Tool):
                 old_content = path.read_text(encoding="utf-8")
             except:
                 pass
-        
+
         try:
             if params.create_directories:
-                ensure_parent_directories(path)
+                ensure_parent_directory(path)
             elif not path.parent.exists():
-                return ToolResult.error_result(f"Parent directory does not exist: {path.parent}")
+                return ToolResult.error_result(
+                    f"Parent directory does not exist: {path.parent}"
+                )
             path.write_text(params.content, encoding="utf-8")
             action = "Created" if is_new_file else "Updated"
             line_count = len(params.content.splitlines())
 
             # success_result passes **kwargs straight into cls(...), which is just ToolResult(...). So diff= and metadata= land directly on the dataclass fields.
-            return ToolResult.success_result( 
+            return ToolResult.success_result(
                 f"{action} {path} {line_count} lines",
                 diff=FileDiff(
                     path=str(path),
