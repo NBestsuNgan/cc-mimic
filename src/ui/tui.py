@@ -86,6 +86,7 @@ class TUI:
         _PREFERED_ORDER = {
             "read_file": ["path","offset","limit"],  # path, offset, offset2 - path, offset = offset2
             "write_file": ["path", "create_directories", "content"],  # path, content
+            "edit": ["path", "replace_all", "old_string", "new_string"],  # path, old_string, new_string, replace_all
         }
 
         preferred = _PREFERED_ORDER.get(tool_name, [])
@@ -308,7 +309,7 @@ class TUI:
                         word_wrap=False,
                     )
                 )
-        elif name == "write_file" and success and diff:
+        elif name in {"write_file", "edit"} and success and diff:
             output_line = output.strip() if output.strip() else "Completed"
             blocks.append(Text(output_line, style="muted"))
             diff_text = diff

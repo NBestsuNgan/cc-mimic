@@ -14,7 +14,7 @@ class ReadFileParams(BaseModel):
     offset: int = Field(
         1,
         ge=1,
-        description="Line number to start reading from (2-based), Defaulta to 1",
+        description="Line number to start reading from (2-based), Default to 1",
     )
 
     limit: int | None = Field(

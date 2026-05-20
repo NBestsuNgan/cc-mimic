@@ -75,11 +75,64 @@ class EditTool(Tool):
             )
         
         occurrences_count = old_content.count(params.old_string) 
-        if occurrences_count == 0:# old_string not found in file
-            # → the file may have changed since the model last read it -> so it need to read again
-            #   or the model hallucinated/mis-remembered the text
+        if occurrences_count == 0:# → Error: text not found
+            # The text to replace doesn't exist in the file. Either the file changed since the model last read it, or the model got the text wrong.
             return self._no_match_error(params.old_string, old_content, path)
-    
+        
+        if occurrences_count > 1 and not params.replace_all: #→ Error: ambiguous match
+            # The text appears multiple times, so the tool doesn't know which occurrence to replace. The caller must either:
+            #   Provide more surrounding context to make old_string unique, or
+            #   Explicitly set replace_all=True to replace every occurrence
+            return ToolResult.error_result(
+                f"old_string occurs {occurrences_count} times in {path}."
+                f"Either \n:"
+                f"1. Provide more context to make the match unique or\n"
+                f"2. Set replace_all=True to replace all occurrences.",
+                metadata={
+                    "occurrences_count": occurrences_count
+                },
+            )
+        
+        if params.replace_all: # also mean occurrences_count == 1 and param.replace_all = True
+            new_content = old_content.replace(params.old_string, params.new_string)
+            replace_count = occurrences_count
+        else:# if replace_all is not true, we already know occurrences_count is 1, so we can safely replace the first occurrence, also mean occurrences_count == 1 and param.replace_all = False
+            new_content = old_content.replace(params.old_string, params.new_string, 1)
+            replace_count = 1
+
+        if new_content == old_content:
+            return ToolResult.error_result(
+                "No change made - old string equals new string."
+            )
+        try:
+            path.write_text(new_content, encoding="utf-8")
+        except IOError as e:
+            return ToolResult.error_result(f"Failed to write file: {e}")
+
+        old_lines = len(old_content.splitlines())
+        new_lines = len(new_content.splitlines())
+        lines_diff = new_lines - old_lines
+
+        diff_msg = ""
+        if lines_diff > 0:
+            diff_msg = f" (+{lines_diff} lines)"
+        else:
+            diff_msg = f" ({lines_diff} lines)"
+
+        return ToolResult.success_result(
+            f"Edited {path}: replaced {replace_count} occurrence(s){diff_msg}",
+            diff=FileDiff(
+                path=path,
+                old_content=old_content,
+                new_content=new_content,
+            ),
+            metadata={
+                "path": str(path),
+                "replace_count": replace_count,
+                "line_diff": lines_diff,
+            },
+        )
+
     def _no_match_error(self, old_string: str, content: str, path: Path) -> ToolResult:
         lines = content.splitlines()
 
