@@ -113,6 +113,7 @@ class GrepTool(Tool):
                 if not is_binary_file(file_path):
                     files.append(file_path)
                     if len(files) >= 500:
+                        files.append(f"...(limited to 500 results)")
                         return files
                     
         return files
