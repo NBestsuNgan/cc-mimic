@@ -1,0 +1,61 @@
+from pydantic import BaseModel, Field
+from pathlib import Path
+from src.tools.base import FileDiff, Tool, ToolInvocation, ToolKind, ToolResult
+from src.utils.paths import (
+    ensure_parent_directory,
+    resolve_path,
+    is_binary_file,
+)
+from src.utils.text import count_tokens, truncate_text
+
+
+class ListDirParams(BaseModel):
+    path: str = Field(
+        "." ,
+        description="Directory path to list (default: current directory)",
+    )
+    include_hidden: bool = Field(
+        False,
+        description="Whether to include hidden files and directories (default: False)",
+    )
+
+class ListDirTool(Tool):
+    name = "list_dir"
+    description = (
+        "List the contents of a directory. "
+    )
+    kind = ToolKind.READ
+    schema = ListDirParams
+
+    async def execute(self, invocation: ToolInvocation) -> ToolResult:
+        params = ListDirParams(**invocation.params)
+        dir_path = resolve_path(invocation.cwd, params.path)
+
+        if not dir_path.exists() or not dir_path.is_dir():
+            return ToolResult.error_result(
+                f"Directory does not exist: {dir_path} "
+            )   
+        
+        try:
+            items = sorted(dir_path.iterdir(), key=lambda p: (not p.is_dir(), p.name.lower())) #path(p) should not be a directory
+        except Exception as e:
+            return ToolResult.error_result(
+                f"Error listing directory: {e} "
+            )
+
+        if not params.include_hidden:
+            items = [item for item in items if not item.name.startswith(".")]
+
+        if not items:
+            return ToolResult.success_result("Directory is empty.", metadata={
+                "path": dir_path, 
+                "entires": 0,
+            })
+
+
+
+
+
+
+
+
