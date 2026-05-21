@@ -10,10 +10,18 @@ class ModelConfig(BaseModel): # separate for "Modle" configuration params, easil
     temperature: float = Field(default=1, ge=0.0, le=2.0) 
     context_window: int = 1_000_000
 
+class ShellEnvironmentPolicy(BaseModel):
+    ignore_default_excludes: bool = False
+    exclude_patterns: list[str] = Field(
+        default_factory=lambda: ["*KEY*", "*SECRET*", "*PASSWORD*", "*TOKEN*"]
+    )
+    set_vars: dict[str, str] = Field(default_factory=dict)
+
+
 class Config(BaseModel):
     model: ModelConfig = Field(default_factory=ModelConfig)
     cwd: Path = Field(default_factory=Path.cwd)
-
+    shell_environment: ShellEnvironmentPolicy = Field(default_factory=ShellEnvironmentPolicy)
     max_turns: int = 100
 
     developer_instructions: str | None = None

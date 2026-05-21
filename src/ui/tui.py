@@ -87,6 +87,7 @@ class TUI:
             "read_file": ["path","offset","limit"],  # path, offset, offset2 - path, offset = offset2
             "write_file": ["path", "create_directories", "content"],  # path, content
             "edit": ["path", "replace_all", "old_string", "new_string"],  # path, old_string, new_string, replace_all
+            "shell": ["command", "timeout", "cwd"],
         }
 
         preferred = _PREFERED_ORDER.get(tool_name, [])
@@ -249,12 +250,13 @@ class TUI:
         metadata: dict[str, Any] | None,
         diff: str | None,
         truncated: bool,
+        exit_code: int | None,
     ) -> None:
         # must have path, read line of lines, all readed content along with the line number
         border_style = f"tool.{tool_kind}" if tool_kind else "tool"
         status_icon = "✓" if success else "✗"
         status_style = "success" if success else "error"
-
+        args = self._tool_args_by_call_id.get(call_id, {})
         title = Text.assemble(
             (f"{status_icon} ", f"{status_style}"),
             (name, "tool"),
@@ -326,6 +328,27 @@ class TUI:
                     word_wrap=True,
                 )
             )
+        elif name == "shell":
+            command = args.get("command")
+            if isinstance(command, str) and command.strip(): # check if not empty
+                blocks.append(Text(f"$ {command.strip()}", style="muted"))
+            if exit_code is not None:
+                blocks.append(Text(f"exit_code={exit_code}", style="muted"))
+        
+            output_display = truncate_text(
+                output,
+                self.config.model_name,
+                self._max_block_tokens,
+            )
+            blocks.append(
+                Syntax(
+                    output_display,
+                    "text",
+                    theme="monokai",
+                    word_wrap=True,
+                )
+            )
+
         if truncated:
             blocks.append(
                 Text("note: tool output was truncated", style="warning")

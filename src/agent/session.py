@@ -13,7 +13,7 @@ class Session:
             config=self.config,
         )
         self.context_manager = ContextManager(config=config)
-        self.tool_registry = create_default_registry()
+        self.tool_registry = create_default_registry(config=config)
         self.session_id = str(uuid.uuid4())
         self.create_at = datetime.now()
         self.update_at = datetime.now()
