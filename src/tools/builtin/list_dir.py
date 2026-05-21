@@ -48,9 +48,24 @@ class ListDirTool(Tool):
 
         if not items:
             return ToolResult.success_result("Directory is empty.", metadata={
-                "path": dir_path, 
-                "entires": 0,
+                "path": str(dir_path), 
+                "entries": 0,
             })
+    
+        lines = []
+        for item in items:
+            if item.is_dir():
+                lines.append(f"{item.name}/")
+            else:
+                lines.append(item.name)
+        
+        return ToolResult.success_result(
+            "\n".join(lines), 
+            metadata={
+                "path": str(dir_path),
+                "entries": len(items),
+            }
+        )
 
 
 
