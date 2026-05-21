@@ -3,6 +3,7 @@ from src.tools.builtin.write_file import WriteFileTool
 from src.tools.builtin.edit_file import EditTool
 from src.tools.builtin.shell import ShellTool
 from src.tools.builtin.list_dir import ListDirTool
+from src.tools.builtin.grep import GrepTool
 
 __all__ = [
     "ReadFileTool",
@@ -10,6 +11,7 @@ __all__ = [
     "EditTool",
     "ShellTool",
     "ListDirTool",
+    "GrepTool",
 ]
 
 def get_all_builtin_tools() -> list[type]:
@@ -19,4 +21,5 @@ def get_all_builtin_tools() -> list[type]:
         EditTool,
         ShellTool,
         ListDirTool,
+        GrepTool,
     ]
