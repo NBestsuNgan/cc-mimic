@@ -118,9 +118,9 @@ class TUI:
                     bytes_count = len(value.encode("utf-8", errors="replace"))
                     value = f"<{line_count} lines • {bytes_count} bytes>"
 
-            if isinstance(value, bool):
+            if not isinstance(value, str):
                 value = str(value)
-                
+
             table.add_row(key, value)
 
         return table
@@ -408,7 +408,6 @@ class TUI:
             )
         elif name == "glob" and success:
             matches = metadata.get("matches")
-            summary = []
 
             if isinstance(matches, int):
                 blocks.append(Text(f"{matches} matches", style="muted"))
@@ -426,6 +425,61 @@ class TUI:
                     word_wrap=True,
                 )
             )
+        elif name == "web_search" and success:
+            results = metadata.get("results")
+            query = args.get("query")
+            summary = []
+            
+            if isinstance(query, str):
+                summary.append(query)
+            if isinstance(results, int):
+                summary.append(f"{results} results")
+            if summary:
+                blocks.append(Text(" • ".join(summary), style="muted"))
+                
+            output_display = truncate_text(
+                output,
+                self.config.model_name,
+                self._max_block_tokens,
+            )
+            blocks.append(
+                Syntax(
+                    output_display,
+                    "text",
+                    theme="monokai",
+                    word_wrap=True,
+                )
+            )
+        elif name == "web_fetch" and success:
+            status_code = metadata.get("status_code")
+            content_length = metadata.get("content_length")
+            url = args.get("url")
+            summary = []
+
+            if isinstance(status_code, int):
+                summary.append(str(status_code))
+            if isinstance(content_length, int):
+                summary.append(f"{content_length} bytes")
+            if isinstance(url, str):
+                summary.append(url)
+                
+            if summary:
+                blocks.append(Text(" • ".join(summary), style="muted"))
+
+            output_display = truncate_text(
+                output,
+                self.config.model_name,
+                self._max_block_tokens,
+            )
+            blocks.append(
+                Syntax(
+                    output_display,
+                    "text",
+                    theme="monokai",
+                    word_wrap=True,
+                )
+            )
+                
 
         if error and not success:
             blocks.append(Text(error, style="error"))
