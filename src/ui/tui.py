@@ -91,6 +91,8 @@ class TUI:
             "list_dir": ["path", "include_hidden"],
             "grep": ["path", "case_insensitive","pattern"],
             "glob": ["path", "pattern"],
+            "todos": ["id", "action", "content"],
+            "memory": ["action", "key", "value"],
         }
 
         preferred = _PREFERED_ORDER.get(tool_name, [])
@@ -492,7 +494,34 @@ class TUI:
                     theme="monokai",
                     word_wrap=True,
                 )
-            )        
+            )
+        elif name == "memory" and success:
+            action = args.get("action")
+            key = args.get("key")
+            found = metadata.get("found")
+            summary = []
+            if isinstance(action, str) and action:
+                summary.append(action)
+            if isinstance(key, str) and key:
+                summary.append(key)
+            if isinstance(found, bool) and found is not None:  # and found is not None case of delete
+                summary.append("found" if found else "missing")
+            if summary:
+                blocks.append(Text(" • ".join(summary), style="muted"))
+
+            output_display = truncate_text(
+                output,
+                self.config.model_name,
+                self._max_block_tokens,
+            )
+            blocks.append(
+                Syntax(
+                    output_display,
+                    "text",
+                    theme="monokai",
+                    word_wrap=True,
+                )
+            )     
 
         if error and not success:
             blocks.append(Text(error, style="error"))

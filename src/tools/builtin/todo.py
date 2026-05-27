@@ -6,7 +6,7 @@ import uuid
 
 class TodosParams(BaseModel):
     action: str = Field(..., description="Action: 'add', 'complete', 'list', 'clear'")
-    id: str | None = Field(None, description="Todo ID (for complete)")
+    id: str | int | None = Field(None, description="Todo ID (for complete)") # in case the model is hallucinating
     content: str | None = Field(None, description="Todo content (for add)")
 
 
@@ -32,7 +32,7 @@ class TodosTool(Tool):
         elif params.action.lower() == "complete":
             if not params.id:
                 return ToolResult.error_result("`id` required for 'complete' action")
-            if params.id not in self._todos:
+            if str(params.id) not in self._todos:
                 return ToolResult.error_result(f"Todo not found {params.id}")
             content = self._todos.pop(str(params.id)) # remove key and return value of that poped key
             return ToolResult.success_result(f"Completed todo [{params.id}: {content}]")

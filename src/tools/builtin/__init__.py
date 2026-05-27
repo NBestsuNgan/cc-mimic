@@ -8,6 +8,7 @@ from src.tools.builtin.glob import GlobTool
 from src.tools.builtin.web_search import WebSearchTool
 from src.tools.builtin.web_fetch import WebFetchTool
 from src.tools.builtin.todo import TodosTool
+from src.tools.builtin.memory import MemoryTool
 
 __all__ = [
     "ReadFileTool",
@@ -19,7 +20,8 @@ __all__ = [
     "GlobTool",
     "WebSearchTool",
     "WebFetchTool",
-    "TodosTool"
+    "TodosTool",
+    "MemoryTool"
 ]
 
 def get_all_builtin_tools() -> list[type]:
@@ -34,4 +36,5 @@ def get_all_builtin_tools() -> list[type]:
         WebSearchTool,
         WebFetchTool,
         TodosTool,
+        MemoryTool,
     ]
