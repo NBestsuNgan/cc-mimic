@@ -28,13 +28,16 @@ class MemoryTool(Tool):
         data_dir = get_data_dir()
         data_dir.mkdir(parents=True, exist_ok=True)
         path = data_dir / "user_memory.json"
-
+        print("="*50)
+        print(path)
+        print("="*50)
+        
         if not path.exists():
             return {"entries": {}}
 
         try:
             content = path.read_text(encoding="utf-8")
-            return json.load(content)
+            return json.loads(content)
         except Exception:
             return {"entries": {}}
 

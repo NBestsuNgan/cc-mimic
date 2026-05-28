@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Final Fantasy VI - The Legendary Journey</title>
+
+    <link rel="stylesheet" href="ffvi-styles.css">
+</head>
+<body>
+
+    <!-- SVG Sprite Sheet (inline for use with <use>) -->
+    <div style="display:none" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg">
+            <symbol id="sprite-ifrit" viewBox="0 0 64 64"><rect x="20" y="4" width="24" height="28" fill="#8B2500"/><rect x="22" y="6" width="20" height="24" fill="#CC4400"/><rect x="18" y="0" width="6" height="8" fill="#FF6600"/><rect x="40" y="0" width="6" height="8" fill="#FF6600"/><rect x="20" y="2" width="4" height="6" fill="#FF8800"/><rect x="26" y="0" width="4" height="8" fill="#FFAA00"/><rect x="32" y="-1" width="4" height="9" fill="#FF4400"/><rect x="38" y="0" width="4" height="8" fill="#FFAA00"/><rect x="42" y="2" width="4" height="6" fill="#FF8800"/><rect x="24" y="12" width="4" height="3" fill="#FFFF00"/><rect x="36" y="12" width="4" height="3" fill="#FFFF00"/><rect x="26" y="20" width="12" height="3" fill="#FF2200"/><rect x="18" y="32" width="28" height="20" fill="#8B2500"/><rect x="20" y="34" width="24" height="16" fill="#CC4400"/><rect x="8" y="34" width="12" height="6" fill="#CC4400"/><rect x="44" y="34" width="12" height="6" fill="#CC4400"/><rect x="4" y="30" width="6" height="4" fill="#FF6600"/><rect x="54" y="30" width="6" height="4" fill="#FF6600"/><rect x="22" y="52" width="8" height="10" fill="#8B2500"/><rect x="34" y="52" width="8" height="10" fill="#8B2500"/></symbol>
+            <symbol id="sprite-shiva" viewBox="0 0 64 64"><rect x="16" y="2" width="8" height="6" fill="#88CCFF"/><rect x="26" y="0" width="12" height="4" fill="#AAEEFF"/><rect x="40" y="2" width="8" height="6" fill="#88CCFF"/><rect x="22" y="8" width="20" height="18" fill="#E8D4B8"/><rect x="24" y="10" width="16" height="14" fill="#F5E6D3"/><rect x="20" y="4" width="6" height="4" fill="#FFFFFF"/><rect x="28" y="2" width="8" height="4" fill="#FFFFFF"/><rect x="38" y="4" width="6" height="4" fill="#FFFFFF"/><rect x="26" y="14" width="4" height="3" fill="#0066FF"/><rect x="34" y="14" width="4" height="3" fill="#0066FF"/><rect x="29" y="20" width="6" height="2" fill="#E8A0A0"/><rect x="20" y="26" width="24" height="22" fill="#66AADD"/><rect x="18" y="28" width="28" height="18" fill="#88BBEE"/><rect x="16" y="32" width="32" height="12" fill="#AADDFF"/><rect x="10" y="24" width="3" height="3" fill="#FFFFFF" opacity="0.8"/><rect x="51" y="22" width="3" height="3" fill="#FFFFFF" opacity="0.8"/><rect x="8" y="36" width="2" height="2" fill="#AAEEFF" opacity="0.6"/><rect x="54" y="34" width="2" height="2" fill="#AAEEFF" opacity="0.6"/><rect x="10" y="28" width="8" height="4" fill="#88BBEE"/><rect x="46" y="28" width="8" height="4" fill="#88BBEE"/><rect x="24" y="48" width="6" height="14" fill="#66AADD"/><rect x="34" y="48" width="6" height="14" fill="#66AADD"/></symbol>
+            <symbol id="sprite-ramuh" viewBox="0 0 64 64"><rect x="20" y="16" width="24" height="16" fill="#EEEEFF"/><rect x="18" y="18" width="28" height="12" fill="#FFFFFF"/><rect x="22" y="6" width="20" height="14" fill="#E8D4B8"/><rect x="24" y="8" width="16" height="10" fill="#F5E6D3"/><rect x="16" y="2" width="32" height="10" fill="#6644AA"/><rect x="18" y="0" width="28" height="6" fill="#8866CC"/><rect x="26" y="10" width="3" height="3" fill="#FFFFFF"/><rect x="35" y="10" width="3" height="3" fill="#FFFFFF"/><rect x="27" y="11" width="2" height="2" fill="#333366"/><rect x="35" y="11" width="2" height="2" fill="#333366"/><rect x="16" y="32" width="32" height="24" fill="#442288"/><rect x="18" y="34" width="28" height="20" fill="#6644AA"/><rect x="18" y="50" width="28" height="4" fill="#8866EE"/><rect x="4" y="12" width="4" height="48" fill="#AA8844"/><rect x="2" y="8" width="8" height="8" fill="#DDDDFF"/><rect x="3" y="6" width="6" height="4" fill="#AAEEFF"/><rect x="0" y="4" width="2" height="4" fill="#FFFF00" opacity="0.8"/><rect x="10" y="2" width="2" height="4" fill="#FFFF00" opacity="0.8"/><rect x="6" y="0" width="2" height="3" fill="#FFFF88" opacity="0.9"/><rect x="22" y="56" width="8" height="8" fill="#442288"/><rect x="34" y="56" width="8" height="8" fill="#442288"/></symbol>
+            <symbol id="sprite-kirin" viewBox="0 0 64 64"><rect x="29" y="0" width="6" height="10" fill="#FFD700"/><rect x="30" y="-2" width="4" height="4" fill="#FFF8DC"/><rect x="20" y="8" width="24" height="16" fill="#F5E6D3"/><rect x="22" y="10" width="20" height="12" fill="#FFF8DC"/><rect x="16" y="6" width="6" height="4" fill="#F5E6D3"/><rect x="42" y="6" width="6" height="4" fill="#F5E6D3"/><rect x="24" y="14" width="3" height="3" fill="#0066FF"/><rect x="37" y="14" width="3" height="3" fill="#0066FF"/><rect x="28" y="20" width="8" height="4" fill="#E8D4B8"/><rect x="12" y="24" width="40" height="22" fill="#FFF8DC"/><rect x="14" y="26" width="36" height="18" fill="#FFFFFF"/><rect x="12" y="22" width="40" height="4" fill="#FFD700"/><rect x="14" y="24" width="4" height="6" fill="#FFD700"/><rect x="16" y="46" width="6" height="14" fill="#F5E6D3"/><rect x="26" y="46" width="6" height="14" fill="#F5E6D3"/><rect x="36" y="46" width="6" height="14" fill="#F5E6D3"/><rect x="46" y="46" width="6" height="14" fill="#F5E6D3"/><rect x="16" y="58" width="6" height="4" fill="#FFD700"/><rect x="26" y="58" width="6" height="4" fill="#FFD700"/><rect x="36" y="58" width="6" height="4" fill="#FFD700"/><rect x="46" y="58" width="6" height="4" fill="#FFD700"/><rect x="2" y="20" width="2" height="6" fill="#FFFFFF" opacity="0.4"/><rect x="60" y="20" width="2" height="6" fill="#FFFFFF" opacity="0.4"/></symbol>
+            <symbol id="sprite-siren" viewBox="0 0 64 64"><rect x="14" y="4" width="36" height="8" fill="#88DDCC"/><rect x="10" y="8" width="8" height="20" fill="#88DDCC"/><rect x="46" y="8" width="8" height="20" fill="#88DDCC"/><rect x="22" y="8" width="20" height="16" fill="#E8D4B8"/><rect x="24" y="10" width="16" height="12" fill="#F5E6D3"/><rect x="26" y="14" width="4" height="2" fill="#333366"/><rect x="34" y="14" width="4" height="2" fill="#333366"/><rect x="29" y="19" width="5" height="3" fill="#E8A0A0"/><rect x="20" y="24" width="24" height="16" fill="#44AADD"/><rect x="18" y="26" width="28" height="14" fill="#66CCEE"/><rect x="4" y="18" width="16" height="12" fill="#AAEEFF" opacity="0.6"/><rect x="44" y="18" width="16" height="12" fill="#AAEEFF" opacity="0.6"/><rect x="2" y="20" width="4" height="8" fill="#FFFFFF" opacity="0.4"/><rect x="58" y="20" width="4" height="8" fill="#FFFFFF" opacity="0.4"/><rect x="0" y="10" width="4" height="3" fill="#FFFFFF" opacity="0.7"/><rect x="60" y="12" width="4" height="3" fill="#FFFFFF" opacity="0.7"/><rect x="14" y="40" width="36" height="12" fill="#44AADD"/><rect x="12" y="42" width="40" height="10" fill="#66CCEE"/><rect x="16" y="52" width="32" height="10" fill="#44AADD"/></symbol>
+            <symbol id="sprite-maduin" viewBox="0 0 64 64"><rect x="16" y="2" width="6" height="10" fill="#44AA44"/><rect x="42" y="2" width="6" height="10" fill="#44AA44"/><rect x="14" y="6" width="4" height="6" fill="#66CC66"/><rect x="46" y="6" width="4" height="6" fill="#66CC66"/><rect x="20" y="10" width="24" height="16" fill="#E8D4B8"/><rect x="22" y="12" width="20" height="12" fill="#F5E6D3"/><rect x="24" y="16" width="4" height="3" fill="#44AA44"/><rect x="36" y="16" width="4" height="3" fill="#44AA44"/><rect x="18" y="26" width="28" height="22" fill="#228844"/><rect x="20" y="28" width="24" height="18" fill="#44AA44"/><rect x="8" y="28" width="12" height="6" fill="#44AA44"/><rect x="44" y="28" width="12" height="6" fill="#44AA44"/><rect x="4" y="26" width="4" height="4" fill="#88FF88" opacity="0.7"/><rect x="56" y="26" width="4" height="4" fill="#88FF88" opacity="0.7"/><rect x="22" y="48" width="8" height="12" fill="#228844"/><rect x="34" y="48" width="8" height="12" fill="#228844"/><rect x="2" y="24" width="2" height="6" fill="#88FF88" opacity="0.4"/><rect x="60" y="24" width="2" height="6" fill="#88FF88" opacity="0.4"/></symbol>
+            <symbol id="sprite-crane" viewBox="0 0 64 64"><rect x="4" y="14" width="3" height="16" fill="#FFFFFF"/><rect x="0" y="10" width="10" height="6" fill="#FFFFFF"/><rect x="0" y="8" width="4" height="4" fill="#FF4444"/><rect x="1" y="12" width="2" height="2" fill="#333333"/><rect x="57" y="14" width="3" height="16" fill="#FFFFFF"/><rect x="54" y="10" width="10" height="6" fill="#FFFFFF"/><rect x="60" y="8" width="4" height="4" fill="#4444FF"/><rect x="61" y="12" width="2" height="2" fill="#333333"/><rect x="12" y="18" width="40" height="4" fill="#FFFFFF" opacity="0.5"/><rect x="14" y="16" width="36" height="2" fill="#FFFFFF" opacity="0.3"/><rect x="14" y="22" width="36" height="2" fill="#FFFFFF" opacity="0.3"/><rect x="6" y="30" width="20" height="24" fill="#EEEEFF"/><rect x="38" y="30" width="20" height="24" fill="#EEEEFF"/><rect x="10" y="54" width="4" height="8" fill="#DDDDCC"/><rect x="18" y="54" width="4" height="8" fill="#DDDDCC"/><rect x="42" y="54" width="4" height="8" fill="#DDDDCC"/><rect x="50" y="54" width="4" height="8" fill="#DDDDCC"/></symbol>
+            <symbol id="sprite-esper" viewBox="0 0 64 64"><rect x="16" y="2" width="32" height="8" fill="#8888AA"/><rect x="14" y="4" width="36" height="6" fill="#AAAACC"/><rect x="20" y="6" width="24" height="4" fill="#444466"/><rect x="26" y="6" width="12" height="3" fill="#AAAACC"/><rect x="4" y="14" width="16" height="8" fill="#666688"/><rect x="44" y="14" width="16" height="8" fill="#666688"/><rect x="14" y="16" width="36" height="28" fill="#555577"/><rect x="16" y="18" width="32" height="24" fill="#777799"/><rect x="24" y="22" width="16" height="16" fill="#9999BB"/><rect x="26" y="24" width="12" height="12" fill="#BBBBDD"/><rect x="2" y="22" width="12" height="6" fill="#666688"/><rect x="50" y="22" width="12" height="6" fill="#666688"/><rect x="18" y="44" width="10" height="16" fill="#555577"/><rect x="36" y="44" width="10" height="16" fill="#555577"/><rect x="16" y="58" width="12" height="4" fill="#444466"/><rect x="36" y="58" width="12" height="4" fill="#444466"/></symbol>
+            <symbol id="sprite-bismark" viewBox="0 0 64 64"><rect x="8" y="8" width="20" height="12" fill="#44AACC"/><rect x="10" y="10" width="16" height="8" fill="#66CCEE"/><rect x="2" y="10" width="8" height="6" fill="#66CCEE"/><rect x="0" y="12" width="4" height="4" fill="#44AACC"/><rect x="12" y="4" width="4" height="6" fill="#AAEEFF"/><rect x="20" y="12" width="4" height="3" fill="#FFFFFF"/><rect x="21" y="13" width="2" height="2" fill="#003366"/><rect x="26" y="4" width="20" height="8" fill="#44AACC" opacity="0.8"/><rect x="30" y="2" width="16" height="4" fill="#66CCEE" opacity="0.6"/><rect x="18" y="20" width="32" height="20" fill="#44AACC"/><rect x="20" y="22" width="28" height="16" fill="#66CCEE"/><rect x="24" y="24" width="20" height="12" fill="#AAEEFF" opacity="0.5"/><rect x="20" y="40" width="6" height="14" fill="#44AACC"/><rect x="30" y="40" width="6" height="14" fill="#44AACC"/><rect x="38" y="40" width="6" height="14" fill="#44AACC"/><rect x="48" y="40" width="6" height="14" fill="#44AACC"/><rect x="48" y="18" width="4" height="16" fill="#44AACC"/><rect x="52" y="14" width="4" height="8" fill="#66CCEE"/><rect x="54" y="10" width="6" height="6" fill="#AAEEFF"/><rect x="6" y="0" width="3" height="3" fill="#FFFFFF" opacity="0.7"/><rect x="60" y="4" width="3" height="3" fill="#FFFFFF" opacity="0.7"/></symbol>
+            <symbol id="sprite-terrato" viewBox="0 0 64 64"><rect x="20" y="4" width="24" height="16" fill="#886644"/><rect x="22" y="6" width="20" height="12" fill="#AA8855"/><rect x="24" y="10" width="4" height="4" fill="#FFDD44"/><rect x="36" y="10" width="4" height="4" fill="#FFDD44"/><rect x="27" y="16" width="10" height="3" fill="#664422"/><rect x="16" y="2" width="6" height="6" fill="#666666"/><rect x="24" y="0" width="6" height="6" fill="#888888"/><rect x="34" y="0" width="6" height="6" fill="#888888"/><rect x="42" y="2" width="6" height="6" fill="#666666"/><rect x="12" y="20" width="40" height="28" fill="#886644"/><rect x="14" y="22" width="36" height="24" fill="#AA8855"/><rect x="16" y="24" width="8" height="6" fill="#997744"/><rect x="30" y="26" width="10" height="4" fill="#BB9966"/><rect x="20" y="34" width="12" height="6" fill="#997744"/><rect x="38" y="32" width="8" height="8" fill="#BB9966"/><rect x="0" y="22" width="12" height="8" fill="#886644"/><rect x="52" y="22" width="12" height="8" fill="#886644"/><rect x="2" y="18" width="4" height="4" fill="#666666"/><rect x="58" y="18" width="4" height="4" fill="#666666"/><rect x="16" y="48" width="12" height="14" fill="#886644"/><rect x="36" y="48" width="12" height="14" fill="#886644"/><rect x="0" y="60" width="64" height="2" fill="#664422" opacity="0.5"/><rect x="28" y="58" width="8" height="4" fill="#664422" opacity="0.3"/></symbol>
+            <symbol id="sprite-shoat" viewBox="0 0 64 64"><rect x="10" y="16" width="44" height="24" fill="#442244"/><rect x="12" y="18" width="40" height="20" fill="#553355"/><rect x="20" y="8" width="24" height="16" fill="#553355"/><rect x="22" y="10" width="20" height="12" fill="#664466"/><rect x="12" y="14" width="12" height="6" fill="#664466"/><rect x="10" y="16" width="4" height="4" fill="#884488"/><rect x="18" y="4" width="4" height="8" fill="#442244"/><rect x="42" y="4" width="4" height="8" fill="#442244"/><rect x="24" y="12" width="5" height="4" fill="#AA44FF"/><rect x="35" y="12" width="5" height="4" fill="#AA44FF"/><rect x="25" y="13" width="3" height="2" fill="#FFAAFF"/><rect x="36" y="13" width="3" height="2" fill="#FFAAFF"/><rect x="14" y="40" width="8" height="16" fill="#442244"/><rect x="26" y="40" width="8" height="16" fill="#442244"/><rect x="38" y="40" width="8" height="16" fill="#442244"/><rect x="48" y="40" width="8" height="16" fill="#442244"/><rect x="14" y="54" width="8" height="4" fill="#331133"/><rect x="26" y="54" width="8" height="4" fill="#331133"/><rect x="38" y="54" width="8" height="4" fill="#331133"/><rect x="48" y="54" width="8" height="4" fill="#331133"/><rect x="4" y="12" width="2" height="8" fill="#AA44FF" opacity="0.3"/><rect x="58" y="12" width="2" height="8" fill="#AA44FF" opacity="0.3"/></symbol>
+            <symbol id="sprite-phantom" viewBox="0 0 64 64"><rect x="18" y="6" width="28" height="32" fill="#AAAACC" opacity="0.7"/><rect x="20" y="8" width="24" height="28" fill="#CCCCDD" opacity="0.6"/><rect x="22" y="10" width="20" height="18" fill="#CCCCDD" opacity="0.8"/><rect x="26" y="14" width="4" height="5" fill="#333366"/><rect x="34" y="14" width="4" height="5" fill="#333366"/><rect x="28" y="22" width="8" height="3" fill="#666688"/><rect x="16" y="36" width="6" height="8" fill="#AAAACC" opacity="0.5"/><rect x="24" y="38" width="6" height="8" fill="#AAAACC" opacity="0.4"/><rect x="34" y="36" width="6" height="8" fill="#AAAACC" opacity="0.5"/><rect x="42" y="38" width="6" height="8" fill="#AAAACC" opacity="0.4"/><rect x="4" y="18" width="14" height="4" fill="#CCCCDD" opacity="0.5"/><rect x="46" y="18" width="14" height="4" fill="#CCCCDD" opacity="0.5"/><rect x="20" y="44" width="24" height="16" fill="#8888AA" opacity="0.3"/><rect x="22" y="48" width="20" height="12" fill="#666688" opacity="0.2"/><rect x="6" y="8" width="3" height="3" fill="#FFFFFF" opacity="0.5"/><rect x="55" y="10" width="3" height="3" fill="#FFFFFF" opacity="0.5"/></symbol>
+            <symbol id="sprite-unicorn" viewBox="0 0 64 64"><rect x="29" y="0" width="6" height="12" fill="#FFD700"/><rect x="30" y="-2" width="4" height="4" fill="#FFFACD"/><rect x="20" y="10" width="24" height="16" fill="#FFF8DC"/><rect x="22" y="12" width="20" height="12" fill="#FFFFFF"/><rect x="18" y="8" width="6" height="4" fill="#FFF8DC"/><rect x="24" y="16" width="3" height="3" fill="#0066FF"/><rect x="38" y="20" width="6" height="4" fill="#F5E6D3"/><rect x="14" y="8" width="6" height="32" fill="#FFD700"/><rect x="16" y="10" width="4" height="28" fill="#FFE44D"/><rect x="20" y="26" width="32" height="20" fill="#FFFFFF"/><rect x="4" y="28" width="16" height="14" fill="#FFF8DC"/><rect x="22" y="46" width="6" height="16" fill="#FFFFFF"/><rect x="30" y="46" width="6" height="16" fill="#FFFFFF"/><rect x="40" y="46" width="6" height="16" fill="#FFF8DC"/><rect x="48" y="46" width="6" height="16" fill="#FFF8DC"/><rect x="22" y="60" width="6" height="4" fill="#FFD700"/><rect x="30" y="60" width="6" height="4" fill="#FFD700"/><rect x="40" y="60" width="6" height="4" fill="#FFD700"/><rect x="48" y="60" width="6" height="4" fill="#FFD700"/><rect x="52" y="24" width="10" height="4" fill="#FFD700"/><rect x="58" y="20" width="6" height="8" fill="#FFE44D"/><rect x="0" y="10" width="2" height="6" fill="#FFD700" opacity="0.4"/><rect x="2" y="40" width="2" height="6" fill="#FFD700" opacity="0.4"/></symbol>
+            <symbol id="sprite-fireserpent" viewBox="0 0 64 64"><rect x="8" y="8" width="16" height="12" fill="#FF4400"/><rect x="10" y="10" width="12" height="8" fill="#FF6600"/><rect x="6" y="12" width="4" height="3" fill="#FFFFFF"/><rect x="24" y="12" width="4" height="3" fill="#FFFFFF"/><rect x="18" y="10" width="3" height="3" fill="#FFFF00"/><rect x="2" y="14" width="4" height="2" fill="#FF2200"/><rect x="24" y="16" width="8" height="8" fill="#FF4400"/><rect x="32" y="20" width="8" height="8" fill="#FF6600"/><rect x="40" y="16" width="8" height="8" fill="#FF4400"/><rect x="48" y="12" width="8" height="8" fill="#FF6600"/><rect x="52" y="4" width="8" height="8" fill="#FF4400"/><rect x="48" y="0" width="8" height="6" fill="#FF6600"/><rect x="26" y="18" width="4" height="4" fill="#FF8800"/><rect x="34" y="22" width="4" height="4" fill="#FFAA00"/><rect x="42" y="18" width="4" height="4" fill="#FF8800"/><rect x="50" y="6" width="4" height="4" fill="#FFAA00"/><rect x="0" y="16" width="2" height="4" fill="#FFAA00" opacity="0.6"/><rect x="60" y="2" width="2" height="4" fill="#FFAA00" opacity="0.6"/></symbol>
+            <symbol id="sprite-airforce" viewBox="0 0 64 64"><rect x="12" y="20" width="40" height="20" fill="#555577"/><rect x="14" y="22" width="36" height="16" fill="#777799"/><rect x="20" y="24" width="16" height="10" fill="#44AACC"/><rect x="22" y="26" width="12" height="6" fill="#66CCEE"/><rect x="0" y="24" width="12" height="6" fill="#666688"/><rect x="52" y="24" width="12" height="6" fill="#666688"/><rect x="2" y="22" width="10" height="4" fill="#777799"/><rect x="52" y="22" width="10" height="4" fill="#777799"/><rect x="4" y="30" width="8" height="8" fill="#444466"/><rect x="52" y="30" width="8" height="8" fill="#444466"/><rect x="4" y="38" width="8" height="4" fill="#FF6600"/><rect x="52" y="38" width="8" height="4" fill="#FF6600"/><rect x="24" y="40" width="16" height="4" fill="#666688"/><rect x="20" y="42" width="4" height="8" fill="#555577"/><rect x="40" y="42" width="4" height="8" fill="#555577"/><rect x="6" y="18" width="4" height="4" fill="#666688"/><rect x="54" y="18" width="4" height="4" fill="#666688"/></symbol>
+            <symbol id="sprite-golem" viewBox="0 0 64 64"><rect x="18" y="4" width="28" height="16" fill="#888888"/><rect x="20" y="6" width="24" height="12" fill="#999999"/><rect x="24" y="8" width="5" height="4" fill="#FFDD44"/><rect x="35" y="8" width="5" height="4" fill="#FFDD44"/><rect x="27" y="14" width="10" height="3" fill="#666666"/><rect x="8" y="20" width="48" height="24" fill="#777777"/><rect x="10" y="22" width="44" height="20" fill="#888888"/><rect x="12" y="24" width="8" height="6" fill="#999999"/><rect x="24" y="26" width="10" height="4" fill="#AAAAAA"/><rect x="38" y="24" width="12" height="8" fill="#999999"/><rect x="0" y="22" width="8" height="10" fill="#777777"/><rect x="56" y="22" width="8" height="10" fill="#777777"/><rect x="2" y="32" width="6" height="6" fill="#888888"/><rect x="56" y="32" width="6" height="6" fill="#888888"/><rect x="14" y="44" width="12" height="16" fill="#777777"/><rect x="38" y="44" width="12" height="16" fill="#777777"/></symbol>
+            <symbol id="sprite-zoneseek" viewBox="0 0 64 64"><rect x="18" y="8" width="28" height="20" fill="#88AAFF"/><rect x="20" y="10" width="24" height="16" fill="#AACCFF"/><rect x="24" y="14" width="5" height="2" fill="#4466AA"/><rect x="35" y="14" width="5" height="2" fill="#4466AA"/><rect x="29" y="20" width="6" height="2" fill="#6688CC"/><rect x="20" y="28" width="24" height="18" fill="#88AAFF" opacity="0.8"/><rect x="22" y="30" width="20" height="14" fill="#AACCFF" opacity="0.7"/><rect x="16" y="46" width="8" height="8" fill="#88AAFF" opacity="0.4"/><rect x="28" y="48" width="8" height="8" fill="#88AAFF" opacity="0.3"/><rect x="40" y="46" width="8" height="8" fill="#88AAFF" opacity="0.4"/><rect x="50" y="4" width="4" height="4" fill="#FFFFFF" opacity="0.6"/><rect x="54" y="2" width="3" height="3" fill="#FFFFFF" opacity="0.4"/><rect x="57" y="0" width="2" height="2" fill="#FFFFFF" opacity="0.3"/></symbol>
+            <symbol id="sprite-balloon" viewBox="0 0 64 64"><rect x="12" y="4" width="40" height="32" fill="#FF4444"/><rect x="14" y="6" width="36" height="28" fill="#FF6666"/><rect x="18" y="8" width="10" height="10" fill="#FF8888"/><rect x="20" y="10" width="6" height="6" fill="#FFAAAA"/><rect x="22" y="18" width="4" height="4" fill="#330000"/><rect x="38" y="18" width="4" height="4" fill="#330000"/><rect x="24" y="26" width="16" height="4" fill="#330000"/><rect x="26" y="24" width="2" height="6" fill="#330000"/><rect x="36" y="24" width="2" height="6" fill="#330000"/><rect x="29" y="36" width="6" height="4" fill="#CC2222"/><rect x="31" y="40" width="2" height="12" fill="#AAAAAA"/><rect x="30" y="34" width="4" height="4" fill="#FFAA00"/><rect x="28" y="32" width="2" height="2" fill="#FFFF00"/></symbol>
+            <symbol id="sprite-starlet" viewBox="0 0 64 64"><rect x="24" y="2" width="16" height="6" fill="#FFDD44"/><rect x="28" y="0" width="8" height="10" fill="#FFEE66"/><rect x="20" y="8" width="24" height="8" fill="#FFDD44"/><rect x="22" y="6" width="20" height="4" fill="#FFEE66"/><rect x="16" y="16" width="32" height="16" fill="#FFDD44"/><rect x="18" y="18" width="28" height="12" fill="#FFEE66"/><rect x="24" y="12" width="16" height="4" fill="#FFEE66"/><rect x="20" y="32" width="24" height="6" fill="#FFDD44"/><rect x="24" y="38" width="16" height="6" fill="#FFEE66"/><rect x="28" y="44" width="8" height="8" fill="#FFDD44"/><rect x="24" y="20" width="4" height="3" fill="#664400"/><rect x="36" y="20" width="4" height="3" fill="#664400"/><rect x="20" y="24" width="4" height="2" fill="#FFAA88"/><rect x="40" y="24" width="4" height="2" fill="#FFAA88"/><rect x="6" y="6" width="3" height="3" fill="#FFFFFF" opacity="0.6"/><rect x="55" y="8" width="3" height="3" fill="#FFFFFF" opacity="0.6"/><rect x="4" y="20" width="2" height="2" fill="#FFEE66" opacity="0.5"/><rect x="58" y="18" width="2" height="2" fill="#FFEE66" opacity="0.5"/></symbol>
+            <symbol id="sprite-atomos" viewBox="0 0 64 64"><rect x="20" y="4" width="24" height="8" fill="#66AAFF" opacity="0.6"/><rect x="12" y="8" width="40" height="8" fill="#4499FF" opacity="0.7"/><rect x="8" y="14" width="48" height="10" fill="#3388FF" opacity="0.8"/><rect x="12" y="22" width="40" height="8" fill="#4499FF" opacity="0.7"/><rect x="16" y="28" width="32" height="8" fill="#66AAFF" opacity="0.6"/><rect x="22" y="12" width="20" height="12" fill="#FFFFFF"/><rect x="24" y="14" width="16" height="8" fill="#003366"/><rect x="28" y="16" width="8" height="4" fill="#FFFFFF"/><rect x="0" y="18" width="8" height="2" fill="#66AAFF" opacity="0.5"/><rect x="56" y="18" width="8" height="2" fill="#66AAFF" opacity="0.5"/><rect x="2" y="22" width="6" height="2" fill="#4499FF" opacity="0.4"/><rect x="56" y="22" width="6" height="2" fill="#4499FF" opacity="0.4"/><rect x="20" y="36" width="24" height="16" fill="#2266CC" opacity="0.4"/><rect x="24" y="38" width="16" height="12" fill="#3388FF" opacity="0.3"/></symbol>
+            <symbol id="sprite-zoneborer" viewBox="0 0 64 64"><rect x="8" y="8" width="20" height="12" fill="#CC8844"/><rect x="10" y="10" width="16" height="8" fill="#DDAA66"/><rect x="2" y="10" width="8" height="6" fill="#CC8844"/><rect x="0" y="12" width="4" height="4" fill="#BB7733"/><rect x="20" y="10" width="3" height="3" fill="#FFDD44"/><rect x="28" y="12" width="8" height="8" fill="#BB7733"/><rect x="36" y="10" width="8" height="8" fill="#DDAA66"/><rect x="44" y="12" width="8" height="8" fill="#BB7733"/><rect x="52" y="10" width="8" height="8" fill="#DDAA66"/><rect x="27" y="14" width="2" height="4" fill="#AA6622"/><rect x="35" y="12" width="2" height="4" fill="#AA6622"/><rect x="43" y="14" width="2" height="4" fill="#AA6622"/><rect x="51" y="12" width="2" height="4" fill="#AA6622"/><rect x="10" y="4" width="3" height="6" fill="#CC8844"/><rect x="18" y="4" width="3" height="6" fill="#CC8844"/><rect x="9" y="2" width="4" height="3" fill="#DDAA66"/><rect x="17" y="2" width="4" height="3" fill="#DDAA66"/><rect x="0" y="20" width="3" height="3" fill="#AA6622" opacity="0.5"/><rect x="60" y="18" width="3" height="3" fill="#AA6622" opacity="0.5"/></symbol>
+            <symbol id="sprite-covert" viewBox="0 0 64 64"><rect x="16" y="6" width="32" height="12" fill="#333355"/><rect x="18" y="8" width="28" height="8" fill="#444466"/><rect x="22" y="10" width="5" height="3" fill="#FFFFFF"/><rect x="37" y="10" width="5" height="3" fill="#FFFFFF"/><rect x="23" y="11" width="3" height="2" fill="#FF4444"/><rect x="38" y="11" width="3" height="2" fill="#FF4444"/><rect x="12" y="18" width="40" height="28" fill="#222244"/><rect x="14" y="20" width="36" height="24" fill="#333355"/><rect x="14" y="28" width="36" height="4" fill="#444466"/><rect x="14" y="38" width="36" height="4" fill="#444466"/><rect x="2" y="20" width="10" height="4" fill="#222244"/><rect x="52" y="20" width="10" height="4" fill="#222244"/><rect x="0" y="18" width="4" height="8" fill="#666688"/><rect x="18" y="46" width="10" height="14" fill="#222244"/><rect x="36" y="46" width="10" height="14" fill="#222244"/><rect x="10" y="58" width="44" height="4" fill="#000000" opacity="0.3"/></symbol>
+            <symbol id="sprite-osprey" viewBox="0 0 64 64"><rect x="14" y="8" width="16" height="12" fill="#FFFFFF"/><rect x="16" y="10" width="12" height="8" fill="#FFFFFF"/><rect x="2" y="12" width="14" height="4" fill="#FFAA00"/><rect x="0" y="13" width="4" height="3" fill="#FF8800"/><rect x="22" y="10" width="3" height="3" fill="#FF4400"/><rect x="12" y="18" width="40" height="8" fill="#FFFFFF"/><rect x="4" y="20" width="10" height="6" fill="#EEEEEE"/><rect x="50" y="20" width="10" height="6" fill="#EEEEEE"/><rect x="0" y="22" width="6" height="4" fill="#DDDDDD"/><rect x="58" y="22" width="6" height="4" fill="#DDDDDD"/><rect x="10" y="16" width="6" height="4" fill="#FFFFFF"/><rect x="48" y="16" width="6" height="4" fill="#FFFFFF"/><rect x="20" y="26" width="16" height="14" fill="#FFFFFF"/><rect x="22" y="28" width="12" height="10" fill="#FFFFFF"/><rect x="22" y="40" width="12" height="8" fill="#DDDDDD"/><rect x="20" y="42" width="16" height="6" fill="#CCCCCC"/><rect x="22" y="50" width="4" height="8" fill="#FFAA00"/><rect x="30" y="50" width="4" height="8" fill="#FFAA00"/></symbol>
+            <symbol id="sprite-phoenix" viewBox="0 0 64 64"><rect x="22" y="6" width="20" height="12" fill="#FF4400"/><rect x="24" y="8" width="16" height="8" fill="#FF6600"/><rect x="42" y="10" width="8" height="3" fill="#FFAA00"/><rect x="50" y="11" width="4" height="2" fill="#FF8800"/><rect x="24" y="2" width="6" height="6" fill="#FFDD00"/><rect x="30" y="0" width="6" height="8" fill="#FFAA00"/><rect x="36" y="2" width="6" height="6" fill="#FFDD00"/><rect x="26" y="10" width="3" height="3" fill="#FFFF00"/><rect x="4" y="16" width="20" height="12" fill="#FF4400"/><rect x="40" y="16" width="20" height="12" fill="#FF4400"/><rect x="0" y="18" width="6" height="8" fill="#FF6600"/><rect x="58" y="18" width="6" height="8" fill="#FF6600"/><rect x="6" y="14" width="4" height="4" fill="#FFAA00"/><rect x="54" y="14" width="4" height="4" fill="#FFAA00"/><rect x="18" y="20" width="28" height="20" fill="#FF4400"/><rect x="20" y="22" width="24" height="16" fill="#FF6600"/><rect x="22" y="40" width="20" height="6" fill="#FF6600"/><rect x="18" y="46" width="28" height="6" fill="#FF4400"/><rect x="20" y="52" width="24" height="6" fill="#FFAA00"/><rect x="22" y="58" width="20" height="4" fill="#FFDD00"/><rect x="0" y="10" width="3" height="3" fill="#FFDD00" opacity="0.7"/><rect x="61" y="8" width="3" height="3" fill="#FFDD00" opacity="0.7"/></symbol>
+            <symbol id="sprite-chaos" viewBox="0 0 64 64"><rect x="16" y="8" width="32" height="32" fill="#333333" opacity="0.8"/><rect x="18" y="10" width="28" height="28" fill="#444444" opacity="0.7"/><rect x="20" y="12" width="10" height="8" fill="#666666"/><rect x="32" y="14" width="12" height="6" fill="#555555"/><rect x="22" y="22" width="8" height="10" fill="#777777"/><rect x="34" y="24" width="10" height="8" fill="#666666"/><rect x="20" y="30" width="12" height="6" fill="#555555"/><rect x="22" y="16" width="5" height="4" fill="#AA00FF"/><rect x="37" y="14" width="5" height="5" fill="#AA00FF"/><rect x="23" y="17" width="3" height="2" fill="#FF00FF"/><rect x="38" y="15" width="3" height="3" fill="#FF00FF"/><rect x="24" y="28" width="4" height="3" fill="#FF0000"/><rect x="30" y="26" width="4" height="4" fill="#FF0000"/><rect x="36" y="28" width="4" height="3" fill="#FF0000"/><rect x="10" y="4" width="4" height="16" fill="#440044" opacity="0.5"/><rect x="50" y="6" width="4" height="14" fill="#440044" opacity="0.5"/><rect x="4" y="20" width="6" height="10" fill="#220022" opacity="0.4"/><rect x="54" y="18" width="6" height="12" fill="#220022" opacity="0.4"/><rect x="0" y="30" width="16" height="2" fill="#AA00FF" opacity="0.3"/><rect x="48" y="32" width="16" height="2" fill="#AA00FF" opacity="0.3"/><rect x="16" y="40" width="32" height="20" fill="#111111" opacity="0.6"/></symbol>
+            <symbol id="sprite-crusader" viewBox="0 0 64 64"><rect x="20" y="0" width="24" height="4" fill="#FFD700"/><rect x="18" y="2" width="4" height="6" fill="#FFD700"/><rect x="42" y="2" width="4" height="6" fill="#FFD700"/><rect x="22" y="6" width="20" height="14" fill="#E8D4B8"/><rect x="24" y="8" width="16" height="10" fill="#F5E6D3"/><rect x="20" y="4" width="24" height="6" fill="#AAAAAA"/><rect x="18" y="6" width="4" height="10" fill="#999999"/><rect x="42" y="6" width="4" height="10" fill="#999999"/><rect x="26" y="12" width="3" height="3" fill="#0044CC"/><rect x="35" y="12" width="3" height="3" fill="#0044CC"/><rect x="14" y="20" width="36" height="28" fill="#888888"/><rect x="16" y="22" width="32" height="24" fill="#AAAAAA"/><rect x="26" y="26" width="12" height="4" fill="#FFD700"/><rect x="30" y="24" width="4" height="8" fill="#FFD700"/><rect x="8" y="22" width="8" height="30" fill="#FFFFFF"/><rect x="48" y="22" width="8" height="30" fill="#FFFFFF"/><rect x="2" y="22" width="12" height="6" fill="#AAAAAA"/><rect x="50" y="22" width="12" height="6" fill="#AAAAAA"/><rect x="0" y="10" width="4" height="16" fill="#CCCCCC"/><rect x="-1" y="8" width="6" height="4" fill="#AAAAAA"/><rect x="2" y="6" width="2" height="6" fill="#FFD700"/><rect x="20" y="48" width="8" height="12" fill="#888888"/><rect x="36" y="48" width="8" height="12" fill="#888888"/><rect x="4" y="4" width="2" height="8" fill="#FFD700" opacity="0.4"/><rect x="58" y="4" width="2" height="8" fill="#FFD700" opacity="0.4"/></symbol>
+            <symbol id="sprite-mog" viewBox="0 0 64 64"><rect x="20" y="2" width="4" height="16" fill="#FF88AA"/><rect x="40" y="2" width="4" height="16" fill="#FF88AA"/><rect x="18" y="0" width="6" height="4" fill="#FF6688"/><rect x="40" y="0" width="6" height="4" fill="#FF6688"/><rect x="26" y="0" width="12" height="6" fill="#FFDD44"/><rect x="28" y="-2" width="8" height="4" fill="#FFE866"/><rect x="14" y="8" width="36" height="24" fill="#88BBEE"/><rect x="16" y="10" width="32" height="20" fill="#AADDFF"/><rect x="20" y="14" width="5" height="5" fill="#003366"/><rect x="39" y="14" width="5" height="5" fill="#003366"/><rect x="21" y="15" width="3" height="3" fill="#FFFFFF"/><rect x="40" y="15" width="3" height="3" fill="#FFFFFF"/><rect x="29" y="20" width="6" height="5" fill="#003366"/><rect x="27" y="26" width="10" height="3" fill="#FF88AA"/><rect x="20" y="32" width="24" height="18" fill="#88BBEE"/><rect x="22" y="34" width="20" height="14" fill="#AADDFF"/><rect x="8" y="34" width="12" height="4" fill="#AADDFF"/><rect x="44" y="34" width="12" height="4" fill="#AADDFF"/><rect x="22" y="50" width="8" height="10" fill="#88BBEE"/><rect x="34" y="50" width="8" height="10" fill="#88BBEE"/><rect x="26" y="52" width="12" height="4" fill="#FF88AA"/><rect x="28" y="54" width="8" height="6" fill="#FFDD44"/><rect x="10" y="30" width="8" height="6" fill="#FFFFFF" opacity="0.6"/><rect x="46" y="30" width="8" height="6" fill="#FFFFFF" opacity="0.6"/></symbol>
+        </svg>
+    </div>
+
+    <!-- Background effects -->
+    <div class="stars" id="stars"></div>
+    <div class="encounter-flash" id="encounterFlash"></div>
+    <div class="summon-flash" id="summonFlash"></div>
+
+    <!-- Secret notification toast -->
+    <div class="secret-notification" id="secretNotification">
+        ★ SECRET DISCOVERED! ★<br>
+        <span id="secretText"></span>
+    </div>
+
+    <!-- Konami hint -->
+    <div class="konami-hint">...</div>
+
+    <!-- ==================== HEADER ==================== -->
+    <header>
+        <div class="ff-logo">FINAL FANTASY</div>
+        <h1>VI<span class="cursor"></span></h1>
+        <p class="subtitle">The Legendary Journey Begins...</p>
+    </header>
+
+    <!-- ==================== NAVIGATION ==================== -->
+    <nav>
+        <button class="nav-btn active" data-section="overview">Overview</button>
+        <button class="nav-btn"        data-section="characters">Characters</button>
+        <button class="nav-btn"        data-section="summons">Summons</button>
+        <button class="nav-btn"        data-section="world">World</button>
+        <button class="nav-btn"        data-section="legacy">Legacy</button>
+    </nav>
+
+    <!-- ==================== MAIN CONTENT ==================== -->
+    <main>
+
+        <!-- ---------- OVERVIEW ---------- -->
+        <section class="section active" id="overview">
+            <div class="rpg-box">
+                <h2>═ GAME OVERVIEW ═</h2>
+                <p>
+                    Released in 1994 for the Super Nintendo Entertainment System,
+                    Final Fantasy VI is widely regarded as one of the greatest RPGs
+                    ever created. Set in a fantasy world where magic and technology
+                    coexist, the game tells an epic tale of rebellion, hope, and
+                    the power of human connections.
+                </p>
+            </div>
+
+            <div class="rpg-box">
+                <h2>═ KEY FEATURES ═</h2>
+                <ul>
+                    <li>14 unique playable characters with deep backstories</li>
+                    <li>Revolutionary narrative with an ensemble cast</li>
+                    <li>Turn-based combat system with Espers (summons)</li>
+                    <li>Rich steampunk-meets-fantasy world design</li>
+                    <li>Opera House scene — gaming's most emotional moment</li>
+                    <li>Multiple endings based on player choices</li>
+                </ul>
+            </div>
+
+            <div class="quote-box">
+                <p>"The world isn't changing… it's that the people who would die to protect it… are fading away…"</p>
+                <p class="quote-author">— Cyan Garamonde</p>
+            </div>
+
+            <div class="rpg-box">
+                <h2>═ QUICK STATS ═</h2>
+                <div class="stat-bar">
+                    <span class="stat-label">STORY</span>
+                    <div class="stat-bg"><div class="stat-fill" style="width:98%"></div></div>
+                </div>
+                <div class="stat-bar">
+                    <span class="stat-label">BATTLE</span>
+                    <div class="stat-bg"><div class="stat-fill" style="width:90%"></div></div>
+                </div>
+                <div class="stat-bar">
+                    <span class="stat-label">MUSIC</span>
+                    <div class="stat-bg"><div class="stat-fill" style="width:100%"></div></div>
+                </div>
+                <div class="stat-bar">
+                    <span class="stat-label">IMPACT</span>
+                    <div class="stat-bg"><div class="stat-fill" style="width:95%"></div></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ---------- CHARACTERS ---------- -->
+        <section class="section" id="characters">
+            <div class="rpg-box">
+                <h2>═ SELECT A CHARACTER ═</h2>
+                <p>Click on a character to reveal their secrets…</p>
+            </div>
+
+            <div class="char-grid">
+                <div class="char-card"   data-char="terra">
+                    <div class="char-sprite">⚔️</div>
+                    <div class="char-name">TERRA</div>
+                    <div class="char-title">The Half-Esper</div>
+                </div>
+                <div class="char-card"   data-char="locke">
+                    <div class="char-sprite">🗡️</div>
+                    <div class="char-name">LOCKE</div>
+                    <div class="char-title">The Treasure Hunter</div>
+                </div>
+                <div class="char-card"   data-char="celes">
+                    <div class="char-sprite">✨</div>
+                    <div class="char-name">CELES</div>
+                    <div class="char-title">The Rune Knight</div>
+                </div>
+                <div class="char-card"   data-char="edgar">
+                    <div class="char-sprite">⚙️</div>
+                    <div class="char-name">EDGAR</div>
+                    <div class="char-title">The King of Figaro</div>
+                </div>
+                <div class="char-card"   data-char="sabin">
+                    <div class="char-sprite">👊</div>
+                    <div class="char-name">SABIN</div>
+                    <div class="char-title">The Martial Artist</div>
+                </div>
+                <div class="char-card"   data-char="shadow">
+                    <div class="char-sprite">🌑</div>
+                    <div class="char-name">SHADOW</div>
+                    <div class="char-title">The Mysterious Ninja</div>
+                </div>
+                <div class="char-card"   data-char="cyan">
+                    <div class="char-sprite">🎭</div>
+                    <div class="char-name">CYAN</div>
+                    <div class="char-title">The Loyal Samurai</div>
+                </div>
+                <div class="char-card"   data-char="kefka">
+                    <div class="char-sprite">🤡</div>
+                    <div class="char-name">KEFKA</div>
+                    <div class="char-title">The Court Mage</div>
+                </div>
+            </div>
+
+            <!-- Character detail panels -->
+            <div class="char-detail" id="terra-detail">
+                <h3>TERRA BRANFORD</h3>
+                <p>A young woman with mysterious magical powers, Terra is half-human, half-Esper. Initially enslaved by the Gestahlian Empire, she breaks free and joins the Returners in their fight against tyranny.</p>
+                <br>
+                <p>Special Ability: Morph (Transforms into Esper form)</p>
+                <div class="stat-bar"><span class="stat-label">MAGIC</span><div class="stat-bg"><div class="stat-fill" style="width:95%"></div></div></div>
+                <div class="stat-bar"><span class="stat-label">SPEED</span><div class="stat-bg"><div class="stat-fill" style="width:70%"></div></div></div>
+            </div>
+
+            <div class="char-detail" id="locke-detail">
+                <h3>LOCKE COLE</h3>
+                <p>A self-proclaimed "treasure hunter" (really a thief with a heart of gold). Locke is driven by guilt over failing to protect someone dear to him in the past, leading to his desperate need to save everyone.</p>
+                <br>
+                <p>Special Ability: Steal</p>
+                <div class="stat-bar"><span class="stat-label">LUCK</span><div class="stat-bg"><div class="stat-fill" style="width:90%"></div></div></div>
+                <div class="stat-bar"><span class="stat-label">SPEED</span><div class="stat-bg"><div class="stat-fill" style="width:85%"></div></div></div>
+            </div>
+
+            <div class="char-detail" id="celes-detail">
+                <h3>CELES CHERE</h3>
+                <p>A former Imperial Rune Knight, Celes defected to the Returners after questioning the Empire's actions. A skilled swordswoman who can channel magic through her blade.</p>
+                <br>
+                <p>Special Ability: Runic (Absorbs magic attacks)</p>
+                <div class="stat-bar"><span class="stat-label">MAGIC</span><div class="stat-bg"><div class="stat-fill" style="width:88%"></div></div></div>
+                <div class="stat-bar"><span class="stat-label">HP</span>   <div class="stat-bg"><div class="stat-fill" style="width:75%"></div></div></div>
+            </div>
+
+            <div class="char-detail" id="kefka-detail">
+                <h3>KEFKA PALAZZO</h3>
+                <p>The main antagonist — a nihilistic, power-hungry clown who becomes a god-like being. Responsible for destroying the World of Balance and reshaping existence itself.</p>
+                <br>
+                <p>Warning: EXTREMELY DANGEROUS</p>
+                <div class="stat-bar"><span class="stat-label">EVIL</span><div class="stat-bg"><div class="stat-fill" style="width:100%"></div></div></div>
+            </div>
+        </section>
+
+        <!-- ---------- SUMMONS (ESPERS) ---------- -->
+        <section class="section" id="summons">
+            <div class="rpg-box">
+                <h2>═ ESPERS / SUMMONS ═</h2>
+                <p>
+                    Espers are magical beings sealed away after the War of the Magi.
+                    In battle, characters can summon these powerful entities to unleash
+                    devastating attacks. Click a summon to learn its secrets!
+                </p>
+            </div>
+
+            <!-- Element filter buttons -->
+            <div class="summon-filters">
+                <button class="filter-btn active" data-filter="all">ALL</button>
+                <button class="filter-btn" data-filter="fire">FIRE</button>
+                <button class="filter-btn" data-filter="ice">ICE</button>
+                <button class="filter-btn" data-filter="elec">LIGHTNING</button>
+                <button class="filter-btn" data-filter="holy">HOLY</button>
+                <button class="filter-btn" data-filter="dark">DARK</button>
+                <button class="filter-btn" data-filter="earth">EARTH</button>
+                <button class="filter-btn" data-filter="wind">WIND</button>
+                <button class="filter-btn" data-filter="water">WATER</button>
+                <button class="filter-btn" data-filter="poison">POISON</button>
+                <button class="filter-btn" data-filter="neutral">NEUTRAL</button>
+            </div>
+
+            <!-- Summon grid -->
+            <div class="summon-grid">
+
+                <!-- Ifrit -->
+                <div class="summon-card fire-card" data-summon="ifrit">
+                    <svg class="summon-icon"><use href="#sprite-ifrit"/></svg>
+                    <div class="summon-element">FIRE</div>
+                    <div class="summon-name">IFRIT</div>
+                </div>
+
+                <!-- Shiva -->
+                <div class="summon-card ice-card" data-summon="shiva">
+                    <svg class="summon-icon"><use href="#sprite-shiva"/></svg>
+                    <div class="summon-element">ICE</div>
+                    <div class="summon-name">SHIVA</div>
+                </div>
+
+                <!-- Ramuh -->
+                <div class="summon-card elec-card" data-summon="ramuh">
+                    <svg class="summon-icon"><use href="#sprite-ramuh"/></svg>
+                    <div class="summon-element">LIGHTNING</div>
+                    <div class="summon-name">RAMUH</div>
+                </div>
+
+                <!-- Kirin -->
+                <div class="summon-card holy-card" data-summon="kirin">
+                    <svg class="summon-icon"><use href="#sprite-kirin"/></svg>
+                    <div class="summon-element">HOLY</div>
+                    <div class="summon-name">KIRIN</div>
+                </div>
+
+                <!-- Siren -->
+                <div class="summon-card neutral-card" data-summon="siren">
+                    <svg class="summon-icon"><use href="#sprite-siren"/></svg>
+                    <div class="summon-element">NEUTRAL</div>
+                    <div class="summon-name">SIREN</div>
+                </div>
+
+                <!-- Maduin -->
+                <div class="summon-card neutral-card" data-summon="maduin">
+                    <svg class="summon-icon"><use href="#sprite-maduin"/></svg>
+                    <div class="summon-element">NEUTRAL</div>
+                    <div class="summon-name">MADUIN</div>
+                </div>
+
+                <!-- Crane -->
+                <div class="summon-card neutral-card" data-summon="crane">
+                    <svg class="summon-icon"><use href="#sprite-crane"/></svg>
+                    <div class="summon-element">NEUTRAL</div>
+                    <div class="summon-name">CRANE</div>
+                </div>
+
+                <!-- Esper Sentinel -->
+                <div class="summon-card neutral-card" data-summon="esper">
+                    <svg class="summon-icon"><use href="#sprite-esper"/></svg>
+                    <div class="summon-element">NEUTRAL</div>
+                    <div class="summon-name">ESPER GUARDIAN</div>
+                </div>
+
+                <!-- Bismark -->
+                <div class="summon-card ice-card" data-summon="bismark">
+                    <svg class="summon-icon"><use href="#sprite-bismark"/></svg>
+                    <div class="summon-element">ICE</div>
+                    <div class="summon-name">BISMARK</div>
+                </div>
+
+                <!-- Terrato (Tritoch) -->
+                <div class="summon-card earth-card" data-summon="terrato">
+                    <svg class="summon-icon"><use href="#sprite-terrato"/></svg>
+                    <div class="summon-element">EARTH</div>
+                    <div class="summon-name">TERRATO</div>
+                </div>
+
+                <!-- Shoat / Catoblepas -->
+                <div class="summon-card dark-card" data-summon="shoat">
+                    <svg class="summon-icon"><use href="#sprite-shoat"/></svg>
+                    <div class="summon-element">DARK</div>
+                    <div class="summon-name">SHOAT</div>
+                </div>
+
+                <!-- Phantasm / Phantom -->
+                <div class="summon-card neutral-card" data-summon="phantom">
+                    <svg class="summon-icon"><use href="#sprite-phantom"/></svg>
+                    <div class="summon-element">NEUTRAL</div>
+                    <div class="summon-name">PHANTOM</div>
+                </div>
+
+                <!-- Unicorn -->
+                <div class="summon-card holy-card" data-summon="unicorn">
+                    <svg class="summon-icon"><use href="#sprite-unicorn"/></svg>
+                    <div class="summon-element">HOLY</div>
+                    <div class="summon-name">UNICORN</div>
+                </div>
+
+                <!-- Fire Serpent -->
+                <div class="summon-card fire-card" data-summon="fireserpent">
+                    <svg class="summon-icon"><use href="#sprite-fireserpent"/></svg>
+                    <div class="summon-element">FIRE</div>
+                    <div class="summon-name">FIRE SERPENT</div>
+                </div>
+
+                <!-- Air Force / Poltergeist -->
+                <div class="summon-card neutral-card" data-summon="airforce">
+                    <svg class="summon-icon"><use href="#sprite-airforce"/></svg>
+                    <div class="summon-element">NEUTRAL</div>
+                    <div class="summon-name">AIR FORCE</div>
+                </div>
+
+                <!-- Golem -->
+                <div class="summon-card earth-card" data-summon="golem">
+                    <svg class="summon-icon"><use href="#sprite-golem"/></svg>
+                    <div class="summon-element">EARTH</div>
+                    <div class="summon-name">GOLEM</div>
+                </div>
+
+                <!-- Zoneseek -->
+                <div class="summon-card neutral-card" data-summon="zoneseek">
+                    <svg class="summon-icon"><use href="#sprite-zoneseek"/></svg>
+                    <div class="summon-element">NEUTRAL</div>
+                    <div class="summon-name">ZONESEEK</div>
+                </div>
+
+                <!-- Balloon -->
+                <div class="summon-card neutral-card" data-summon="balloon">
+                    <svg class="summon-icon"><use href="#sprite-balloon"/></svg>
+                    <div class="summon-element">NEUTRAL</div>
+                    <div class="summon-name">BALLOON</div>
+                </div>
+
+                <!-- Starlet -->
+                <div class="summon-card holy-card" data-summon="starlet">
+                    <svg class="summon-icon"><use href="#sprite-starlet"/></svg>
+                    <div class="summon-element">HOLY</div>
+                    <div class="summon-name">STARLET</div>
+                </div>
+
+                <!-- Atomos -->
+                <div class="summon-card wind-card" data-summon="atomos">
+                    <svg class="summon-icon"><use href="#sprite-atomos"/></svg>
+                    <div class="summon-element">WIND</div>
+                    <div class="summon-name">ATOMOS</div>
+                </div>
+
+                <!-- Zoneborer (Lesser Lopros) -->
+                <div class="summon-card neutral-card" data-summon="zoneborer">
+                    <svg class="summon-icon"><use href="#sprite-zoneborer"/></svg>
+                    <div class="summon-element">NEUTRAL</div>
+                    <div class="summon-name">ZONEBORER</div>
+                </div>
+
+                <!-- Covert -->
+                <div class="summon-card neutral-card" data-summon="covert">
+                    <svg class="summon-icon"><use href="#sprite-covert"/></svg>
+                    <div class="summon-element">NEUTRAL</div>
+                    <div class="summon-name">COVERT</div>
+                </div>
+
+                <!-- Osprey -->
+                <div class="summon-card neutral-card" data-summon="osprey">
+                    <svg class="summon-icon"><use href="#sprite-osprey"/></svg>
+                    <div class="summon-element">NEUTRAL</div>
+                    <div class="summon-name">OSPREY</div>
+                </div>
+
+                <!-- Phoenix -->
+                <div class="summon-card fire-card" data-summon="phoenix">
+                    <svg class="summon-icon"><use href="#sprite-phoenix"/></svg>
+                    <div class="summon-element">FIRE</div>
+                    <div class="summon-name">PHOENIX</div>
+                </div>
+
+                <!-- Chaos -->
+                <div class="summon-card neutral-card" data-summon="chaos">
+                    <svg class="summon-icon"><use href="#sprite-chaos"/></svg>
+                    <div class="summon-element">NEUTRAL</div>
+                    <div class="summon-name">CHAOS</div>
+                </div>
+
+                <!-- Crusader -->
+                <div class="summon-card holy-card" data-summon="crusader">
+                    <svg class="summon-icon"><use href="#sprite-crusader"/></svg>
+                    <div class="summon-element">HOLY</div>
+                    <div class="summon-name">CRUSADER</div>
+                </div>
+
+                <!-- Mog -->
+                <div class="summon-card neutral-card" data-summon="mog">
+                    <svg class="summon-icon"><use href="#sprite-mog"/></svg>
+                    <div class="summon-element">NEUTRAL</div>
+                    <div class="summon-name">MOG</div>
+                </div>
+
+            </div>
+
+            <!-- ========== Summon Detail Panels ========== -->
+
+            <!-- Ifrit -->
+            <div class="summon-detail" id="ifrit-detail">
+                <h3>IFRIT</h3>
+                <div class="summon-subtitle">The Fire King — Demon of Flame</div>
+                <p>
+                    A powerful demon lord who rules over flame. Initially encountered as
+                    an enemy trapped in Narshe's mines, he later pledges his power to the
+                    Returners after Terra intervenes. His signature attack, Inferno,
+                    engulfs all enemies in searing flames.
+                </p>
+                <div class="summon-stat-row">
+                    <div class="summon-stat">Attack: <span>Inferno</span></div>
+                    <div class="summon-stat">Element: <span>Fire</span></div>
+                    <div class="summon-stat">Power: <span>★★★★☆</span></div>
+                </div>
+                <div class="stat-bar">
+                    <span class="stat-label">POWER</span>
+                    <div class="stat-bg"><div class="stat-fill fire" style="width:80%"></div></div>
+                </div>
+                <div class="stat-bar">
+                    <span class="stat-label">MP</span>
+                    <div class="stat-bg"><div class="stat-fill" style="width:44%"></div></div>
+                </div>
+            </div>
+
+            <!-- Shiva -->
+            <div class="summon-detail" id="shiva-detail">
+                <h3>SHIVA</h3>
+                <div class="summon-subtitle">The Ice Queen — Maiden of Frost</div>
+                <p>
+                    Mistress of ice and cold, Shiva dwells in the frozen caverns of Narshe.
+                    She engages Ifrit in an eternal battle against flame. She joins the
+                    party's cause after being defeated in combat. Her Blizzard attack
+                    freezes all enemies.
+                </p>
+                <div class="summon-stat-row">
+                    <div class="summon-stat">Attack: <span>Blizzard</span></div>
+                    <div class="summon-stat">Element: <span>Ice</span></div>
+                    <div class="summon-stat">Power: <span>★★★★☆</span></div>
+                </div>
+                <div class="stat-bar">
+                    <span class="stat-label">POWER</span>
+                    <div class="stat-bg"><div class="stat-fill ice" style="width:80%"></div></div>
+                </div>
+                <div class="stat-bar">
+                    <span class="stat-label">MP</span>
+                    <div class="stat-bg"><div class="stat-fill" style="width:44%"></div></div>
+                </div>
+            </div>
+
+            <!-- Ramuh -->
+            <div class="summon-detail" id="ramuh-detail">
+                <h3>RAMUH</h3>
+                <div class="summon-subtitle">The Archon of Storms — Sage of Lightning</div>
+                <p>
+                    An ancient sage with immense magical knowledge who guides the
+                    Thunder elemental. He appears as a spectral figure and offers wisdom
+                    to the party. His Plasma attack strikes all enemies with devastating
+                    lightning.
+                </p>
+                <div class="summon-stat-row">
+                    <div class="summon-stat">Attack: <span>Plasma</span></div>
+                    <div class="summon-stat">Element: <span>Lightning</span></div>
+                    <div class="summon-stat">Power: <span>★★★★★</span></div>
+                </div>
+                <div class="stat-bar">
+                    <span class="stat-label">POWER</span>
+                    <div class="stat-bg"><div class="stat-fill elec" style="width:95%"></div></div>
+                </div>
+                <div class="stat-bar">
+                    <span class="stat-label">MP</span>
+                    <div class="stat-bg"><div class="stat-fill" style="width:48%"></div></div>
+                </div>
+            </div>
+
+            <!-- Kirin -->
+            <div class="summon-detail" id="kirin-detail">
+                <h3>KIRIN</h3>
+                <div class="summon-subtitle">The Divine Stag — Healer of the Sacred</div>
+                <p>
+                    A gentle, holy creature who aids the party in Narshe. Kirin provides
+                    healing magic and holy power. Its Holy Wind attack also has
+                    restorative properties, making it invaluable for support.
+                </p>
+                <div class="summon-stat-row">
+                    <div class="summon-stat">Attack: <span>Holy Wind</span></div>
+                    <div class="summon-stat">Element: <span>Holy</span></div>
+                    <div class="summon-stat">Power: <span>★★★☆☆</span></div>
+                </div>
+                <div class="stat-bar">
+                    <span class="stat-label">POWER</span>
+                    <div class="stat-bg"><div class="stat-fill holy" style="width:50%"></div></div>
+                </div>
+                <div class="stat-bar">
+                    <span class="stat-label">HEAL</span>
+                    <div class="stat-bg"><div class="stat-fill holy" style="width:70%"></div></div>
+                </div>
+            </div>
+
+            <!-- Siren -->
+            <div class="summon-detail" id="siren-detail">
+                <h3>SIREN</h3>
+                <div class="summon-subtitle">The Enchantress — Weaver of Silence</div>
+                <p>
+                    A mystical being with a beautiful voice that can put enemies to sleep.
+                    Found in the Esper World, Siren's Silent Voice attack deals damage
+                    while inflicting silence on all foes.
+                </p>
+                <div class="summon-stat-row">
+                    <div class="summon-stat">Attack: <span>Silent Voice</span></div>
+                    <div class="summon-stat">Element: <span>Neutral</span></div>
+                    <div class="summon-stat">Status: <span>Silence + Sleep</span></div>
+                </div>
+                <div class="stat-bar">
+                    <span class="stat-label">POWER</span>
+                    <div class="stat-bg"><div class="stat-fill" style="width:45%"></div></div>
+                </div>
+                <div class="stat-bar">
+                    <span class="stat-label">STATUS</span>
+                    <div class="stat-bg"><div class="stat-fill" style="width:85%"></div></div>
+                </div>
+            </div>
+
+            <!-- Maduin -->
+            <div class="summon-detail" id="maduin-detail">
+                <h3>MADUIN</h3>
+                <div class="summon-subtitle">The Holy Guardian — Terra's Father</div>
+                <p>
+                    The green Esper who is Terra's father. He sacrificed his life to
+                    protect Terra and her mother from the Gestahlian Empire. His spirit
+                    later grants Terra his power. Valigarmanda, his attack, deals
+                    devastating neutral damage.
+                </p>
+                <div class="summon-stat-row">
+                    <div class="summon-stat">Attack: <span>Valigarmanda</span></div>
+                    <div class="summon-stat">Element: <span>Neutral</span></div>
+                    <div class="summon-stat">Power: <span>★★★★★</span></div>
+                </div>
+                <div class="stat-bar">
+                    <span class="stat-label">POWER</span>
+                    <div class="stat-bg"><div class="stat-fill" style="width:100%"></div></div>
+                </div>
+                <div class="stat-bar">
+                    <span class="stat-label">MP</span>
+                    <div class="stat-bg"><div class="stat-fill" style="width:90%"></div></div>
+                </div>
+            </div>
+
+            <!-- Crane -->
+            <div class="summon-detail" id="crane-detail">
+                <h3>CRANE</h3>
+                <div class="summon-subtitle">Twin Summons of War — East & West</div>
+                <p>
+                    Twin summoned spirits wielded by the Returners' leadership. They
+                    appear in pairs during the game's climactic siege, representing the
+                    strength of the rebellion united as one.
+                </p>
+                <div class="summon-stat-row">
+                    <div class="summon-stat">Attack: <span>Wind Slash</span></div>
+                    <div class="summon-stat">Element: <span>Neutral</span></div>
+                    <div class="summon-stat">Type: <span>Multi-target</span></div>
+                </div>
+                <div class="stat-bar">
+                    <span class="stat-label">POWER</span>
+                    <div class="stat-bg"><div class="stat-fill" style="width:60%"></div></div>
+                </div>
+            </div>
+
+            <!-- Esper Guardian -->
+            <div class="summon-detail" id="esper-detail">
+                <h3>ESPER GUARDIAN</h3>
+                <div class="summon-subtitle">Sentinel of the Hidden Realm</div>
+                <p>
+                    A mighty protector found guarding the path within the Esper World.
+                    This powerful guardian tests the resolve of those who seek to recruit
+                    Espers to their cause. Its defensive magic shields allies while
+                    striking at foes.
+                </p>
+                <div class="summon-stat-row">
+                    <div class="summon-stat">Attack: <span>Protector</span></div>
+                    <div class="summon-stat">Element: <span>Neutral</span></div>
+                    <div class="summon-stat">Type: <span>Support</span></div>
+                </div>
+                <div class="stat-bar">
+                    <span class="stat-label">DEF</span>
+                    <div class="stat-bg"><div class="stat-fill" style="width:90%"></div></div>
+                </div>
+            </div>
+
+            <!-- Bismark -->
+            <div class="summon-detail" id="bismark-detail">
+                <h3>BISMARK</h3>
+                <div class="summon-subtitle">The Merciless Dragon — Ice Wyrm</div>
+                <p>
+                    A fierce ice dragon that guards one of the Statues in the esper
+                    realm. Known for its relentless attacks and piercing breath that
+                    freezes all who stand in its path.
+                </p>
+                <div class="summon-stat-row">
+                    <div class="summon-stat">Attack: <span>Breath Wing</span></div>
+                    <div class="summon-stat">Element: <span>Ice</span></div>
+                    <div class="summon-stat">Power: <span>★★★★☆</span></div>
+                </div>
+                <div class="stat-bar">
+                    <span class="stat-label">POWER</span>
+                    <div class="stat-bg"><div class="stat-fill ice" style="width:88%"></div></div>
+                </div>
+            </div>
+
+            <!-- Terrato -->
+            <div class="summon-detail" id="terrato-detail">
+                <h3>TERRATO</h3>
+                <div class="summon-subtitle">The Earth Shaker — Titan of Stone</div>
+                <p>
+                    A colossal earth elemental that commands the very ground beneath
+                    its foes. Quake, its devastating attack, unleases tectonic force
+                    that ravages all enemies.
+                </p>
+                <div class="summon-stat-row">
+                    <div class="summon-stat">Attack: <span>Quake</span></div>
+                    <div class="summon-stat">Element: <span>Earth</span></div>
+                    <div class="summon-stat">Power: <span>★★★★★</span></div>
+                </div>
+                <div class="stat-bar">
+                    <span class="stat-label">POWER</span>
+                    <div class="stat-bg"><div class="stat-fill earth" style="width:100%"></div></div>
+                </div>
+            </div>
+
+            <!-- Shoat -->
+            <div class="summon-detail" id="shoat-detail">
+                <h3>SHOAT</h3>
+                <div class="summon-subtitle">The Demon Beast — Eye of Darkness</div>
+                <p>
+                    A fearsome demon that turns enemies to petrified stone with a
+                    single gaze. Its Petrifying attack is both terrifying and brutal,
+                    rendering foes completely helpless.
+                </p>
+                <div class="summon-stat-row">
+                    <div class="summon-stat">Attack: <span>Demon Eye</span></div>
+                    <div class="summon-stat">Element: <span>Dark</span></div>
+                    <div class="summon-stat">Status: <span>Petrify</span></div>
+                </div>
+                <div class="stat-bar">
+                    <span class="stat-label">POWER</span>
+                    <div class="stat-bg"><div class="stat-fill dark" style="width:60%"></div></div>
+                </div>
+                <div class="stat-bar">
+                    <span class="stat-label">STATUS</span>
+                    <div class="stat-bg"><div class="stat-fill dark" style="width:95%"></div></div>
+                </div>
+            </div>
+
+            <!-- Phantom -->
+            <div class="summon-detail" id="phantom-detail">
+                <h3>PHANTOM</h3>
+                <div class="summon-subtitle">Spirit of the Fallen — Grimm Reaper</div>
+                <p>
+                    A ghostly apparition that appeared to Vicks and Edgar at the Phantom
+                    Train. Despite its origins, it ultimately helps the party. Its dark
+                    powers deal devastating neutral damage against groups of enemies.
+                </p>
+                <div class="summon-stat-row">
+                    <div class="summon-stat">Attack: <span>Phantasm</span></div>
+                    <div class="summon-stat">Element: <span>Neutral</span></div>
+                    <div class="summon-stat">Power: <span>★★★★☆</span></div>
+                </div>
+                <div class="stat-bar">
+                    <span class="stat-label">POWER</span>
+                    <div class="stat-bg"><div class="stat-fill" style="width:75%"></div></div>
+                </div>
+            </div>
+
+            <!-- Unicorn -->
+            <div class="summon-detail" id="unicorn-detail">
+                <h3>UNICORN</h3>
+                <div class="summon-subtitle">The Mythic Healer — Horn of Light</div>
+                <p>
+                    A rare holy beast imbued with powerful life-giving magic. Its horn
+                    glows with purifying light, capable of healing allies and dispelling
+                    evil. One of the most sought-after Espers for its versatile support.
+                </p>
+                <div class="summon-stat-row">
+                    <div class="summon-stat">Attack: <span>Luster</span></div>
+                    <div class="summon-stat">Element: <span>Holy</span></div>
+                    <div class="summon-stat">Type: <span>Support</span></div>
+                </div>
+                <div class="stat-bar">
+                    <span class="stat-label">HEAL</span>
+                    <div class="stat-bg"><div class="stat-fill holy" style="width:85%"></div></div>
+                </div>
+                <div class="stat-bar">
+                    <span class="stat-label">CURE</span>
+                    <div class="stat-bg"><div class="stat-fill holy" style="width:90%"></div></div>
+                </div>
+            </div>
+
+            <!-- Fire Serpent -->
+            <div class="summon-detail" id="fireserpent-detail">
+                <h3>FIRE SERPENT</h3>
+                <div class="summon-subtitle">The Venom Flame — Serpent of Burning Poison</div>
+                <p>
+                    A serpentine creature wreathed in toxic flames. Found in Magitek
+                    research facilities, it combines fire magic with venomous strikes.
+                    Its Flame attack leaves a lingering burn on its victims.
+                </p>
+                <div class="summon-stat-row">
+                    <div class="summon-stat">Attack: <span>Flame</span></div>
+                    <div class="summon-stat">Element: <span>Fire</span></div>
+                    <div class="summon-stat">Status: <span>Burn</span></div>
+                </div>
+                <div class="stat-bar">
+                    <span class="stat-label">POWER</span>
+                    <div class="stat-bg"><div class="stat-fill fire" style="width:55%"></div></div>
+                </div>
+            </div>
+
+            <!-- Air Force -->
+            <div class="summon-detail" id="airforce-detail">
+                <h3>AIR FORCE</h3>
+                <div class="summon-subtitle">The Armored Mech — Machine of War</div>
+                <p>
+                    A massive Magitek war machine that attacks the party with laser fire
+                    and depleted uranium missiles. One of the few "technological" summons,
+                    representing the clash between magitek and magic that defines the game.
+                </p>
+                <div class="summon-stat-row">
+                    <div class="summon-stat">Attack: <span>Wave Cannon</span></div>
+                    <div class="summon-stat">Element: <span>Neutral</span></div>
+                    <div class="summon-stat">Type: <span>Airstrike</span></div>
+                </div>
+                <div class="stat-bar">
+                    <span class="stat-label">POWER</span>
+                    <div class="stat-bg"><div class="stat-fill" style="width:85%"></div></div>
+                </div>
+            </div>
+
+            <!-- Golem -->
+            <div class="summon-detail" id="golem-detail">
+                <h3>GOLEM</h3>
+                <div class="summon-subtitle">The Stone Sentinel — Guardian of the Ancients</div>
+                <p>
+                    An ancient construct of rock and earth that stands watch over sacred
+                    ruins. Its fists carry the weight of mountains, and its loyalty to
+                    those who prove worthy is absolute. A powerful defensive summon.
+                </p>
+                <div class="summon-stat-row">
+                    <div class="summon-stat">Attack: <span>Stone Fist</span></div>
+                    <div class="summon-stat">Element: <span>Earth</span></div>
+                    <div class="summon-stat">Power: <span>★★★★☆</span></div>
+                </div>
+                <div class="stat-bar">
+                    <span class="stat-label">POWER</span>
+                    <div class="stat-bg"><div class="stat-fill earth" style="width:80%"></div></div>
+                </div>
+                <div class="stat-bar">
+                    <span class="stat-label">DEF</span>
+                    <div class="stat-bg"><div class="stat-fill earth" style="width:95%"></div></div>
+                </div>
+            </div>
+
+            <!-- ZoneSeek -->
+            <div class="summon-detail" id="zoneseek-detail">
+                <h3>ZONESEEK</h3>
+                <div class="summon-subtitle">The Dream Weaver — Mist Walker</div>
+                <p>
+                    A gentle spirit found in the Esper World who offers its power to
+                    the party. Its ability to manipulate ethereal energy grants unique
+                    magical properties when equipped.
+                </p>
+                <div class="summon-stat-row">
+                    <div class="summon-stat">Attack: <span>Entice</span></div>
+                    <div class="summon-stat">Element: <span>Neutral</span></div>
+                    <div class="summon-stat">Type: <span>Status</span></div>
+                </div>
+                <div class="stat-bar">
+                    <span class="stat-label">STATUS</span>
+                    <div class="stat-bg"><div class="stat-fill" style="width:70%"></div></div>
+                </div>
+            </div>
+
+            <!-- Balloon -->
+            <div class="summon-detail" id="balloon-detail">
+                <h3>BALLOON</h3>
+                <div class="summon-subtitle">The Floating Menace — Explosive Spirit</div>
+                <p>
+                    A bizarre, balloon-like creature that appears in the Esper World.
+                    Despite its innocent appearance, it explodes in a dangerous burst
+                    of energy when attacking, dealing devastating group damage.
+                </p>
+                <div class="summon-stat-row">
+                    <div class="summon-stat">Attack: <span>Burst</span></div>
+                    <div class="summon-stat">Element: <span>Neutral</span></div>
+                    <div class="summon-stat">Type: <span>AoE</span></div>
+                </div>
+                <div class="stat-bar">
+                    <span class="stat-label">POWER</span>
+                    <div class="stat-bg"><div class="stat-fill" style="width:65%"></div></div>
+                </div>
+            </div>
+
+            <!-- Starlet -->
+            <div class="summon-detail" id="starlet-detail">
+                <h3>STARLET</h3>
+                <div class="summon-subtitle">The Celestial Nurse — Light of the Stars</div>
+                <p>
+                    A small, star-like being radiating holy energy. Prized for its
+                    healing capabilities, Starlet can restore HP to all party members,
+                    making it essential for long dungeon crawls and tough boss fights.
+                </p>
+                <div class="summon-stat-row">
+                    <div class="summon-stat">Attack: <span>HP Rain</span></div>
+                    <div class="summon-stat">Element: <span>Holy</span></div>
+                    <div class="summon-stat">Type: <span>Heal All</span></div>
+                </div>
+                <div class="stat-bar">
+                    <span class="stat-label">HEAL</span>
+                    <div class="stat-bg"><div class="stat-fill holy" style="width:100%"></div></div>
+                </div>
+            </div>
+
+            <!-- Atomos -->
+            <div class="summon-detail" id="atomos-detail">
+                <h3>ATOMOS</h3>
+                <div class="summon-subtitle">The Wind Devourer — Swallowing Vortex</div>
+                <p>
+                    A mysterious black hole-like entity that swallows foes whole, crushing
+                    them in a dimensional vortex. Atomos is one of the few summons capable
+                    of instantly killing enemies with its crushing gravitational pull.
+                </p>
+                <div class="summon-stat-row">
+                    <div class="summon-stat">Attack: <span>Wormhole</span></div>
+                    <div class="summon-stat">Element: <span>Wind</span></div>
+                    <div class="summon-stat">Type: <span>Instant Kill</span></div>
+                </div>
+                <div class="stat-bar">
+                    <span class="stat-label">POWER</span>
+                    <div class="stat-bg"><div class="stat-fill wind" style="width:70%"></div></div>
+                </div>
+            </div>
+
+            <!-- Zoneborer -->
+            <div class="summon-detail" id="zoneborer-detail">
+                <h3>ZONEBORER</h3>
+                <div class="summon-subtitle">The Tunnel Wyrm — Earth-Burrowing Horror</div>
+                <p>
+                    A massive worm-like creature that tunnels through solid rock. Found
+                    deep underground in the Esper World, it bursts forth to attack with
+                    surprising ferocity.
+                </p>
+                <div class="summon-stat-row">
+                    <div class="summon-stat">Attack: <span>Tunnel</span></div>
+                    <div class="summon-stat">Element: <span>Neutral</span></div>
+                    <div class="summon-stat">Power: <span>★★★☆☆</span></div>
+                </div>
+                <div class="stat-bar">
+                    <span class="stat-label">POWER</span>
+                    <div class="stat-bg"><div class="stat-fill" style="width:55%"></div></div>
+                </div>
+            </div>
+
+            <!-- Covert -->
+            <div class="summon-detail" id="covert-detail">
+                <h3>COVERT</h3>
+                <div class="summon-subtitle">The Shadow Blade — Silent Assassin</div>
+                <p>
+                    A deadly shadow-based summon that strikes from the darkness. Its
+                    attacks are swift and lethal, designed to take down single powerful
+                    enemies with surgical precision.
+                </p>
+                <div class="summon-stat-row">
+                    <div class="summon-stat">Attack: <span>Shadow Edge</span></div>
+                    <div class="summon-stat">Element: <span>Neutral</span></div>
+                    <div class="summon-stat">Type: <span>Single Target</span></div>
+                </div>
+                <div class="stat-bar">
+                    <span class="stat-label">POWER</span>
+                    <div class="stat-bg"><div class="stat-fill" style="width:92%"></div></div>
+                </div>
+            </div>
+
+            <!-- Osprey -->
+            <div class="summon-detail" id="osprey-detail">
+                <h3>OSPREY</h3>
+                <div class="summon-subtitle">The Sky Hunter — Winged Predator</div>
+                <p>
+                    A fierce bird-of-prey spirit that soars through battle. Fast and
+                    agile, its aerial attacks strike before enemies can retaliate,
+                    making it excellent for Speed-focused strategies.
+                </p>
+                <div class="summon-stat-row">
+                    <div class="summon-stat">Attack: <span>Talon</span></div>
+                    <div class="summon-stat">Element: <span>Neutral</span></div>
+                    <div class="summon-stat">Speed: <span>Very High</span></div>
+                </div>
+                <div class="stat-bar">
+                    <span class="stat-label">POWER</span>
+                    <div class="stat-bg"><div class="stat-fill" style="width:62%"></div></div>
+                </div>
+                <div class="stat-bar">
+                    <span class="stat-label">SPEED</span>
+                    <div class="stat-bg"><div class="stat-fill" style="width:90%"></div></div>
+                </div>
+            </div>
+
+            <!-- Phoenix -->
+            <div class="summon-detail" id="phoenix-detail">
+                <h3>PHOENIX</h3>
+                <div class="summon-subtitle">The Immortal Flame — Bird of Rebirth</div>
+                <p>
+                    The legendary phoenix, master of fire and rebirth. Said to never
+                    truly die, it rises from its own ashes. Phoenix's Flame resurrects
+                    fallen party members while dealing devastating fire damage to all
+                    enemies — the ultimate combination of offense and salvation.
+                </p>
+                <div class="summon-stat-row">
+                    <div class="summon-stat">Attack: <span>Flame/Phoenix</span></div>
+                    <div class="summon-stat">Element: <span>Fire</span></div>
+                    <div class="summon-stat">Type: <span>Revive + Damage</span></div>
+                </div>
+                <div class="stat-bar">
+                    <span class="stat-label">POWER</span>
+                    <div class="stat-bg"><div class="stat-fill fire" style="width:90%"></div></div>
+                </div>
+                <div class="stat-bar">
+                    <span class="stat-label">REVIVE</span>
+                    <div class="stat-bg"><div class="stat-fill fire" style="width:100%"></div></div>
+                </div>
+            </div>
+
+            <!-- Chaos -->
+            <div class="summon-detail" id="chaos-detail">
+                <h3>CHAOS</h3>
+                <div class="summon-subtitle">The Void Beast — Embodiment of Nothing</div>
+                <p>
+                    A terrifying representation of pure nothingness. Its attacks distort
+                    reality itself, warping the battlefield in unpredictable ways.
+                    Extremely dangerous and difficult to control.
+                </p>
+                <div class="summon-stat-row">
+                    <div class="summon-stat">Attack: <span>Chaos</span></div>
+                    <div class="summon-stat">Element: <span>Neutral</span></div>
+                    <div class="summon-stat">Type: <span>Chaotic</span></div>
+                </div>
+                <div class="stat-bar">
+                    <span class="stat-label">POWER</span>
+                    <div class="stat-bg"><div class="stat-fill" style="width:95%"></div></div>
+                </div>
+            </div>
+
+            <!-- Crusader -->
+            <div class="summon-detail" id="crusader-detail">
+                <h3>CRUSADER</h3>
+                <div class="summon-subtitle">The Invincible Warrior — Blade of Judgment</div>
+                <p>
+                    The ultimate holy warrior — a legendary crusader of unmatched
+                    power. Appearing in the most dire circumstances, it strikes down
+                    evil with righteous fury. Its devastating attack deals massive
+                    damage to all foes, but at a great MP cost.
+                </p>
+                <div class="summon-stat-row">
+                    <div class="summon-stat">Attack: <span>Crusader's Might</span></div>
+                    <div class="summon-stat">Element: <span>Holy</span></div>
+                    <div class="summon-stat">Power: <span>★★★★★★</span></div>
+                </div>
+                <div class="stat-bar">
+                    <span class="stat-label">POWER</span>
+                    <div class="stat-bg"><div class="stat-fill holy" style="width:100%"></div></div>
+                </div>
+                <div class="stat-bar">
+                    <span class="stat-label">MP</span>
+                    <div class="stat-bg"><div class="stat-fill" style="width:100%"></div></div>
+                </div>
+            </div>
+
+            <!-- Mog -->
+            <div class="summon-detail" id="mog-detail">
+                <h3>MOG</h3>
+                <div class="summon-subtitle">The Loyal Moogle — Dance of the Forest</div>
+                <p>
+                    A young moogle with a beautiful voice that can perform magical
+                    dances. Despite being a moogle, he's a powerful Esper. His dances
+                    can protect allies, confuse enemies, or empower the party in various
+                    ways depending on the summoned dance.
+                </p>
+                <div class="summon-stat-row">
+                    <div class="summon-stat">Attack: <span>Interceptor</span></div>
+                    <div class="summon-stat">Element: <span>Neutral</span></div>
+                    <div class="summon-stat">Type: <span>Dance</span></div>
+                </div>
+                <div class="stat-bar">
+                    <span class="stat-label">VERSATILE</span>
+                    <div class="stat-bg"><div class="stat-fill" style="width:88%"></div></div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ---------- WORLD ---------- -->
+        <section class="section" id="world">
+            <div class="rpg-box">
+                <h2>═ LORE & TIMELINE ═</h2>
+                <p>The world of Final Fantasy VI has a tragic history…</p>
+            </div>
+
+            <div class="rpg-box">
+                <div class="timeline-item">
+                    <div class="timeline-year">1000 YRS AGO</div>
+                    <div class="timeline-content">
+                        <h3>The War of the Magi</h3>
+                        <p>A devastating war between humans and Espers scarred the world. The conflict ended with the sealing of Espers into another dimension and the banishment of magic.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">PRESENT</div>
+                    <div class="timeline-content">
+                        <h3>The Gestahlian Empire Rises</h3>
+                        <p>Emperor Gestahl discovers the Esper world and begins harnessing magical energy to create Magitek, a fusion of magic and technology that gives the Empire unparalleled power.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">MID-GAME</div>
+                    <div class="timeline-content">
+                        <h3>The Cataclysm</h3>
+                        <p>Kefka betrays Gestahl, seizes the Warring Triad's power, and reshapes the world, creating the World of Ruin — a devastated landscape where hope seems lost.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">END-GAME</div>
+                    <div class="timeline-content">
+                        <h3>The Returners' Final Stand</h3>
+                        <p>The scattered heroes reunite to defeat Kefka at his tower, destroying his god-like power and restoring hope to the world.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rpg-box">
+                <h2>═ LOCATIONS ═</h2>
+                <ul>
+                    <li>Narshe — Frozen mining town where it all begins</li>
+                    <li>Figaro Castle — Edgar's movable kingdom</li>
+                    <li>South Figaro — Secret rebel hideout</li>
+                    <li>Opera House — Site of the legendary performance</li>
+                    <li>Vector — The Empire's Magitek factory</li>
+                    <li>Thamasa — Village hiding a great secret</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ---------- LEGACY ---------- -->
+        <section class="section" id="legacy">
+            <div class="rpg-box">
+                <h2>═ AWARDS & RECOGNITION ═</h2>
+                <p>Final Fantasy VI's impact on gaming cannot be overstated…</p>
+            </div>
+
+            <div class="achievement-grid">
+                <div class="achievement">
+                    <div class="achievement-icon">🏆</div>
+                    <div class="achievement-info">
+                        <h4>IGN Top 100</h4>
+                        <p>Ranked #9 in IGN's greatest games of all time</p>
+                    </div>
+                </div>
+                <div class="achievement">
+                    <div class="achievement-icon">🎵</div>
+                    <div class="achievement-info">
+                        <h4>Legendary Soundtrack</h4>
+                        <p>Nobuo Uematsu's masterpiece — widely considered the best video game OST ever</p>
+                    </div>
+                </div>
+                <div class="achievement">
+                    <div class="achievement-icon">📖</div>
+                    <div class="achievement-info">
+                        <h4>Narrative Innovation</h4>
+                        <p>First FF with ensemble cast, no single protagonist</p>
+                    </div>
+                </div>
+                <div class="achievement">
+                    <div class="achievement-icon">🎮</div>
+                    <div class="achievement-info">
+                        <h4>Multiple Ports</h4>
+                        <p>Released on SNES, PS1, GBA, iOS, Android, and PC</p>
+                    </div>
+                </div>
+                <div class="achievement">
+                    <div class="achievement-icon">💀</div>
+                    <div class="achievement-info">
+                        <h4>Villain Legacy</h4>
+                        <p>Kefka often cited as the greatest video game villain</p>
+                    </div>
+                </div>
+                <div class="achievement">
+                    <div class="achievement-icon">❤️</div>
+                    <div class="achievement-info">
+                        <h4>Emotional Impact</h4>
+                        <p>Opera scene moved thousands of players to tears</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="quote-box">
+                <p>"You don't get to choose how you're going to die. Or when. You can only decide how you're going to live. Now."</p>
+                <p class="quote-author">— Cyan Garamonde</p>
+            </div>
+
+            <div class="rpg-box">
+                <h2>═ PLAY TODAY ═</h2>
+                <p style="text-align:center; padding:20px;">
+                    Available on multiple platforms!<br><br>
+                    🎮 Steam / GOG<br>
+                    📱 iOS / Android<br>
+                    🎮 PlayStation Classic
+                </p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer>
+        <p class="footer-logo">FINAL FANTASY VI</p>
+        <p>A tribute page celebrating one of gaming's greatest masterpieces</p>
+        <br>
+        <p>© 1994 SQUARE ENIX CO., LTD. ALL RIGHTS RESERVED.</p>
+        <p>This is a fan-made tribute page.</p>
+    </footer>
+
+    <script src="ffvi-script.js"></script>
+</body>
+</html>

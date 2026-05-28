@@ -1,0 +1,9 @@
+<!--
+  Final Fantasy VI - SVG Sprite Sheet (External Reference)
+  Pixel-art style representations of Espers / Summons
+  Note: Sprites are embedded inline in index.html for <use> compatibility.
+  This file is kept as a reference/backup.
+-->
+<svg xmlns="http://www.w3.org/2000/svg">
+  <!-- See index.html for inline sprite definitions -->
+</svg>
