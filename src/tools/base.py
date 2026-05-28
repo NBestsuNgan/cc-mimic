@@ -114,7 +114,7 @@ class ToolInvocation:
     cwd: Path
 
 
-class  Tool(abc.ABC):
+class Tool(abc.ABC):
     name: str = "base_tool"
     description: str = "Base tool"
     kind: ToolKind = ToolKind.READ
