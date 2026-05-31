@@ -6,7 +6,6 @@ from src.utils.paths import (
     resolve_path,
     is_binary_file,
 )
-from src.utils.text import count_tokens, truncate_text
 
 
 class EditParams(BaseModel):

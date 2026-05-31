@@ -2,11 +2,9 @@ import fnmatch
 import os
 import sys
 import asyncio
-
+import signal
 from pydantic import BaseModel, Field
 from src.tools.base import Tool, ToolInvocation, ToolKind, ToolResult
-from src.utils.paths import resolve_path, is_binary_file
-from src.utils.text import count_tokens, truncate_text
 from pathlib import Path
 
 BLOCKED_COMMANDS = {

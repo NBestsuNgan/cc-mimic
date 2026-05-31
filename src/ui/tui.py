@@ -188,12 +188,13 @@ class TUI:
             # $ stop as end character of the line
             m = re.match(r"^\s*(\d+)\|(.*)$", line)
             if not m:
-                return None
-
-            line_no = int(m.group(1))
-            if start_line is None:
-                start_line = line_no
-            code_lines.append(m.group(2))
+                # return None
+                code_lines.append(line)
+            else:
+                line_no = int(m.group(1))
+                if start_line is None:
+                    start_line = line_no
+                code_lines.append(m.group(2))
 
         if (
             start_line is None

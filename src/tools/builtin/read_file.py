@@ -14,13 +14,13 @@ class ReadFileParams(BaseModel):
     offset: int = Field(
         1,
         ge=1,
-        description="Line number to start reading from (2-based), Default to 1",
+        description="Line number to start reading from (1-based). Defaults to 1",
     )
 
     limit: int | None = Field(
         None,
         ge=1,
-        description="Maximum number of lines to read, If not specified, reads entire file.",
+        description="Maximum number of lines to read. If not specified, reads entire file.",
     )
 
 
@@ -29,7 +29,7 @@ class ReadFileTool(Tool):
     description = (
         "Read the contents of a text file. Returns the file content with line numbers. "
         "For large files, use offset and limit to read specific portions. "
-        "Cannot read binary files (images, executab les, etc.)."
+        "Cannot read binary files (images, executables, etc.)."
     )
     kind = ToolKind.READ
     schema = ReadFileParams
@@ -55,8 +55,8 @@ class ReadFileTool(Tool):
 
         if file_size > self.MAX_FILE_SIZE:
             return ToolResult.error_result(
-                f"File is too large: ({file_size/(1024*1024):.1f}MB)."
-                f"Maximum  is {self.MAX_FILE_SIZE/(1024*1024):.0f}MB."
+                f"File too large ({file_size / (1024*1024):.1f}MB)."
+                f"Maximum is {self.MAX_FILE_SIZE / (1024*1024):.0f}MB."
             )
 
         if is_binary_file(path):
@@ -67,7 +67,7 @@ class ReadFileTool(Tool):
                 else f"{file_size} bytes"
             )  # if greater than 1 MB it will be write in MB else writing in bytes
             return ToolResult.error_result(
-                f"Cannot read bianry file: {path.name} ({size_str})"
+                f"Cannot read binary file: {path.name} ({size_str})"
                 f"This tool only reads text files."
             )
 
@@ -117,15 +117,16 @@ class ReadFileTool(Tool):
             if token_count > self.MAX_OUTPUT_TOKENS:
                 output = truncate_text(
                     output,
+                    self.config.model_name, 
                     self.MAX_OUTPUT_TOKENS,
                     suffix=f"\n... [truncated {total_lines} total lines]",
                 )
                 truncated = True
 
             metadata_lines = []
-            if start_idx > 0 and end_idx < total_lines:
+            if start_idx > 0 or end_idx < total_lines:
                 metadata_lines.append(
-                    f"Showing lines {start_idx + 1}-{end_idx} of {total_lines}"
+                    f"Showing lines {start_idx+1}-{end_idx} of {total_lines}"
                 )
 
             if metadata_lines:
