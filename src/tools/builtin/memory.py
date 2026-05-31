@@ -1,5 +1,4 @@
 from src.tools.base import Tool, ToolInvocation, ToolKind, ToolResult
-from src.config.config import Config
 from src.config.loader import get_data_dir
 from pydantic import BaseModel, Field
 import uuid
@@ -28,9 +27,6 @@ class MemoryTool(Tool):
         data_dir = get_data_dir()
         data_dir.mkdir(parents=True, exist_ok=True)
         path = data_dir / "user_memory.json"
-        print("="*50)
-        print(path)
-        print("="*50)
         
         if not path.exists():
             return {"entries": {}}

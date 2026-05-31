@@ -1,12 +1,7 @@
 from pydantic import BaseModel, Field
-import re
-import os
-from pathlib import Path
-from src.tools.base import FileDiff, Tool, ToolInvocation, ToolKind, ToolResult
+from src.tools.base import Tool, ToolInvocation, ToolKind, ToolResult
 from src.utils.paths import (
-    ensure_parent_directory,
     resolve_path,
-    is_binary_file,
 )
 
 class GlobParams(BaseModel):

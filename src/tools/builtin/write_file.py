@@ -3,7 +3,6 @@ from src.tools.base import Tool, ToolInvocation, ToolKind, ToolResult, FileDiff
 from src.utils.paths import (
     ensure_parent_directory,
     resolve_path,
-    is_binary_file,
 )
 
 

@@ -3,7 +3,8 @@ from pathlib import Path
 
 from src.config.config import Config
 from src.tools.base import Tool, ToolResult, ToolInvocation
-from src.tools.builtin import ReadFileTool, get_all_builtin_tools
+from src.tools.builtin import get_all_builtin_tools
+from src.tools.subagents import get_default_subagent_definitions, SubagentTool
 import logging
 
 
@@ -11,8 +12,9 @@ logger = logging.getLogger(__name__)
 
 
 class ToolRegistry:
-    def __init__(self):
+    def __init__(self, config: Config):
         self._tools: dict[str, Tool] = {}
+        self.config = config
 
     def register(self, tool: Tool) -> None:
         if tool.name in self._tools:
@@ -37,6 +39,11 @@ class ToolRegistry:
         tools: list[Tool] = []
         for tool in self._tools.values():
             tools.append(tool)
+        
+        if self.config.allowed_tools:
+            allow_set = set(self.config.allowed_tools)
+            tools = [t for t in tools if t.name in allow_set]
+        
         return tools
 
     def get_schemas(self) -> list[dict[str, Any]]:
@@ -87,8 +94,10 @@ class ToolRegistry:
 
         
 def create_default_registry(config: Config) -> ToolRegistry:
-    registry = ToolRegistry()
+    registry = ToolRegistry(config)
     for tool_class in get_all_builtin_tools():
         registry.register(tool_class(config))
     
+    for subagent_def in get_default_subagent_definitions():
+        registry.register(SubagentTool(config, subagent_def))
     return registry

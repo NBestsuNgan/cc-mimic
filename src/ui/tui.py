@@ -522,10 +522,11 @@ class TUI:
                     theme="monokai",
                     word_wrap=True,
                 )
-            )     
-
-        if error and not success:
-            blocks.append(Text(error, style="error"))
+            )
+        else:   
+            if error and not success:
+                blocks.append(Text(error, style="error"))
+            
             output_display = truncate_text(output, self.config.model_name, self._max_block_tokens)
             if output_display.strip():
                 blocks.append(
