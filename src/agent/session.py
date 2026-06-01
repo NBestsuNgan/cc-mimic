@@ -6,6 +6,7 @@ from src.config.loader import get_data_dir
 from src.context.manager import ContextManager
 from src.tools.registry import create_default_registry
 from src.tools.discovery import ToolDiscoveryManager
+from src.tools.mcp.mcp_manager import MCPManager
 import json
 
 
@@ -15,23 +16,35 @@ class Session:
         self.client = LLMClient(
             config=self.config,
         )
-        self.tool_registry = create_default_registry(config=config)
-        self.context_manager = ContextManager(
-            config=config,
-            user_memory=self._load_memory(),
-            tools=self.tool_registry.get_tools(),
-        )
+        self.tool_registry = create_default_registry(config=config) # register built-in tool and sub-agent
+        self.context_manager: ContextManager | None = None
+        
         self.discovery_manager = ToolDiscoveryManager(
             config=config,
             registry=self.tool_registry,
         )
+        self.mcp_manager = MCPManager(self.config)
         self.session_id = str(uuid.uuid4())
         self.create_at = datetime.now()
         self.update_at = datetime.now()
 
-        self.discovery_manager.discover_all()  # discover and register tools at the beginning of the session of subagent
-        
+         
         self._turn_count = 0
+        
+    async def initialize(self) -> None:
+        # register MCP
+        await self.mcp_manager.initialize() # initial all mcp client connection
+        self.mcp_manager.register_tools(self.tool_registry) # register mcp tool in self.tool_registry 
+        
+        # register hidden(discovery) tool of subagent
+        self.discovery_manager.discover_all()  # get hidden(discovery) tool of subagent
+        
+        # load built-in tools, MCP tools, hiddent ool of subagent -> into context manager
+        self.context_manager = ContextManager(
+            config=self.config,
+            user_memory=self._load_memory(),
+            tools=self.tool_registry.get_tools(),
+        )
 
     def _load_memory(self) -> str | None:
         data_dir = get_data_dir()

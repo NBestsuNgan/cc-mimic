@@ -1,6 +1,7 @@
-from src.config.config import Config, MCPServerConfig
+from src.config.config import Config
 from src.tools.mcp.client import MCPClient, MCPServerStatus
 from src.tools.registry import ToolRegistry
+from src.tools.mcp.mcp_tool import MCPTool
 import asyncio
 
 
@@ -29,21 +30,39 @@ class MCPManager:
             )
 
         conenction_task = [
-            await asyncio.wait_for(client.connect())
+            asyncio.wait_for(
+                client.connect(),
+                client.config.startup_timeout_sec,
+            )
             for name, client in self._clients.items()
         ]
 
         await asyncio.gather(*conenction_task, return_exceptions=True)
         self._initialized = True
-    
+
     def register_tools(self, registry: ToolRegistry) -> int:
         count = 0
-        
+
         for client in self._clients.values():
             if client.status != MCPServerStatus.CONNECTED:
                 continue
             for tool_info in client.tools:
-                registry.register_mcp_tool(
-                    name=tool_info.name,
-                    
+                mcp_tool = MCPTool(
+                    tool_info=tool_info,
+                    client=client,
+                    config=self.config,
+                    name=f"{client.name}__{tool_info.name}",  # {mcp_server_name}__{mcp_tool_name}
                 )
+                registry.register_mcp_tool(
+                    mcp_tool
+                )  # register as mcp prefix tool name to avoid overwrite tool
+                count += 1
+
+        return count
+
+    async def shutdown(self) -> None:
+        disconnection_tasks = [client.disconnect() for client in self._clients.values()]
+        
+        await asyncio.gather(*disconnection_tasks, return_exceptions=True)
+        self._clients.clear()
+        self._initialized = False
