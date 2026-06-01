@@ -5,6 +5,7 @@ from src.config.config import Config
 from src.config.loader import get_data_dir
 from src.context.manager import ContextManager
 from src.tools.registry import create_default_registry
+from src.tools.discovery import ToolDiscoveryManager
 import json
 
 
@@ -20,10 +21,16 @@ class Session:
             user_memory=self._load_memory(),
             tools=self.tool_registry.get_tools(),
         )
+        self.discovery_manager = ToolDiscoveryManager(
+            config=config,
+            registry=self.tool_registry,
+        )
         self.session_id = str(uuid.uuid4())
         self.create_at = datetime.now()
         self.update_at = datetime.now()
 
+        self.discovery_manager.discover_all()  # discover and register tools at the beginning of the session of subagent
+        
         self._turn_count = 0
 
     def _load_memory(self) -> str | None:
