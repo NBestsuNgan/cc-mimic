@@ -119,7 +119,7 @@ class ContextManager:
     def add_usage(self, usage: TokenUsage):
         self._total_usage += usage
     
-    def replace_with_summary(self, summary: str) -> int:
+    def replace_with_summary(self, summary: str) -> TokenUsage:
         self._messages = []
         
         continuation_content = f"""# Context Restoration (Previous Session Compacted)
@@ -171,5 +171,9 @@ I'll continue with the REMAINING tasks only, starting from where we left off."""
         )
         self._messages.append(continue_item)
         
-        compaction_usage = summary_item.token_count + ack_item.token_count + continue_item.token_count
+        compaction_usage = TokenUsage()
+        for item in self._messages:
+            token_usage = TokenUsage(prompt_tokens=item.token_count)
+            compaction_usage += token_usage
+            
         return compaction_usage
