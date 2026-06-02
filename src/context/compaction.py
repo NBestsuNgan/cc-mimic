@@ -5,7 +5,7 @@ from src.prompts.system import get_compression_prompt
 from typing import Any
 
 class ChatCompactor:
-    def __int__(self, client: LLMClient):
+    def __init__(self, client: LLMClient):
         self.client = client
 
     def _format_history_for_compaction(self, messages: list[dict[str, Any]]) -> str:
