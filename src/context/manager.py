@@ -2,6 +2,7 @@ from src.prompts.system import get_system_prompt
 from src.utils.text import count_tokens
 from src.config.config import Config
 from src.tools.base import Tool
+from src.client.llm_client import TokenUsage
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -42,6 +43,8 @@ class ContextManager:
         self.config = config
         self._model_name = self.config.model_name
         self._messages: list[MessageItem] = []
+        self._latest_usage = TokenUsage()
+        self._total_usage = TokenUsage()
 
     def add_user_message(self, content: str) -> None:
         item = MessageItem(
@@ -102,3 +105,49 @@ class ContextManager:
             messages.append(item.to_dict())
 
         return messages
+
+    def need_compression(self) -> bool:
+        context_limit = self.config.model.context_window
+        current_tokens = self._latest_usage.total_tokens
+        
+        # 258000 > 256000
+        return current_tokens > (context_limit * 0.8)
+    
+    def set_latest_usage(self, usage : TokenUsage):
+        self._latest_usage = usage
+    
+    def add_usage(self, usage: TokenUsage):
+        self._total_usage += usage
+    
+    def replace_with_summary(self, summary: str) -> None:
+        self._messages = []
+        
+        continuation_content = f"""# Context Restoration (Previous Session Compacted)
+
+        The previous conversation was compacted due to context length limits. Below is a detailed summary of the work done so far. 
+
+        **CRITICAL: Actions listed under "COMPLETED ACTIONS" are already done. DO NOT repeat them.**
+
+        ---
+
+        {summary}
+
+        ---
+
+        Resume work from where we left off. Focus ONLY on the remaining tasks."""
+
+        
+
+        ack_content = """I've reviewed the context from the previous session. I understand:
+- The original goal and what was requested
+- Which actions are ALREADY COMPLETED (I will NOT repeat these)
+- The current state of the project
+- What still needs to be done
+
+I'll continue with the REMAINING tasks only, starting from where we left off."""
+        
+        
+        
+        
+        
+        

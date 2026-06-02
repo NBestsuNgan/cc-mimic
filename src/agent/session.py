@@ -7,6 +7,8 @@ from src.context.manager import ContextManager
 from src.tools.registry import create_default_registry
 from src.tools.discovery import ToolDiscoveryManager
 from src.tools.mcp.mcp_manager import MCPManager
+from src.context.compaction import ChatCompactor
+
 import json
 
 
@@ -24,6 +26,7 @@ class Session:
             registry=self.tool_registry,
         )
         self.mcp_manager = MCPManager(self.config)
+        self.chat_compactor = ChatCompactor(self.client)
         self.session_id = str(uuid.uuid4())
         self.create_at = datetime.now()
         self.update_at = datetime.now()

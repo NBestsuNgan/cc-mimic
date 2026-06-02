@@ -3,6 +3,7 @@ import json
 from typing import AsyncGenerator
 from src.agent.events import AgentEvent, AgentEventType
 from src.client.response import StreamEventType, ToolCall, ToolResultMessage
+from src.client.llm_client import TokenUsage
 from src.config.config import Config
 from src.agent.session import Session
 
@@ -35,8 +36,17 @@ class Agent:
         for turn_num in range(max_turns): # turns used for multi sequence of task like do 1 then 2 then 3 and stop when 3 complete
             self.session.increment_turn()
             response_text = ""
+            
+            # check for context overflow
+            if self.session.context_manager.need_compression():
+                summary, usage = await self.session.chat_compactor.compress(self.session.context_manager)
+                if summary:
+                    self.session.context_manager.set_latest_usage(usage)
+                    self.session.context_manager.add_usage(usage)
+                    
             tools_schemas = self.session.tool_registry.get_schemas()
             tool_calls: list[ToolCall] = []
+            usage: TokenUsage | None = None
             
             async for event in self.session.client.chat_completion(
                 self.session.context_manager.get_messages(), 
@@ -57,6 +67,8 @@ class Agent:
                     yield AgentEvent.agent_error(
                         event.error or "Unkown error occured."
                     )
+                elif event.type == StreamEventType.MESSAGE_COMPLETE:
+                    usage = event.usage
 
     
             self.session.context_manager.add_assistant_message(
@@ -81,6 +93,10 @@ class Agent:
                 yield AgentEvent.text_complete(response_text)
             
             if not tool_calls:
+                if usage:
+                    self.session.context_manager.set_latest_usage(usage)
+                    self.session.context_manager.add_usage(usage)
+                    
                 return
             
             tool_call_results: list[ToolResultMessage] = []
@@ -118,6 +134,10 @@ class Agent:
                     tool_result.tool_call_id,
                     tool_result.content,
                 )
+                
+            if usage:
+                    self.session.context_manager.set_latest_usage(usage)
+                    self.session.context_manager.add_usage(usage)
 
         yield AgentEvent.agent_error(f"Maximum turns ({max_turns}) reached")
         

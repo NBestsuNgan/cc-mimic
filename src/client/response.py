@@ -27,7 +27,7 @@ class TokenUsage:
     total_tokens: int = 0
     cached_tokens: int = 0
     
-    def __add__(self, other: TokenUsage): # other represent to another instance of TokenUsage class that will be perform calculation together
+    def __add__(self, other: TokenUsage): # "other" represent to another instance of TokenUsage class that will be perform calculation together
         return TokenUsage(
             prompt_tokens=self.prompt_tokens + other.prompt_tokens,
             completion_tokens=self.completion_tokens + other.completion_tokens,
