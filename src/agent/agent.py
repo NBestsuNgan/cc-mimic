@@ -41,13 +41,9 @@ class Agent:
             if self.session.context_manager.need_compression():
                 summary, usage = await self.session.chat_compactor.compress(self.session.context_manager)
                 if summary:
+                    self.session.context_manager.replace_with_summary(summary)
                     self.session.context_manager.set_latest_usage(usage)
                     self.session.context_manager.add_usage(usage)
-                    
-                    # gaslighting LLM
-                    compaction_usage = self.session.context_manager.replace_with_summary(summary)
-                    self.session.context_manager.set_latest_usage(compaction_usage)
-                    self.session.context_manager.add_usage(compaction_usage)
                     
             tools_schemas = self.session.tool_registry.get_schemas()
             tool_calls: list[ToolCall] = []
