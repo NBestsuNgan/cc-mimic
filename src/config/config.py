@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from pathlib import Path
 import os
 from typing import Any
+from enum import Enum
 
 load_dotenv(override=True)
 
@@ -45,11 +46,19 @@ class MCPServerConfig(BaseModel):
 
         return self
         
+class ApprovalPolicy(str, Enum):
+    ON_REQUEST = "on-request"
+    ON_FAILURE = "on-failure"
+    AUTO = "auto"
+    AUTO_EDIT = "auto-edit"
+    NEVER = "never"
+    YOLO = "yolo"
     
 class Config(BaseModel):
     model: ModelConfig = Field(default_factory=ModelConfig)
     cwd: Path = Field(default_factory=Path.cwd)
     shell_environment: ShellEnvironmentPolicy = Field(default_factory=ShellEnvironmentPolicy)
+    approval: ApprovalPolicy = ApprovalPolicy.ON_REQUEST
     max_turns: int = 100
     mcp_servers: dict[str, MCPServerConfig] = Field(default_factory=dict)
     

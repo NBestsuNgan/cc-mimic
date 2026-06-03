@@ -1,17 +1,24 @@
 from __future__ import annotations
 import json
-from typing import AsyncGenerator
+from typing import AsyncGenerator, Callable, Awaitable
+
 from src.agent.events import AgentEvent, AgentEventType
 from src.client.response import StreamEventType, ToolCall, ToolResultMessage
 from src.client.llm_client import TokenUsage
 from src.config.config import Config
 from src.agent.session import Session
+from src.tools.base import ToolConfirmation
 
 class Agent:
-    def __init__(self, config: Config):
+    def __init__(
+        self, 
+        config: Config,
+        confirmation_callback: (Callable[[ToolConfirmation], bool] | None)= None,
+        ):
         self.config = config
         # all of params encapsulated in session.
         self.session: Session | None = Session(self.config)
+        self.session.approval_manager.confirmation_callback = confirmation_callback
 
     async def run(self, message: str):
         yield AgentEvent.agent_start(message)
@@ -114,6 +121,7 @@ class Agent:
                     name=tool_call.name,
                     params=tool_call.arguments,
                     cwd=self.config.cwd,
+                    approval_manager=self.session.approval_manager,
                 )
                 
                 yield AgentEvent.tool_call_complete(

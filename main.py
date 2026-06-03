@@ -18,7 +18,6 @@ class CLI:
         self.agent: Agent | None = None
         self.config = config
         self.tui = TUI(self.config, console)
-        
 
     async def run_single(self, message: str) -> str | None:
         async with Agent(config=self.config) as agent:
@@ -34,7 +33,10 @@ class CLI:
                 f"command: /help /config /approve /model /exit",
             ],
         )
-        async with Agent(config=self.config) as agent:
+        async with Agent(
+            config=self.config,
+            confirmation_callback=self.tui.handle_confirmation,
+        ) as agent:
             self.agent = agent
             while True:
                 try:
@@ -123,22 +125,21 @@ def main(
     prompt: str | None,
     cwd: Path | None,
 ):
-    
+
     try:
         config = load_config(cwd=cwd)
     except Exception as e:
         console.print(f"[error]Configuration Error: {e}[/error]")
-    
+
     errors = config.validate()
     if errors:
         for error in errors:
             console.print(f"[error]Configuration Error: {error}[/error]")
-        
+
         sys.exit(1)
 
-    cli = CLI(config=config) # dependency management solution
+    cli = CLI(config=config)  # dependency management solution
 
-    
     # messages = [{"role": "user", "content": prompt}]
     if prompt:
         result = asyncio.run(cli.run_single(prompt))

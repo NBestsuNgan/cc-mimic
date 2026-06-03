@@ -4,7 +4,7 @@ import sys
 import asyncio
 import signal
 from pydantic import BaseModel, Field
-from src.tools.base import Tool, ToolInvocation, ToolKind, ToolResult
+from src.tools.base import Tool, ToolInvocation, ToolKind, ToolResult, ToolConfirmation
 from pathlib import Path
 
 BLOCKED_COMMANDS = {
@@ -52,6 +52,27 @@ class ShellTool(Tool):
     kind = ToolKind.SHELL
     schema = ShellParams
 
+    async def get_confirmation(self, invocation: ToolInvocation) -> ToolConfirmation | None:
+        params = ShellParams(**invocation.params)
+        command = params.command.lower().strip()
+        
+        for blocked in BLOCKED_COMMANDS:
+            if blocked in command:
+                return ToolConfirmation(
+                    tool_name=self.name,
+                    params=invocation.params,
+                    description=f"Execute (BLOCKED): {command}",
+                    command=command,
+                    is_dangerous=True, 
+                )
+        
+        return ToolConfirmation(
+            tool_name=self.name,
+            params=invocation.params,
+            description=f"Execute: {command}",
+            command=command,
+        )
+    
     async def execute(self, invocation: ToolInvocation) -> ToolResult:
         params = ShellParams(**invocation.params)
         command = params.command.lower().strip()

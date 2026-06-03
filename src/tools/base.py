@@ -106,7 +106,11 @@ class ToolConfirmation:
     tool_name: str
     params: dict[str, Any]
     description: str
-
+    
+    diff: FileDiff | None = None
+    affected_paths: list[Path] = field(default_factory=list)
+    command: str | None = None
+    is_dangerous: bool = False 
 
 @dataclass
 class ToolInvocation:
@@ -164,9 +168,9 @@ class Tool(abc.ABC):
 
     async def get_confirmation(
         self, invocation: ToolInvocation
-    ) -> ToolInvocation | None:
+    ) -> ToolConfirmation | None:
         if not self.is_mutating(invocation.params):
-            return False
+            return None
 
         return ToolConfirmation(
             tool_name=self.name,

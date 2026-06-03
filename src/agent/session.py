@@ -8,6 +8,7 @@ from src.tools.registry import create_default_registry
 from src.tools.discovery import ToolDiscoveryManager
 from src.tools.mcp.mcp_manager import MCPManager
 from src.context.compaction import ChatCompactor
+from src.safety.approval import ApprovalManager, ApprovalContext, ApprovalDecision
 
 import json
 
@@ -27,6 +28,10 @@ class Session:
         )
         self.mcp_manager = MCPManager(self.config)
         self.chat_compactor = ChatCompactor(self.client)
+        self.approval_manager = ApprovalManager(
+            self.config.approval, 
+            self.config.cwd,
+        )
         self.session_id = str(uuid.uuid4())
         self.create_at = datetime.now()
         self.update_at = datetime.now()
