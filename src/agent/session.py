@@ -1,5 +1,6 @@
 import uuid
 from datetime import datetime
+from src.hooks.hook_system import HookSystem
 from src.client.llm_client import LLMClient
 from src.config.config import Config
 from src.config.loader import get_data_dir
@@ -32,6 +33,7 @@ class Session:
             self.config.approval, 
             self.config.cwd,
         )
+        self.hook_system = HookSystem(config=self.config)
         self.session_id = str(uuid.uuid4())
         self.create_at = datetime.now()
         self.update_at = datetime.now()

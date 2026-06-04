@@ -21,6 +21,7 @@ class Agent:
         self.session.approval_manager.confirmation_callback = confirmation_callback
 
     async def run(self, message: str):
+        await self.session.hook_system.trigger_before_agent(message)
         yield AgentEvent.agent_start(message)
 
         # add user message to context
@@ -33,6 +34,7 @@ class Agent:
             if event.type == AgentEventType.TEXT_COMPLETE:
                 final_response = event.data.get("content")
 
+        await self.session.hook_system.trigger_after_agent(message, final_response or "")
         yield AgentEvent.agent_end(final_response)
 
     async def _agentic_loop(self) -> AsyncGenerator[AgentEvent, None]:
@@ -121,6 +123,7 @@ class Agent:
                     name=tool_call.name,
                     params=tool_call.arguments,
                     cwd=self.config.cwd,
+                    hook_system=self.session.hook_system,
                     approval_manager=self.session.approval_manager,
                 )
                 
