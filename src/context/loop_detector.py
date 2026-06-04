@@ -47,3 +47,5 @@ class LoopDetector:
             
         return None
                 
+    def clear(self) -> None:
+        self._history.clear()

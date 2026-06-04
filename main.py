@@ -8,7 +8,7 @@ from src.agent.agent import Agent
 from src.client.llm_client import LLMClient
 from src.ui.tui import TUI, get_console
 from src.config.loader import load_config
-from src.config.config import Config
+from src.config.config import Config, ApprovalPolicy
 
 console = get_console()
 
@@ -45,7 +45,7 @@ class CLI:
                         continue
                 
                     if user_input.startswith("/"):
-                        should_continue = self._handle_command(user_input)
+                        should_continue = await self._handle_command(user_input)
                         if not should_continue:
                             break
                         continue
@@ -119,17 +119,37 @@ class CLI:
 
         return final_response
 
-    def _handle_command(self, command: str) -> bool:
+    async def _handle_command(self, command: str) -> bool:
         cmd = command.lower().strip()
         parts = cmd.split(maxsplit=1)
         cmd_name = parts[0]
         cmd_args = parts[1] if len(parts) > 1 else ""
         if cmd_name == "/exit" or cmd_name == "/quit":
             return False
-        elif cmd_name == "/help":
+        elif command == "/help":
             self.tui.show_help()
+        elif command == "/clear":
+            self.agent.session.context_manager.clear()
+            self.agent.session.loop_detector.clear()
+            console.print("[success]Conversation cleared [/success]")
+        elif command == "/config":
+            console.print("\n[bold]Current Configuration[/bold]")
+            console.print(f"  Model: {self.config.model_name}")
+            console.print(f"  Temperature: {self.config.temperature}")
+            console.print(f"  Approval: {self.config.approval.value}")
+            console.print(f"  Working Dir: {self.config.cwd}")
+            console.print(f"  Max Turns: {self.config.max_turns}")
+            console.print(f"  Hooks Enabled: {self.config.hooks_enabled}")
+        elif cmd_name == "/model":
+            if cmd_args:
+                self.config.model_name = cmd_args
+                console.print(f"[success]Model changed to: {cmd_args} [/success]")
+            else:
+                console.print(f"Current model: {self.config.model_name}")
+        
         else:
-            console.print(f"[error]Unknown comamnd: {cmd_name}[/error]")
+            console.print(f"[error]Unknown command: {cmd_name}[/error]")
+
         return True
 
 @click.command()  # denote that this is a command executable
