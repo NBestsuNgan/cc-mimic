@@ -22,7 +22,7 @@ def main():
         "error": error,
     }
 
-    log_path = os.path.expanduser("\Users\Nattapat(Best)Dungde\Desktop\cc-mimic\hook.log")
+    log_path = os.path.expanduser("/Users/Nattapat(Best)Dungde/Desktop/cc-mimic/hook.log")
     print("="*50)
     print(log_path)
     print("="*50)

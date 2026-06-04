@@ -15,7 +15,7 @@ class HookSystem:
         self.hooks: list[HookConfig] = []
 
         if self.config.hooks_enabled:
-            self.hooks = [hook for hook in self.hooks if hook.enabled]
+            self.hooks = [hook for hook in self.config.hooks if hook.enabled]
 
     async def _run_hook(self, hook: HookConfig, env: dict[str, str]) -> None:
         try: 
@@ -60,10 +60,10 @@ class HookSystem:
             
 
     async def _run_command(
-        self, commands: str, timeout: float, env: dict[str, str]
+        self, command: str, timeout: float, env: dict[str, str]
     ) -> None:
         process = await asyncio.create_subprocess_shell(
-            commands,
+            command,
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
             cwd=self.config.cwd,
