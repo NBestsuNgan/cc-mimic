@@ -8,6 +8,7 @@ from src.client.llm_client import TokenUsage
 from src.config.config import Config
 from src.agent.session import Session
 from src.tools.base import ToolConfirmation
+from src.prompts.system import create_loop_breaker_prompt
 
 class Agent:
     def __init__(
@@ -107,6 +108,7 @@ class Agent:
                 )
             if response_text:
                 yield AgentEvent.text_complete(response_text)
+                self.session.loop_detector.record_action("response", text=response_text)
                 if user_latest_message:
                     await self.session.hook_system.trigger_after_llm(user_latest_message, response_text)
             
@@ -126,7 +128,12 @@ class Agent:
                     name=tool_call.name,
                     arguments=tool_call.arguments,
                 )
-                
+                self.session.loop_detector.record_action(
+                    "tool_call", 
+                    tool_name=tool_call.name,
+                    args=tool_call.arguments,
+                )
+
                 result = await self.session.tool_registry.invoke(
                     name=tool_call.name,
                     params=tool_call.arguments,
@@ -155,7 +162,12 @@ class Agent:
                     tool_result.tool_call_id,
                     tool_result.content,
                 )
-                
+            
+            loop_detection_error = self.session.loop_detector.check_for_loop()
+            if loop_detection_error:
+                loop_prompt = create_loop_breaker_prompt(loop_detection_error)
+                self.session.context_manager.add_user_message(loop_prompt)
+            
             if usage:
                     self.session.context_manager.set_latest_usage(usage)
                     self.session.context_manager.add_usage(usage)

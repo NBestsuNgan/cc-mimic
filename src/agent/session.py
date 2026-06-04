@@ -5,6 +5,7 @@ from src.client.llm_client import LLMClient
 from src.config.config import Config
 from src.config.loader import get_data_dir
 from src.context.manager import ContextManager
+from src.context.loop_detector import LoopDetector
 from src.tools.registry import create_default_registry
 from src.tools.discovery import ToolDiscoveryManager
 from src.tools.mcp.mcp_manager import MCPManager
@@ -33,6 +34,7 @@ class Session:
             self.config.approval, 
             self.config.cwd,
         )
+        self.loop_detector = LoopDetector()
         self.hook_system = HookSystem(config=self.config)
         self.session_id = str(uuid.uuid4())
         self.create_at = datetime.now()
