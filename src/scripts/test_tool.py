@@ -11,6 +11,7 @@ def main():
     cwd = os.environ.get("AI_AGENT_CWD")
     tool_name = os.environ.get("AI_AGENT_TOOL_NAME")
     user_message = os.environ.get("AI_AGENT_USER_MESSAGE")
+    llm_response = os.environ.get("AI_AGENT_LLM_RESPONSE")
     error = os.environ.get("AI_AGENT_ERROR")
 
     log_data = {
@@ -19,13 +20,12 @@ def main():
         "cwd": cwd,
         "tool_name": tool_name,
         "user_message": user_message,
+        "llm_response": llm_response,
         "error": error,
     }
 
-    log_path = os.path.expanduser("/Users/Nattapat(Best)Dungde/Desktop/cc-mimic/hook.log")
-    print("="*50)
-    print(log_path)
-    print("="*50)
+    cross_platform_path = f"{Path(__file__).parent.parent.parent}/".replace('C:', '').replace('\\', '/')
+    log_path = os.path.expanduser(cross_platform_path + "hook.log")
     os.makedirs(os.path.dirname(log_path), exist_ok=True)
     with open(log_path, "a") as f:
         f.write(f"[HOOK] {json.dumps(log_data)}\n")

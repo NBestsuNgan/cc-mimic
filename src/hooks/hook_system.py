@@ -126,6 +126,30 @@ class HookSystem:
             if hook.trigger == HookTrigger.AFTER_AGENT:
                 await self._run_hook(hook, env)
 
+    async def trigger_before_llm(
+        self,
+        user_message: str,
+    ) -> None:
+        env = self._build_env(
+            HookTrigger.BEFORE_LLM, user_message=user_message
+        )
+        for hook in self.hooks:
+            if hook.trigger == HookTrigger.BEFORE_LLM:
+                await self._run_hook(hook, env)
+
+    async def trigger_after_llm(
+        self,
+        user_message: str,
+        llm_response: str,
+    ) -> None:
+        env = self._build_env(
+            HookTrigger.AFTER_LLM, user_message=user_message
+        )
+        env["AI_AGENT_LLM_RESPONSE"] = llm_response
+        for hook in self.hooks:
+            if hook.trigger == HookTrigger.AFTER_LLM:
+                await self._run_hook(hook, env)
+
     async def trigger_before_tool(
         self,
         tool_name: str,

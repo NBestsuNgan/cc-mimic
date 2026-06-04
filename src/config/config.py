@@ -57,8 +57,13 @@ class ApprovalPolicy(str, Enum):
 class HookTrigger(str, Enum):
     BEFORE_AGENT = "before_agent"
     AFTER_AGENT = "after_agent"
+
+    BEFORE_LLM = "before_llm"
+    AFTER_LLM = "after_llm"
+
     BEFORE_TOOL = "before_tool"
     AFTER_TOOL = "after_tool"
+
     ON_ERROR = "on_error"
     
 class HookConfig(BaseModel):

@@ -58,6 +58,12 @@ class Agent:
             tool_calls: list[ToolCall] = []
             usage: TokenUsage | None = None
             
+
+            user_latest_message = self.session.context_manager.get_messages()[-1]  # latest message from user
+            user_latest_message = user_latest_message.get("content", "") if user_latest_message.get("role") == "user" else None
+            
+            if user_latest_message:
+                await self.session.hook_system.trigger_before_llm(user_latest_message)
             async for event in self.session.client.chat_completion(
                 self.session.context_manager.get_messages(), 
                 tools=tools_schemas if tools_schemas else None, 
@@ -101,6 +107,8 @@ class Agent:
                 )
             if response_text:
                 yield AgentEvent.text_complete(response_text)
+                if user_latest_message:
+                    await self.session.hook_system.trigger_after_llm(user_latest_message, response_text)
             
             if not tool_calls:
                 if usage:
