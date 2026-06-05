@@ -32,13 +32,13 @@ class LoopDetector:
         
         # check exact same action
         if len(self._history) >= self.max_exact_repeat:
-            recent = self._history[-self.max_exact_repeat:] # a->b->[a->b->a] -> 1 because "a" and "a"
+            recent = list(self._history)[-self.max_exact_repeat:] # a->b->[a->b->a] -> 1 because "a" and "a"
             if len(set(recent)) == 1:
                 return f"Same action repeated {self.max_exact_repeat} times"
     
         # check repitition pattern
         if len(self._history) >= self.max_cycle_length * 2:
-            history = set(self._history)
+            history = list(self._history)
 
             for cyclce_len in range(2, min(self.max_cycle_length + 1, len(history)//2 + 1)): # terminate based on the lenght of history
                 recent = history[-cyclce_len*2:]
