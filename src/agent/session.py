@@ -11,7 +11,7 @@ from src.tools.discovery import ToolDiscoveryManager
 from src.tools.mcp.mcp_manager import MCPManager
 from src.context.compaction import ChatCompactor
 from src.safety.approval import ApprovalManager, ApprovalContext, ApprovalDecision
-
+from typing import Any
 import json
 
 
@@ -87,3 +87,15 @@ class Session:
         self.update_at = datetime.now()
 
         return self._turn_count
+
+    def get_stats(self) -> dict[str, Any]:
+        return {
+            "session_id": self.session_id,
+            "created_at": self.create_at.isoformat(),
+            "turn_count": self._turn_count,
+            "message_count": self.context_manager.message_count,
+            "token_usage": self.context_manager.total_usage,
+            "tools_count": len(self.tool_registry.get_tools()),
+            "mcp_servers": len(self.tool_registry.connected_mcp_servers),
+            
+        }

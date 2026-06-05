@@ -18,6 +18,10 @@ class ToolRegistry:
         self._tools: dict[str, Tool] = {}
         self._mcp_tools: dict[str, Tool] = {}
         self.config = config
+        
+    @property
+    def connected_mcp_servers(self) -> list[Tool]:
+        return self._mcp_tools.values()
 
     def register(self, tool: Tool) -> None:
         if tool.name in self._tools:

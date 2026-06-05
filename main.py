@@ -146,7 +146,28 @@ class CLI:
                 console.print(f"[success]Model changed to: {cmd_args} [/success]")
             else:
                 console.print(f"Current model: {self.config.model_name}")
-        
+        elif cmd_name == "/model":
+            if cmd_args:
+                self.config.model_name = cmd_args # /model opus-4.6
+                console.print(f"[success]Model change to: {cmd_args} [/success]")
+            else:
+                console.print(f"Current model: {self.config.model_name}")
+        elif cmd_name == "/approval":
+            if cmd_args:
+                try:
+                    approval = ApprovalPolicy(cmd_args)
+                    self.config.approval = approval
+                    console.print(f"[success]Approval policy change to: {cmd_args} [/success]")
+                except:
+                    console.print(f"[error]Incorrect Approval policy: {cmd_args}[/error]")
+                    console.print(f"Valid options: {', '.join(p for p in ApprovalPolicy)}")
+            else:
+                console.print(f"Current Approval policy: {self.config.approval.value}")
+        elif cmd_name == "/stats":
+            stats = self.agent.session.get_stats()
+            console.print("\n[bold]Session Statistics [/bold]")
+            for key, value in stats.items():
+                console.print(f".  {key}: {value}")
         else:
             console.print(f"[error]Unknown command: {cmd_name}[/error]")
 

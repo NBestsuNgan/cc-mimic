@@ -48,6 +48,15 @@ class ContextManager:
         self._messages: list[MessageItem] = []
         self._latest_usage = TokenUsage()
         self._total_usage = TokenUsage()
+    
+    # reason that add property because it will give benefit of cannot eidt value of private variable, only can get value via function like this, cannot directly change
+    @property 
+    def message_count(self) -> int:
+        return len(self._messages)
+
+    @property
+    def total_usage(self) -> TokenUsage:
+        return self._total_usage
 
     def add_user_message(self, content: str) -> None:
         item = MessageItem(
