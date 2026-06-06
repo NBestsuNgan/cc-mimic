@@ -42,7 +42,10 @@ class PersistenceManager:
         self.data_dir = get_data_dir()
         self.sessions_dir = self.data_dir / "sessions"
         self.sessions_dir.mkdir(parents=True, exist_ok=True)
+        self.checkpoints_dir = self.data_dir / "checkpoints"
+        self.checkpoints_dir.mkdir(parents=True, exist_ok=True)
         os.chmod(self.sessions_dir, 0o700)
+        os.chmod(self.checkpoints_dir, 0o700)
         
     def save_session(self, snapshot: SessionSnapshot) -> None:
         file_path = self.sessions_dir / f"{snapshot.session_id}.json"
@@ -52,17 +55,53 @@ class PersistenceManager:
             
         os.chmod(file_path, 0o600) # 0o600 mean all the access is to the onwer only and have read and write permission, 6 -> 4(read) + 2(write)
         
-    def list_session(self) -> list[dict[str, Any]]:
+    def load_session(self, session_id: str) -> SessionSnapshot| None:
+        file_path = self.sessions_dir / f"{session_id}.json"
+        
+        if not file_path.exists():
+            return None
+        
+        with open(file_path, "r", encoding="utf-8") as fp:
+            data = json.load(fp)
+            
+        return SessionSnapshot.from_dict(data)
+        
+    def list_sessions(self) -> list[dict[str, Any]]:
         sessions = []
         for file_path in self.sessions_dir.glob("*.json"):
             with open(file_path, "r", encoding="utf-8") as fp:
                 data = json.load(fp)
-            sessions.append({
-                "session_id": data["session_id"],
-                "created_at": data["created_at"],
-                "updated_at": data["updated_at"],
-                "turn_count": data["turn_count"],
-            })
-        
+            sessions.append(
+                {
+                    "session_id": data["session_id"],
+                    "created_at": data["created_at"],
+                    "updated_at": data["updated_at"],
+                    "turn_count": data["turn_count"],
+                }
+            )
+
         sessions.sort(key=lambda x: x["updated_at"], reverse=True)
         return sessions
+    
+    def save_checkpoint(self, snapshot: SessionSnapshot) -> str:
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        checkpoint_id = f"{snapshot.session_id}_{timestamp}"
+        file_path = self.checkpoints_dir / f"{checkpoint_id}.json"
+        
+        with open(file_path, "w", encoding="utf-8") as fp:
+            json.dump(snapshot.to_dict(), fp, indent=2)
+            
+        os.chmod(file_path, 0o600)
+        return checkpoint_id
+    
+    def load_checkpoint(self, checkpoint_id: str) -> SessionSnapshot | None:
+        file_path = self.checkpoints_dir / f"{checkpoint_id}.json"
+
+        if not file_path.exists():
+            return None
+
+        with open(file_path, "r", encoding="utf-8") as fp:
+            data = json.load(fp)
+
+        return SessionSnapshot.from_dict(data)
+        
