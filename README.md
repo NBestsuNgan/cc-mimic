@@ -7,3 +7,9 @@ python3 -m venv .venv
 # activate .venv
 source .venv/bin/activate
 ```
+
+
+# feature pending add
+- Sandboxing
+- LSP
+- apply_patch
