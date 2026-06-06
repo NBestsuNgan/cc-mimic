@@ -3,7 +3,7 @@ from src.tools.mcp.client import MCPClient, MCPServerStatus
 from src.tools.registry import ToolRegistry
 from src.tools.mcp.mcp_tool import MCPTool
 import asyncio
-
+from typing import Any
 
 class MCPManager:
     def __init__(self, config: Config):
@@ -66,3 +66,16 @@ class MCPManager:
         await asyncio.gather(*disconnection_tasks, return_exceptions=True)
         self._clients.clear()
         self._initialized = False
+    
+    def get_all_servers(self) -> list[dict[str, Any]]:
+        servers = []
+        for name, client in self._clients.items():
+            server_info = {
+                "name": name,
+                "status": client.status.value,
+                "tools": len(client.tools)
+            }
+            servers.append(server_info)
+        
+        return servers
+            

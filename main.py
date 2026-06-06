@@ -9,7 +9,7 @@ from src.client.llm_client import LLMClient
 from src.ui.tui import TUI, get_console
 from src.config.loader import load_config
 from src.config.config import Config, ApprovalPolicy
-
+from src.agent.persistence import PersistenceManager, SessionSnapshot
 console = get_console()
 
 
@@ -168,6 +168,36 @@ class CLI:
             console.print("\n[bold]Session Statistics [/bold]")
             for key, value in stats.items():
                 console.print(f".  {key}: {value}")
+        elif cmd_name == "/tools":
+            tools = self.agent.session.tool_registry.get_tools()
+            console.print(f"\n[bold]Available tools ({len(tools)}) [/bold]")
+            for tool in tools:
+                console.print(f"  •  {tool.name}")
+        elif cmd_name == "/mcp":
+            mcp_servers = self.agent.session.mcp_manager.get_all_servers()
+            console.print(f"\n[bold]MCP Servers ({len(mcp_servers)}) [/bold]")
+            for server in mcp_servers:
+                status = server["status"]
+                status_color = "green" if status == "connected" else "red"
+                console.print(f"  •  {server['name']}: [{status_color}]{status}[/{status_color}] ({server['tools']}) tools")
+        elif cmd_name == "/save":
+            persistence_manager = PersistenceManager()
+            session_snapshot = SessionSnapshot(
+                session_id=self.agent.session.session_id,
+                created_at=self.agent.session.created_at,
+                updated_at=self.agent.session.updated_at,
+                turn_count=self.agent.session.turn_count,
+                messages=self.agent.session.context_manager.get_messages(),
+                total_usage=self.agent.session.context_manager.total_usage,
+            )
+            persistence_manager.save_session(session_snapshot)
+            console.print(f"[success]Session saved: {self.agent.session.session_id}[/success]")
+        elif cmd_name == "/sessions":
+            persistence_manager = PersistenceManager()
+            sessions = persistence_manager.list_session()
+            console.print("\n[bold]Saved Sessions[/bold]]")
+            for s in sessions:
+                console.print(f"  • {s['session_id']} (turns: {s['turn_count']}, updated: {s['updated_at']})")
         else:
             console.print(f"[error]Unknown command: {cmd_name}[/error]")
 

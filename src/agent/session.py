@@ -37,11 +37,15 @@ class Session:
         self.loop_detector = LoopDetector()
         self.hook_system = HookSystem(config=self.config)
         self.session_id = str(uuid.uuid4())
-        self.create_at = datetime.now()
-        self.update_at = datetime.now()
+        self.created_at = datetime.now()
+        self.updated_at = datetime.now()
 
          
         self._turn_count = 0
+    
+    @property
+    def turn_count(self) -> int:
+        return self._turn_count
         
     async def initialize(self) -> None:
         # register MCP
@@ -84,14 +88,14 @@ class Session:
 
     def increment_turn(self) -> int:
         self._turn_count += 1
-        self.update_at = datetime.now()
+        self.updated_at = datetime.now()
 
         return self._turn_count
 
     def get_stats(self) -> dict[str, Any]:
         return {
             "session_id": self.session_id,
-            "created_at": self.create_at.isoformat(),
+            "created_at": self.created_at.isoformat(),
             "turn_count": self._turn_count,
             "message_count": self.context_manager.message_count,
             "token_usage": self.context_manager.total_usage,

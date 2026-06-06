@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 from src.tools.base import Tool, ToolInvocation, ToolResult, ToolKind
 
-
+# disvocery tool of sub agent
 class TestToolParams(BaseModel):
     message: str = Field(..., description="The message to echo back")
 
