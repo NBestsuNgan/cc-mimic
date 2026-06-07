@@ -6,7 +6,7 @@ import os
 from typing import Any
 from enum import Enum
 
-load_dotenv(override=True)
+load_dotenv(Path(__file__).parent.parent.parent / ".env")
 
 class ModelConfig(BaseModel): # separate for "Modle" configuration params, easily to extendable in the future
     name: str = "openrouter/owl-alpha" 
