@@ -20,8 +20,8 @@ class BlockedFile:
         for blcok_file in BLOCLED_FILES:
             if blcok_file in self.search_params:
                 if self.tool_name == "read_file":
-                    return ToolResult.error_result("Cannot read .env file")
+                    return ToolResult.error_result(f"Cannot read {blcok_file} file")
                 elif self.tool_name == "shell":
-                    return ToolResult.error_result("Command contain .env related, Command cannot access .env file")
+                    return ToolResult.error_result(f"Command contain {blcok_file} related, Command cannot access {blcok_file} file")
                 
         return None
