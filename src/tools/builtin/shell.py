@@ -5,6 +5,7 @@ import asyncio
 import signal
 from pydantic import BaseModel, Field
 from src.tools.base import Tool, ToolInvocation, ToolKind, ToolResult, ToolConfirmation
+from src.safety.blocked_file import BlockedFile
 from pathlib import Path
 
 BLOCKED_COMMANDS = {
@@ -82,6 +83,9 @@ class ShellTool(Tool):
                     f"Command blocked for safety: {params.command}",
                     metadata={"blocked": True}
                 )
+        is_contain_block_file = await BlockedFile(command, self.name).execute()
+        if is_contain_block_file:
+            return is_contain_block_file
 
         if params.cwd:
             cwd = Path(params.cwd)

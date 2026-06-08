@@ -2,6 +2,7 @@ from pydantic import BaseModel, Field
 from src.tools.base import Tool, ToolInvocation, ToolKind, ToolResult
 from src.utils.paths import resolve_path, is_binary_file
 from src.utils.text import count_tokens, truncate_text
+from src.safety.blocked_file import BlockedFile
 
 
 class ReadFileParams(BaseModel):
@@ -50,6 +51,10 @@ class ReadFileTool(Tool):
 
         if not path.is_file():
             return ToolResult.error_result(f"Path is not a file: {path}")
+        
+        is_contain_block_file = await BlockedFile(path.name, self.name).execute()
+        if is_contain_block_file:
+            return is_contain_block_file
 
         file_size = path.stat().st_size
 
