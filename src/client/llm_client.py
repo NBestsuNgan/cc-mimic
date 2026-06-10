@@ -69,13 +69,15 @@ class LLMClient:
         client = self.get_client()
         kwargs = {
             "model": self.config.model_name,
-            "messages": messages,
+            # "messages": messages,
             "stream": stream,
         }
 
         if tools:
             kwargs["tools"] = self._build_tools(tools)
             kwargs["tool_choice"] = "auto"
+
+        kwargs["messages"] = messages
 
         # print("\n===== OUTGOING API PAYLOAD =====", flush=True)
         # print(json.dumps(kwargs, indent=2, default=str), flush=True)

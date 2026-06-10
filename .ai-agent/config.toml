@@ -38,10 +38,11 @@ command = 'python src/scripts/test_tool.py'
 
 
 
-[mcp_servers.filesystem]
-command = "npx"
-args = ["-y", "@modelcontextprotocol/server-filesystem", "/Users/nbest/Desktop/cc-mimic/.ai-agent", "/tmp"]
-
-# [mcp_servers.filesystem2]
+# [mcp_servers.filesystem]
 # command = "npx"
-# args = ["-y", "@modelcontextprotocol/server-filesystem222222222222", "/Users/nbest/Desktop/cc-mimic/.ai-agent", "/tmp"]
+# args = ["-y", "@modelcontextprotocol/server-filesystem", "/Users/nbest/Desktop/cc-mimic/.ai-agent", "/tmp"]
+
+# [mcp_servers.github]
+# command = "npx"
+# args = ["-y", "@modelcontextprotocol/server-github"]
+# env = { GITHUB_PERSONAL_ACCESS_TOKEN = "your_token" }
