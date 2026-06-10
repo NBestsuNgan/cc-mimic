@@ -1,3 +1,5 @@
+# initial config dir
+
 hooks_enabled=true
 
 [model]
