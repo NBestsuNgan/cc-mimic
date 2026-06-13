@@ -341,6 +341,10 @@ def main(
     cwd: Path | None,
 ):
 
+    # Bootstrap .ai-agent/ directory before loading config so that
+    # project-level config.toml (with hooks, etc.) is picked up.
+    Config(cwd=cwd or Path.cwd()).initial_start_dir()
+
     try:
         config = load_config(cwd=cwd)
     except Exception as e:
@@ -351,8 +355,6 @@ def main(
         for error in errors:
             console.print(f"[error]Configuration Error: {error}[/error]")
         sys.exit(1)
-
-    config.initial_start_dir()
     cli = CLI(config=config)  # dependency management solution
 
     # messages = [{"role": "user", "content": prompt}]

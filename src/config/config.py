@@ -85,7 +85,7 @@ class Config(BaseModel):
     model: ModelConfig = Field(default_factory=ModelConfig)
     cwd: Path = Field(default_factory=Path.cwd)
     shell_environment: ShellEnvironmentPolicy = Field(default_factory=ShellEnvironmentPolicy)
-    hooks_enabled: bool = False
+    hooks_enabled: bool = True
     hooks: list[HookConfig] = Field(default_factory=list)
     approval: ApprovalPolicy = ApprovalPolicy.ON_REQUEST
     max_turns: int = 100
@@ -144,7 +144,7 @@ class Config(BaseModel):
         # pwd/.ai-agent
         config_path = self.cwd / ".ai-agent"
         config_path.mkdir(parents=True, exist_ok=True)
-        
+
         # pwd/.ai-agent/config.toml
         config_toml_path = config_path / "config.toml"
         CONFIG_TOML_CONTENT = """# initial config dir
@@ -160,32 +160,32 @@ temperature=0
 [[hooks]]
 name='log_before_agent_hook'
 trigger='before_agent'
-command = 'python .ai-agent/hooks/test_hook.py' 
+command = 'python .ai-agent/hooks/test_hook.py'
 
 [[hooks]]
 name='log_after_agent_hook'
 trigger='after_agent'
-command = 'python .ai-agent/hooks/test_hook.py' 
+command = 'python .ai-agent/hooks/test_hook.py'
 
 [[hooks]]
 name='log_before_llm_hook'
 trigger='before_llm'
-command = 'python .ai-agent/hooks/test_hook.py' 
+command = 'python .ai-agent/hooks/test_hook.py'
 
 [[hooks]]
 name='log_after_llm_hook'
 trigger='after_llm'
-command = 'python .ai-agent/hooks/test_hook.py' 
+command = 'python .ai-agent/hooks/test_hook.py'
 
 [[hooks]]
 name='log_before_tool_hook'
 trigger='before_tool'
-command = 'python .ai-agent/hooks/test_hook.py' 
+command = 'python .ai-agent/hooks/test_hook.py'
 
 [[hooks]]
 name='log_after_tool_hook'
 trigger='after_tool'
-command = 'python .ai-agent/hooks/test_hook.py' 
+command = 'python .ai-agent/hooks/test_hook.py'
 
 
 

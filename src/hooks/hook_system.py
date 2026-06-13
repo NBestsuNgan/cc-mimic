@@ -3,21 +3,29 @@ import os
 import sys
 import signal
 import tempfile
+import logging
 from typing import Any
 import json
 from src.config.config import Config, HookConfig, HookTrigger
 from src.tools.base import ToolResult
+
+logger = logging.getLogger(__name__)
 
 
 class HookSystem:
     def __init__(self, config: Config):
         self.config = config
         self.hooks: list[HookConfig] = []
+        logger.info(f"HookSystem init: hooks_enabled={config.hooks_enabled}, hooks_count={len(config.hooks)}, cwd={config.cwd}")
 
         if self.config.hooks_enabled:
             self.hooks = [hook for hook in self.config.hooks if hook.enabled]
+            logger.info(f"Loaded {len(self.hooks)} enabled hooks")
+        else:
+            logger.warning("Hooks are DISABLED - no hooks will be triggered")
 
     async def _run_hook(self, hook: HookConfig, env: dict[str, str]) -> None:
+        logger.info(f"Triggering hook: {hook.name} ({hook.trigger.value})")
         try: 
             if hook.command:
                 await self._run_command(hook.command, hook.timeout_sec, env)
@@ -54,7 +62,7 @@ class HookSystem:
             # finally:
             #     os.unlink(script_path)
         except Exception as e:
-            print(e)
+            logger.error(f"Hook {hook.name} failed: {e}")
 
 
             
@@ -62,26 +70,43 @@ class HookSystem:
     async def _run_command(
         self, command: str, timeout: float, env: dict[str, str]
     ) -> None:
-        process = await asyncio.create_subprocess_shell(
-            command,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
-            cwd=self.config.cwd,
-            env=env,
-            start_new_session=True,
-        )
+        logger.info(f"Running hook command: {command}, cwd={self.config.cwd}")
+
+        # If the user wrote 'python ...' in config.toml, swap to sys.executable
+        # so the hook uses the same Python interpreter as the agent.
+        resolved = command
+        if resolved.startswith("python ") or resolved.startswith("python3 "):
+            resolved = sys.executable + resolved[resolved.index(" "):]
+        logger.info(f"Resolved hook command: {resolved}")
 
         try:
-            await asyncio.wait_for(
-                process.communicate(),
-                timeout=timeout,
+            process = await asyncio.create_subprocess_shell(
+                resolved,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
+                cwd=self.config.cwd,
+                env=env,
+                start_new_session=True,
             )
-        except asyncio.TimeoutError:
-            if sys.platform != "win32":
-                os.killpg(os.getpgid(process.pid), signal.SIGKILL)
-            else:
-                process.kill()
-            await process.wait()
+
+            try:
+                stdout, stderr = await asyncio.wait_for(
+                    process.communicate(),
+                    timeout=timeout,
+                )
+                if process.returncode != 0:
+                    logger.warning(f"Hook command failed (rc={process.returncode}): {stderr.decode()}")
+                else:
+                    logger.info(f"Hook command succeeded: {stdout.decode().strip()}")
+            except asyncio.TimeoutError:
+                if sys.platform != "win32":
+                    os.killpg(os.getpgid(process.pid), signal.SIGKILL)
+                else:
+                    process.kill()
+                await process.wait()
+                logger.warning(f"Hook command timed out after {timeout}s")
+        except Exception as e:
+            logger.error(f"Hook command error: {e}")
 
     def _build_env(
         self,
