@@ -75,7 +75,7 @@ def load_config(cwd: Path | None) -> Config:
             logger.warning(f"Skip invalid system config: {system_path}")
 
     # user specific path
-    # C:\Users\Nattapat(Best)Dungde\Desktop\ai-agent\.ai-agent\config.toml
+    # C:\Users\Username\Desktop\ai-agent\.ai-agent\config.toml
 
     # "specific path" will override "system path"
     project_path = _get_project_config(cwd)

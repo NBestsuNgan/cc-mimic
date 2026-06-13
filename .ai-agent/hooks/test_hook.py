@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 import os
 import sys
 import json
@@ -24,14 +23,14 @@ def main():
         "error": error,
     }
 
-    cross_platform_path = f"{Path(__file__).parent.parent.parent}/".replace('C:', '').replace('\\', '/')
-    log_path = os.path.expanduser(cross_platform_path + "hook.log")
-    os.makedirs(os.path.dirname(log_path), exist_ok=True)
-    with open(log_path, "a") as f:
+    # Clean cross-platform pathlib alternative to your string replace lines
+    log_path = Path(cwd) / ".ai-agent" / "hook.log"
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+
+    with open(log_path, "a", encoding="utf-8") as f:
         f.write(f"[HOOK] {json.dumps(log_data)}\n")
 
     sys.exit(0)
-
 
 if __name__ == "__main__":
     main()

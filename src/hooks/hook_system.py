@@ -99,7 +99,6 @@ class HookSystem:
             env["AI_AGENT_USER_MESSAGE"] = user_message
         if error:
             env["AI_AGENT_ERROR"] = str(error)
-
         return env
 
     async def trigger_before_agent(

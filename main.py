@@ -11,6 +11,7 @@ from src.ui.tui import TUI, get_console
 from src.config.loader import load_config
 from src.config.config import Config, ApprovalPolicy
 from src.agent.persistence import PersistenceManager, SessionSnapshot
+
 console = get_console()
 
 
@@ -44,7 +45,7 @@ class CLI:
                     user_input = console.input("\n[user]> [/user]").strip()
                     if not user_input:
                         continue
-                
+
                     if user_input.startswith("/"):
                         should_continue = await self._handle_command(user_input)
                         if not should_continue:
@@ -144,13 +145,17 @@ class CLI:
         elif cmd_name == "/model":
             if cmd_args:
                 self.config.model_name = cmd_args
-                console.print(f"[success]Model changed to: {cmd_args} [/success]")
+                console.print(
+                    f"[success]Model changed to: {cmd_args} [/success]"
+                )
             else:
                 console.print(f"Current model: {self.config.model_name}")
         elif cmd_name == "/model":
             if cmd_args:
-                self.config.model_name = cmd_args # /model opus-4.6
-                console.print(f"[success]Model change to: {cmd_args} [/success]")
+                self.config.model_name = cmd_args  # /model opus-4.6
+                console.print(
+                    f"[success]Model change to: {cmd_args} [/success]"
+                )
             else:
                 console.print(f"Current model: {self.config.model_name}")
         elif cmd_name == "/approval":
@@ -158,12 +163,20 @@ class CLI:
                 try:
                     approval = ApprovalPolicy(cmd_args)
                     self.config.approval = approval
-                    console.print(f"[success]Approval policy change to: {cmd_args} [/success]")
+                    console.print(
+                        f"[success]Approval policy change to: {cmd_args} [/success]"
+                    )
                 except:
-                    console.print(f"[error]Incorrect Approval policy: {cmd_args}[/error]")
-                    console.print(f"Valid options: {', '.join(p for p in ApprovalPolicy)}")
+                    console.print(
+                        f"[error]Incorrect Approval policy: {cmd_args}[/error]"
+                    )
+                    console.print(
+                        f"Valid options: {', '.join(p for p in ApprovalPolicy)}"
+                    )
             else:
-                console.print(f"Current Approval policy: {self.config.approval.value}")
+                console.print(
+                    f"Current Approval policy: {self.config.approval.value}"
+                )
         elif cmd_name == "/stats":
             stats = self.agent.session.get_stats()
             console.print("\n[bold]Session Statistics [/bold]")
@@ -180,7 +193,9 @@ class CLI:
             for server in mcp_servers:
                 status = server["status"]
                 status_color = "green" if status == "connected" else "red"
-                console.print(f"  •  {server['name']}: [{status_color}]{status}[/{status_color}] ({server['tools']}) tools")
+                console.print(
+                    f"  •  {server['name']}: [{status_color}]{status}[/{status_color}] ({server['tools']}) tools"
+                )
         elif cmd_name == "/save":
             persistence_manager = PersistenceManager()
             session_snapshot = SessionSnapshot(
@@ -192,13 +207,17 @@ class CLI:
                 total_usage=self.agent.session.context_manager.total_usage,
             )
             persistence_manager.save_session(session_snapshot)
-            console.print(f"[success]Session saved: {self.agent.session.session_id}[/success]")
+            console.print(
+                f"[success]Session saved: {self.agent.session.session_id}[/success]"
+            )
         elif cmd_name == "/sessions":
             persistence_manager = PersistenceManager()
             sessions = persistence_manager.list_sessions()
             console.print("\n[bold]Saved Sessions[/bold]]")
             for s in sessions:
-                console.print(f"  • {s['session_id']} (turns: {s['turn_count']}, updated: {s['updated_at']})")
+                console.print(
+                    f"  • {s['session_id']} (turns: {s['turn_count']}, updated: {s['updated_at']})"
+                )
         elif cmd_name == "/resume":
             if not cmd_args:
                 console.print(f"[error]Usage: /resume <session_id> [/error]")
@@ -231,7 +250,8 @@ class CLI:
                             )
                         elif msg["role"] == "tool":
                             session.context_manager.add_tool_result(
-                                msg.get("tool_call_id", ""), msg.get("content", "")
+                                msg.get("tool_call_id", ""),
+                                msg.get("content", ""),
                             )
 
                     await self.agent.session.client.close()
@@ -251,11 +271,17 @@ class CLI:
                 messages=self.agent.session.context_manager.get_messages(),
                 total_usage=self.agent.session.context_manager.total_usage,
             )
-            checkpoint_id = persistence_manager.save_checkpoint(session_snapshot)
-            console.print(f"[success]Checkpoint created saved: {checkpoint_id}[/success]")
+            checkpoint_id = persistence_manager.save_checkpoint(
+                session_snapshot
+            )
+            console.print(
+                f"[success]Checkpoint created saved: {checkpoint_id}[/success]"
+            )
         elif cmd_name == "/restore":
             if not cmd_args:
-                console.print(f"[error]Usage: /restire <checkpoint_id> [/error]")
+                console.print(
+                    f"[error]Usage: /restire <checkpoint_id> [/error]"
+                )
             else:
                 persistence_manager = PersistenceManager()
                 snapshot = persistence_manager.load_checkpoint(cmd_args)
@@ -285,7 +311,8 @@ class CLI:
                             )
                         elif msg["role"] == "tool":
                             session.context_manager.add_tool_result(
-                                msg.get("tool_call_id", ""), msg.get("content", "")
+                                msg.get("tool_call_id", ""),
+                                msg.get("content", ""),
                             )
 
                     await self.agent.session.client.close()
@@ -299,6 +326,7 @@ class CLI:
             console.print(f"[error]Unknown command: {cmd_name}[/error]")
 
         return True
+
 
 @click.command()  # denote that this is a command executable
 @click.argument("prompt", required=False)
@@ -318,13 +346,13 @@ def main(
     except Exception as e:
         console.print(f"[error]Configuration Error: {e}[/error]")
 
-    errors = config.validate()
+    errors = config.validate() # validate config
     if errors:
         for error in errors:
             console.print(f"[error]Configuration Error: {error}[/error]")
-
         sys.exit(1)
 
+    config.initial_start_dir()
     cli = CLI(config=config)  # dependency management solution
 
     # messages = [{"role": "user", "content": prompt}]

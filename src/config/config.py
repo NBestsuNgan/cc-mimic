@@ -139,3 +139,151 @@ class Config(BaseModel):
 
     def to_dict(self) -> dict[str, Any]:
         return self.model_dump(mode="json")
+
+    def initial_start_dir(self) -> None:
+        # pwd/.ai-agent
+        config_path = self.cwd / ".ai-agent"
+        config_path.mkdir(parents=True, exist_ok=True)
+        
+        # pwd/.ai-agent/config.toml
+        config_toml_path = config_path / "config.toml"
+        CONFIG_TOML_CONTENT = """# initial config dir
+
+hooks_enabled=true
+
+# Object
+[model]
+name="openrouter/owl-alpha"
+temperature=0
+
+# List of Object
+[[hooks]]
+name='log_before_agent_hook'
+trigger='before_agent'
+command = 'python .ai-agent/hooks/test_hook.py' 
+
+[[hooks]]
+name='log_after_agent_hook'
+trigger='after_agent'
+command = 'python .ai-agent/hooks/test_hook.py' 
+
+[[hooks]]
+name='log_before_llm_hook'
+trigger='before_llm'
+command = 'python .ai-agent/hooks/test_hook.py' 
+
+[[hooks]]
+name='log_after_llm_hook'
+trigger='after_llm'
+command = 'python .ai-agent/hooks/test_hook.py' 
+
+[[hooks]]
+name='log_before_tool_hook'
+trigger='before_tool'
+command = 'python .ai-agent/hooks/test_hook.py' 
+
+[[hooks]]
+name='log_after_tool_hook'
+trigger='after_tool'
+command = 'python .ai-agent/hooks/test_hook.py' 
+
+
+
+# [mcp_servers.filesystem]
+# command = "npx"
+# args = ["-y", "@modelcontextprotocol/server-filesystem", "/Users/nbest/Desktop/cc-mimic/.ai-agent", "/tmp"]
+
+# [mcp_servers.github]
+# command = "npx"
+# args = ["-y", "@modelcontextprotocol/server-github"]
+# env = { GITHUB_PERSONAL_ACCESS_TOKEN = "your_token" }
+"""
+        if not config_toml_path.exists():
+            config_toml_path.write_text(CONFIG_TOML_CONTENT, encoding="utf-8")
+        
+        # discovery tools
+        discovery_tools_path = config_path / "tools"
+        discovery_tools_path.mkdir(parents=True, exist_ok=True)
+        
+        # discovery tools execute file
+        discovery_tool_file_path = discovery_tools_path / "test_tool.py"
+        DISCOVERY_TOOL_CONTENT = """from pydantic import BaseModel, Field
+from src.tools.base import Tool, ToolInvocation, ToolResult, ToolKind
+
+# discovery tool of sub agent
+class TestToolParams(BaseModel):
+    message: str = Field(..., description="The message to echo back")
+
+class TestTool(Tool):
+    name = "test_tool"
+    description = (
+        "A test tool that echoes back the input message. "
+        "This tool is discovered from .unified_agent/tool/test_tool.py"
+    )
+    kind = ToolKind.READ
+    schema = TestToolParams
+
+    async def execute(self, invocation: ToolInvocation) -> ToolResult:
+        params = TestToolParams(**invocation.params)
+        message = params.message
+        
+        output = f"Test tool received: {message}\\n"
+        output += "Tool was discovered from: .ai-agent/tool/test_tool.py"
+        
+        return ToolResult.success_result(output)
+"""
+
+        if not discovery_tool_file_path.exists():
+            discovery_tool_file_path.write_text(DISCOVERY_TOOL_CONTENT, encoding="utf-8")
+        
+        # configureable hook execute files
+        hooks_path = config_path / "hooks"
+        hooks_path.mkdir(parents=True, exist_ok=True)
+        
+        # hook logs execute file
+        hook_file_path = hooks_path / "test_hook.py"
+        HOOK_CONTENT = """#!/usr/bin/env python3
+import os
+import sys
+import json
+from datetime import datetime
+from pathlib import Path
+
+def main():
+    trigger = os.environ.get("AI_AGENT_TRIGGER")
+    cwd = os.environ.get("AI_AGENT_CWD")
+    tool_name = os.environ.get("AI_AGENT_TOOL_NAME")
+    user_message = os.environ.get("AI_AGENT_USER_MESSAGE")
+    llm_response = os.environ.get("AI_AGENT_LLM_RESPONSE")
+    error = os.environ.get("AI_AGENT_ERROR")
+
+    log_data = {
+        "timestamp": datetime.now().isoformat(),
+        "trigger": trigger,
+        "cwd": cwd,
+        "tool_name": tool_name,
+        "user_message": user_message,
+        "llm_response": llm_response,
+        "error": error,
+    }
+
+    # Clean cross-platform pathlib alternative to your string replace lines
+    log_path = Path(cwd) / ".ai-agent" / "hook.log"
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+
+    with open(log_path, "a", encoding="utf-8") as f:
+        f.write(f"[HOOK] {json.dumps(log_data)}\\n")
+
+    sys.exit(0)
+
+if __name__ == "__main__":
+    main()
+"""
+
+        if not hook_file_path.exists():
+            hook_file_path.write_text(HOOK_CONTENT, encoding="utf-8")
+        
+        # hook logs
+        hook_log_path = config_path / "hook.log"
+        hook_log_path.touch()
+        

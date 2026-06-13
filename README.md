@@ -25,13 +25,14 @@ pip3 install -e .
 
 ## ⊹ Features
 
-| Status | Feature |
-|--------|---------|
-| ◌ Pending | Sandboxing |
-| ◌ Pending | LSP (Language Server Protocol) |
-| ◌ Pending | `apply_patch` |
-| ◌ Pending | `skill.md` |
-| ◌ Pending | `initialize .ai-agent and it configuration in the cwd() that call myagent` |
+| Status    | Feature                                                                    |
+| --------- | -------------------------------------------------------------------------- |
+| ◌ Pending | Sandboxing                                                                 |
+| ◌ Pending | LSP (Language Server Protocol)                                             |
+| ◌ Pending | `apply_patch`                                                              |
+| ◌ Pending | `skill.md`                                                                 |
+| ✅ Done | `initialize .ai-agent and it configuration in the cwd() that call myagent` |
+
 ---
 
 ## ⚙ Configuration
