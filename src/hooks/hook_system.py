@@ -75,19 +75,43 @@ class HookSystem:
         # If the user wrote 'python ...' in config.toml, swap to sys.executable
         # so the hook uses the same Python interpreter as the agent.
         resolved = command
+        use_exec = False
+        exec_args = None
+
         if resolved.startswith("python ") or resolved.startswith("python3 "):
-            resolved = sys.executable + resolved[resolved.index(" "):]
+            python_path = sys.executable
+            # On Windows, always use exec to handle special characters like
+            # parentheses in the path (e.g., username with parentheses)
+            if sys.platform == "win32":
+                args = resolved[resolved.index(" "):].strip().split()
+                exec_args = [python_path] + args
+                use_exec = True
+                logger.info(f"Using exec with args: {exec_args}")
+            else:
+                if " " in python_path:
+                    python_path = f'"{python_path}"'
+                resolved = python_path + resolved[resolved.index(" "):]
+
         logger.info(f"Resolved hook command: {resolved}")
 
         try:
-            process = await asyncio.create_subprocess_shell(
-                resolved,
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE,
-                cwd=self.config.cwd,
-                env=env,
-                start_new_session=True,
-            )
+            if use_exec:
+                process = await asyncio.create_subprocess_exec(
+                    *exec_args,
+                    stdout=asyncio.subprocess.PIPE,
+                    stderr=asyncio.subprocess.PIPE,
+                    cwd=self.config.cwd,
+                    env=env,
+                )
+            else:
+                process = await asyncio.create_subprocess_shell(
+                    resolved,
+                    stdout=asyncio.subprocess.PIPE,
+                    stderr=asyncio.subprocess.PIPE,
+                    cwd=self.config.cwd,
+                    env=env,
+                    start_new_session=(sys.platform != "win32"),
+                )
 
             try:
                 stdout, stderr = await asyncio.wait_for(
