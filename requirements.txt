@@ -1,4 +1,5 @@
 # require lib of project
+PyYAML==6.0.3
 openai==2.32.0
 python-dotenv==1.2.2
 click==8.3.2

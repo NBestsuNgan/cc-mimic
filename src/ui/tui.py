@@ -38,6 +38,7 @@ AGENT_THEME = Theme(
         "tool.network": "bright_blue",
         "tool.memory": "green",
         "tool.mcp": "bright_cyan",
+        "tool.skill": "bold bright_yellow",
         # Code / blocks
         "code": "white",
     }
@@ -139,9 +140,12 @@ class TUI:
     ) -> None:
         self._tool_args_by_call_id[call_id] = arguments
         border_style = f"tool.{tool_kind}" if tool_kind else "tool"
+        is_skill = tool_kind == "skill"
+        label = "Skill" if is_skill else "C"
         title = Text.assemble(
-            ("C ", "muted"),
-            (name, "tool"),
+            (label, "tool.skill" if is_skill else "muted"),
+            (" ", "muted"),
+            (name, "tool.skill" if is_skill else "tool"),
             ("  ", "muted"),
             (f"#{call_id[:8]}", "muted"),
         )
@@ -268,10 +272,11 @@ class TUI:
         border_style = f"tool.{tool_kind}" if tool_kind else "tool"
         status_icon = "✓" if success else "✗"
         status_style = "success" if success else "error"
+        is_skill = tool_kind == "skill"
         args = self._tool_args_by_call_id.get(call_id, {})
         title = Text.assemble(
             (f"{status_icon} ", f"{status_style}"),
-            (name, "tool"),
+            (name, "tool.skill" if is_skill else "tool"),
             ("  ", "muted"),
             (f"#{call_id[:8]}", "muted"),
         )
@@ -526,6 +531,17 @@ class TUI:
                     word_wrap=True,
                 )
             )
+        elif is_skill:
+            if success:
+                output_display = truncate_text(output, self.config.model_name, self._max_block_tokens)
+                if output_display.strip():
+                    blocks.append(
+                        Markdown(output_display)
+                    )
+                else:
+                    blocks.append(Text("(no output)", style="muted"))
+            else:
+                blocks.append(Text(error or "Skill failed", style="error"))
         else:   
             if error and not success:
                 blocks.append(Text(error, style="error"))

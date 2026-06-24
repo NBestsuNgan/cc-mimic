@@ -56,6 +56,7 @@ class Agent:
                     self.session.context_manager.add_usage(usage)
                     
             tools_schemas = self.session.tool_registry.get_schemas()
+            skills_schemas = self.session.tool_registry.get_skills_schemas()
             tool_calls: list[ToolCall] = []
             usage: TokenUsage | None = None
             
@@ -68,6 +69,7 @@ class Agent:
             async for event in self.session.client.chat_completion(
                 self.session.context_manager.get_messages(), 
                 tools=tools_schemas if tools_schemas else None, 
+                skills=skills_schemas if skills_schemas else None, 
             ):
                 if event.type == StreamEventType.TEXT_DELTA:
                     if event.text_delta:

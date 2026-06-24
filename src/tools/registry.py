@@ -3,8 +3,10 @@ from pathlib import Path
 
 from src.config.config import Config
 from src.tools.base import Tool, ToolResult, ToolInvocation
+
 from src.tools.builtin import get_all_builtin_tools
 from src.tools.subagents import get_default_subagent_definitions, SubagentTool
+from src.tools.skills.skill_tool import Skill
 from src.safety.approval import ApprovalManager, ApprovalContext, ApprovalDecision
 from src.hooks.hook_system import HookSystem
 import logging
@@ -16,6 +18,7 @@ logger = logging.getLogger(__name__)
 class ToolRegistry:
     def __init__(self, config: Config):
         self._tools: dict[str, Tool] = {}
+        self._skills: dict[str, Skill] = {}
         self._mcp_tools: dict[str, Tool] = {}
         self.config = config
         
@@ -34,6 +37,10 @@ class ToolRegistry:
         self._mcp_tools[tool.name] = tool
         logger.debug(f"Registerd MCP tool: {tool.name}")
 
+    def register_skill(self, skill: Skill) -> None:
+        self._skills[skill.name] = skill
+        logger.debug(f"Registerd Skill: {skill.name}")
+
     def unregister(self, name: str) -> bool:
         if name in self._tools:
             del self._tools[name]
@@ -46,6 +53,8 @@ class ToolRegistry:
             return self._tools[name]
         elif name in self._mcp_tools:
             return self._mcp_tools[name]
+        elif name in self._skills:
+            return self._skills[name]
         return None
 
     def get_tools(self) -> list[Tool]:
@@ -61,8 +70,18 @@ class ToolRegistry:
         
         return tools
 
+    def get_skills(self) -> list[Skill]:
+        skills: list[Skill] = []
+        for skill in self._skills.values():
+            skills.append(skill)
+        
+        return skills
+
     def get_schemas(self) -> list[dict[str, Any]]:
         return [tool.to_openai_schema() for tool in self.get_tools()]
+
+    def get_skills_schemas(self) -> list[dict[str, Any]]:
+        return [skill.to_skill_openai_schema() for skill in self.get_skills()]
 
     async def invoke(
         self,
@@ -142,7 +161,6 @@ def create_default_registry(config: Config) -> ToolRegistry:
     registry = ToolRegistry(config)
     for tool_class in get_all_builtin_tools():
         registry.register(tool_class(config))
-    
     for subagent_def in get_default_subagent_definitions():
         registry.register(SubagentTool(config, subagent_def))
     return registry

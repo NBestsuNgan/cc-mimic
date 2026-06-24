@@ -1,5 +1,5 @@
 from pathlib import Path
-
+import yaml
 
 def resolve_path(
     base: str | Path,
@@ -41,3 +41,15 @@ def is_binary_file(path: str | Path) -> bool:
             return b"\x00" in chuck  # logic to checking binary file
     except (OSError, IOError):
         return False
+
+def load_frontmatter(path: Path) -> tuple[dict, str]:
+    raw = path.read_text(encoding="utf-8")
+    
+    if not raw.startswith("---"):
+        return {}, raw
+    
+    parts = raw.split("---", 2)
+    metadata = yaml.safe_load(parts[1])
+    body = parts[2].strip()
+    
+    return metadata, body

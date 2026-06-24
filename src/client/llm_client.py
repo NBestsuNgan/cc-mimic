@@ -36,6 +36,29 @@ class LLMClient:
             await self._client.close()
             self._client = None
 
+    def _build_skills(self, skills: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        return [
+            {
+                "type": "function",
+                "function": {
+                    "name": skill["name"],
+                    "description": skill["description"],
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "description": "The name of the skill to execute"
+                            }
+                        },
+                        "required": ["name"]
+                    }
+                }
+            }
+            for skill in skills
+            if skill.get("name") and skill.get("description")
+        ]
+
     def _build_tools(self, tools: list[dict[str, Any]]):
         return [
             {
@@ -61,6 +84,7 @@ class LLMClient:
             dict[str, Any]
         ],  # list of invocation message interaction will be send to llm
         tools: list[dict[str, Any]] | None = None,
+        skills: list[dict[str, Any]] | None = None,
         stream: bool = True,
     ) -> AsyncGenerator[StreamEvent, None]:
         ### return vs yield ###
@@ -73,8 +97,10 @@ class LLMClient:
             "stream": stream,
         }
 
-        if tools:
-            kwargs["tools"] = self._build_tools(tools)
+        if tools or skills:
+            kwargs["tools"] = self._build_tools(tools or [])
+            if skills:
+                kwargs["tools"].extend(self._build_skills(skills))
             kwargs["tool_choice"] = "auto"
 
 

@@ -624,6 +624,7 @@ def get_system_prompt(
     config: Config,
     user_memory: str | None = None,
     tools: list[Tool] | None = None,
+    skills: list[dict[str, str]] | None = None,
 ) -> str:
     parts = []
 
@@ -634,6 +635,9 @@ def get_system_prompt(
 
     if tools:
         parts.append(_get_tool_guidelines_section(tools))
+
+    if skills:
+        parts.append(_get_skills_section(skills))
 
     # AGENTS.md spec
     parts.append(_get_agents_md_section())
@@ -649,7 +653,7 @@ def get_system_prompt(
 
     if user_memory:
         parts.append(_get_memory_section(user_memory))
-    
+
     # Operational guidelines
     parts.append(_get_operational_section())
 
@@ -902,6 +906,26 @@ You have access to the following tools to accomplish your tasks:
    - Use sub-agents when the task involves complex refactoring, codebase exploration, or system-wide analysis"""
 
     return guidelines
+
+
+def _get_skills_section(skills: list[dict[str, str]]) -> str:
+    """Generate skills section for system prompt."""
+    skills_list = "\n".join(
+        f"- **{s['name']}**: {s['description']}" for s in skills
+    )
+    return f"""# Skills
+
+You have access to the following skills. Each skill provides specialized domain knowledge and step-by-step instructions for specific tasks.
+
+{skills_list}
+
+## How to use skills
+
+- When the user's request matches a skill's purpose, invoke it by calling its name as a tool.
+- The skill's full instructions will be loaded automatically after you call it — read them carefully and follow them to complete the task.
+- Do NOT use `read_file` to read the skill file yourself — just call the skill and its content will be provided.
+- Skills act as expert guides: they tell you HOW to approach a task, what to look for, and what output to produce.
+- Call the skill by its exact name as listed above, then follow the instructions it provides."""
 
 
 def get_compression_prompt() -> str:
