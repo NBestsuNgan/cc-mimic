@@ -38,6 +38,9 @@ name='log_after_tool_hook'
 trigger='after_tool'
 command = 'python .ai-agent/hooks/test_hook.py' 
 
+[mcp_servers.playwright]
+command = "npx"
+args = ["-y", "@playwright/mcp@latest"]
 
 
 # [mcp_servers.filesystem]

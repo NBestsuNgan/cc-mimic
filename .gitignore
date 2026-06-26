@@ -136,6 +136,7 @@ celerybeat.pid
 .claude
 .ai-agent/
 -p
+.playwright-mcp
 
 # Environments
 .env

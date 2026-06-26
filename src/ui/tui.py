@@ -639,6 +639,7 @@ class TUI:
 - `/checkpoints` - List available checkpoints
 - `/restore <checkpoint_id>` - Restore a checkpoint
 - `/sessions` - List saved sessions
+- `/clear_sessions` - Clear all sessions
 - `/resume <session_id>` - Resume a saved session
 
 ## Tips

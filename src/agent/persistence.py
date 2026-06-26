@@ -82,6 +82,15 @@ class PersistenceManager:
 
         sessions.sort(key=lambda x: x["updated_at"], reverse=True)
         return sessions
+
+    def clear_sessions(self) -> list[str]:
+        sessions_path = [file_path for file_path in self.sessions_dir.glob("*.json")] 
+        deleted_session = []
+        for session in sessions_path:
+            os.remove(session)
+            deleted_session.append(session.name)
+
+        return deleted_session
     
     def save_checkpoint(self, snapshot: SessionSnapshot) -> str:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")

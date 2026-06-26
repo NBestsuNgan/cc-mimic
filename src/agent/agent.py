@@ -1,7 +1,7 @@
 from __future__ import annotations
 import json
 from typing import AsyncGenerator, Callable, Awaitable
-
+from src.agent.persistence import PersistenceManager, SessionSnapshot
 from src.agent.events import AgentEvent, AgentEventType
 from src.client.response import StreamEventType, ToolCall, ToolResultMessage
 from src.client.llm_client import TokenUsage
@@ -21,16 +21,26 @@ class Agent:
         self.session: Session | None = Session(self.config)
         self.session.approval_manager.confirmation_callback = confirmation_callback
 
-    async def run(self, message: str):
+    async def run(self, message: str, persistence_manager: PersistenceManager):
         await self.session.hook_system.trigger_before_agent(message)
         yield AgentEvent.agent_start(message)
 
         # add user message to context
         self.session.context_manager.add_user_message(message)
-
         final_response: str | None = None
         async for event in self._agentic_loop():
             yield event
+
+            # save sessions
+            session_snapshot = SessionSnapshot(
+                session_id=self.session.session_id,
+                created_at=self.session.created_at,
+                updated_at=self.session.updated_at,
+                turn_count=self.session.turn_count,
+                messages=self.session.context_manager.get_messages(),
+                total_usage=self.session.context_manager.total_usage,
+            )
+            persistence_manager.save_session(session_snapshot)
 
             if event.type == AgentEventType.TEXT_COMPLETE:
                 final_response = event.data.get("content")

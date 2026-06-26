@@ -40,6 +40,7 @@ class CLI:
             confirmation_callback=self.tui.handle_confirmation,
         ) as agent:
             self.agent = agent
+            persistence_manager = PersistenceManager()
             while True:
                 try:
                     user_input = console.input("\n[user]> [/user]").strip()
@@ -52,7 +53,10 @@ class CLI:
                             break
                         continue
 
-                    await self._process_message(user_input)
+                    await self._process_message(
+                        user_input, 
+                        persistence_manager
+                    )
                 except KeyboardInterrupt:
                     console.print("\n[dim]Use /exit to quit[/dim]")
                 except EOFError:
@@ -68,14 +72,14 @@ class CLI:
             return "skill"
         return tool.kind.value
 
-    async def _process_message(self, message: str) -> str | None:
+    async def _process_message(self, message: str, persistence_manager: PersistenceManager) -> str | None:
         if not self.agent:
             return None
 
         assistant_streaming = False
         final_response: str | None = None
 
-        async for event in self.agent.run(message):
+        async for event in self.agent.run(message, persistence_manager):
             if event.type == AgentEventType.TEXT_DELTA:
                 content = event.data.get("content", "")
                 # first message that user have
@@ -213,11 +217,22 @@ class CLI:
         elif cmd_name == "/sessions":
             persistence_manager = PersistenceManager()
             sessions = persistence_manager.list_sessions()
-            console.print("\n[bold]Saved Sessions[/bold]]")
+            console.print("\n[bold]Saved Sessions[/bold]")
             for s in sessions:
                 console.print(
                     f"  • {s['session_id']} (turns: {s['turn_count']}, updated: {s['updated_at']})"
                 )
+        elif cmd_name == "/clear_sessions":
+            persistence_manager = PersistenceManager()
+            sessions = persistence_manager.clear_sessions()
+            if sessions:
+                console.print("\n[success]Cleared Sessions[/success]")
+                for s in sessions:
+                    console.print(
+                        f"[success]  • {s}[/success]"
+                    )
+            else:
+                console.print("\n[error]Clear Sessions occur errors[/error]")
         elif cmd_name == "/resume":
             if not cmd_args:
                 console.print(f"[error]Usage: /resume <session_id> [/error]")
