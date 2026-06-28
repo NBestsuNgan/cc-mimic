@@ -24,7 +24,11 @@ class CLI:
     async def run_single(self, message: str) -> str | None:
         async with Agent(config=self.config) as agent:
             self.agent = agent
-            return await self._process_message(message)
+            persistence_manager = PersistenceManager()
+            return await self._process_message(
+                message, 
+                persistence_manager
+            )
 
     async def run_interactive(self) -> str | None:
         self.tui.print_welcome(
