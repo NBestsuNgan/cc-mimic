@@ -11,6 +11,7 @@ from typing import Any
 from rich.panel import Panel
 from pathlib import Path
 import re
+from platformdirs import user_data_dir
 from src.utils.paths import display_path_rel_to_cwd
 from src.utils.text import truncate_text
 from src.config.config import Config
@@ -56,6 +57,53 @@ def get_console() -> Console:
     return _console
 
 
+class InputPrompt:
+    """Claude Code-style input with persistent command history.
+
+    - Enter sends the message.
+    - Up/Down arrow keys recall previous inputs (history search).
+    - Ctrl+C / Ctrl+D abort the current input.
+    - History is persisted to disk and shared across sessions.
+    """
+
+    def __init__(self, history_file: Path | None = None) -> None:
+        from prompt_toolkit import PromptSession
+        from prompt_toolkit.history import FileHistory
+        from prompt_toolkit.key_binding import KeyBindings
+
+        if history_file is None:
+            history_file = (
+                Path(user_data_dir("cc-mimic", "cc-mimic")) / "history.txt"
+            )
+        history_file.parent.mkdir(parents=True, exist_ok=True)
+
+        self.session: PromptSession[str] = PromptSession(
+            history=FileHistory(str(history_file)),
+            key_bindings=self._build_key_bindings(),
+            multiline=False,
+        )
+
+    @staticmethod
+    def _build_key_bindings():
+        from prompt_toolkit.key_binding import KeyBindings
+
+        kb = KeyBindings()
+
+        # Ctrl+C / Ctrl+D abort the input line.
+        @kb.add("c-c")
+        def _(event):
+            event.app.exit(exception=KeyboardInterrupt)
+
+        @kb.add("c-d")
+        def _(event):
+            event.app.exit(exception=EOFError)
+
+        return kb
+
+    async def prompt(self, prompt_text: str = "> ") -> str:
+        return await self.session.prompt_async(prompt_text)
+
+
 class TUI:
     def __init__(
         self,
@@ -68,6 +116,12 @@ class TUI:
         self._tool_args_by_call_id: dict[str, dict[str, Any]] = {}
         self.cwd = self.config.cwd
         self._max_block_tokens = 2400
+        self._input = InputPrompt()
+
+    async def get_input(self, prompt: str = "> ") -> str:
+        """Prompt the user for input with arrow-key history recall."""
+        self.console.print()
+        return await self._input.prompt(prompt)
 
     def begin_assistant(self) -> None:
         self.console.print()

@@ -4,7 +4,7 @@ hooks_enabled=true
 
 # Object
 [model]
-name="openrouter/owl-alpha"
+name="tencent/hy3:free"
 temperature=0
 
 # List of Object

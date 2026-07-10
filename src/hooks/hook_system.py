@@ -16,16 +16,16 @@ class HookSystem:
     def __init__(self, config: Config):
         self.config = config
         self.hooks: list[HookConfig] = []
-        logger.info(f"HookSystem init: hooks_enabled={config.hooks_enabled}, hooks_count={len(config.hooks)}, cwd={config.cwd}")
+        # logger.info(f"HookSystem init: hooks_enabled={config.hooks_enabled}, hooks_count={len(config.hooks)}, cwd={config.cwd}")
 
         if self.config.hooks_enabled:
             self.hooks = [hook for hook in self.config.hooks if hook.enabled]
-            logger.info(f"Loaded {len(self.hooks)} enabled hooks")
+            # logger.info(f"Loaded {len(self.hooks)} enabled hooks")
         else:
             logger.warning("Hooks are DISABLED - no hooks will be triggered")
 
     async def _run_hook(self, hook: HookConfig, env: dict[str, str]) -> None:
-        logger.info(f"Triggering hook: {hook.name} ({hook.trigger.value})")
+        # logger.info(f"Triggering hook: {hook.name} ({hook.trigger.value})")
         try: 
             if hook.command:
                 await self._run_command(hook.command, hook.timeout_sec, env)
@@ -70,7 +70,7 @@ class HookSystem:
     async def _run_command(
         self, command: str, timeout: float, env: dict[str, str]
     ) -> None:
-        logger.info(f"Running hook command: {command}, cwd={self.config.cwd}")
+        # logger.info(f"Running hook command: {command}, cwd={self.config.cwd}")
 
         # If the user wrote 'python ...' in config.toml, swap to sys.executable
         # so the hook uses the same Python interpreter as the agent.
@@ -86,13 +86,13 @@ class HookSystem:
                 args = resolved[resolved.index(" "):].strip().split()
                 exec_args = [python_path] + args
                 use_exec = True
-                logger.info(f"Using exec with args: {exec_args}")
+                # logger.info(f"Using exec with args: {exec_args}")
             else:
                 if " " in python_path:
                     python_path = f'"{python_path}"'
                 resolved = python_path + resolved[resolved.index(" "):]
 
-        logger.info(f"Resolved hook command: {resolved}")
+        # logger.info(f"Resolved hook command: {resolved}")
 
         try:
             if use_exec:
@@ -121,7 +121,8 @@ class HookSystem:
                 if process.returncode != 0:
                     logger.warning(f"Hook command failed (rc={process.returncode}): {stderr.decode()}")
                 else:
-                    logger.info(f"Hook command succeeded: {stdout.decode().strip()}")
+                    pass
+                    # logger.info(f"Hook command succeeded: {stdout.decode().strip()}")
             except asyncio.TimeoutError:
                 if sys.platform != "win32":
                     os.killpg(os.getpgid(process.pid), signal.SIGKILL)

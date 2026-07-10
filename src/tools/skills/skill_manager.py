@@ -1,62 +1,76 @@
+from __future__ import annotations
+
+import logging
+from pathlib import Path
+from typing import Any
+
+from agent_skills import Skill as AgentSkill
+
 from src.config.config import Config
 from src.tools.registry import ToolRegistry
 from src.tools.skills.skill_tool import Skill, SkillInfo
-from src.utils.paths import load_frontmatter
-import asyncio
-from pathlib import Path
-from typing import Any
-import yaml
-import os
+
+logger = logging.getLogger(__name__)
+
+SKILL_FILENAMES = {"skill.md"}
+EXCLUDE_DIRS = {".venv", "node_modules", "__pycache__", ".git", "build"}
+
 
 class SkillManager:
     def __init__(self, config: Config):
         self.config = config
         self._initialized = False
         self._skills: list[Skill] = []
-        self._valid_skills_folder: list[Path] = []
-    
+        self._valid_skill_files: list[Path] = []
+
     async def initialize(self) -> None:
-        # list all available skill in the repository
-        EXCEPT_STRUCTURE = [
-            ".venv",
-            "src|tools|skills",
-        ]
         if self._initialized:
             return
-        
-        skills_folders = list(self.config.cwd.rglob("skills"))
-        for folder in skills_folders:
-            count_except = 0
-            search_folder = str(folder).replace("/", "|").replace("\\", "|")
-            for skip_search in EXCEPT_STRUCTURE:
-                if skip_search in search_folder:
-                    count_except += 1
-                    break
-            if count_except > 0:
+
+        for path in sorted(self.config.cwd.rglob("*.md")):
+            if path.name.lower() not in SKILL_FILENAMES:
                 continue
-            self._valid_skills_folder.append(folder)
+            if any(part in EXCLUDE_DIRS for part in path.parts):
+                continue
+            self._valid_skill_files.append(path)
+
         self._initialized = True
 
+    def _validate(self, path: Path) -> SkillInfo | None:
+        try:
+            content = path.read_text(encoding="utf-8")
+        except OSError as e:
+            logger.warning("Skill unreadable, skipping %s: %s", path, e)
+            return None
+
+        try:
+            agent_skill = AgentSkill.from_skill_md(content)
+        except (ValueError, Exception) as e:
+            logger.warning("Invalid skill structure, skipping %s: %s", path, e)
+            return None
+
+        metadata = agent_skill.metadata
+        if not metadata.name or not metadata.description:
+            logger.warning(
+                "Skill missing name/description, skipping %s", path
+            )
+            return None
+
+        return SkillInfo(metadata.name, metadata.description, path)
+
     def register_skills(self, registry: ToolRegistry) -> int:
+        if not self._initialized:
+            return 0
+
         count = 0
+        for path in self._valid_skill_files:
+            info = self._validate(path)
+            if info is None:
+                continue
 
-        for skill_folder in self._valid_skills_folder:
-            name=""
-            description=""
-            path=""
-            for item in skill_folder.rglob("*.md"):
-                meta_data, _ = load_frontmatter(item)
-                name = meta_data["name"]
-                description = meta_data["description"]
-                path = item
-                
-            if name and description and path:
-                skill_info = SkillInfo(name, description, path)
-                skill = Skill(self.config, skill_info)
-                self._skills.append(skill)
-
-        for skill in self._skills:      
-            registry.register_skill(skill) 
+            skill = Skill(self.config, info)
+            self._skills.append(skill)
+            registry.register_skill(skill)
             count += 1
 
         return count

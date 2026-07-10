@@ -1,3 +1,4 @@
+import logging
 from typing import Any
 import asyncio
 import click
@@ -13,6 +14,46 @@ from src.config.config import Config, ApprovalPolicy
 from src.agent.persistence import PersistenceManager, SessionSnapshot
 
 console = get_console()
+
+
+def setup_logging(config: Config) -> None:
+    # Route all library/agent logging to a file instead of the console so
+    # hook-system and third-party logs (e.g. httpx "HTTP Request") don't
+    # clutter the interactive terminal. The .ai-agent/hook.log file written
+    # by hooks is separate and untouched.
+    log_dir = config.cwd / ".ai-agent"
+    log_dir.mkdir(parents=True, exist_ok=True)
+    log_file = log_dir / "agent.log"
+
+    root = logging.getLogger()
+    root.setLevel(logging.INFO)
+
+    # Drop any existing console (stream) handlers.
+    for handler in list(root.handlers):
+        if isinstance(handler, logging.StreamHandler) and not isinstance(
+            handler, logging.FileHandler
+        ):
+            root.removeHandler(handler)
+
+    # Add a single file handler if we don't already have one.
+    if not any(isinstance(h, logging.FileHandler) for h in root.handlers):
+        file_handler = logging.FileHandler(log_file, encoding="utf-8")
+        file_handler.setFormatter(
+            logging.Formatter("%(asctime)s %(levelname)s %(name)s: %(message)s")
+        )
+        root.addHandler(file_handler)
+
+    # Silence noisy HTTP request logging from the OpenAI SDK / httpx.
+    for noisy in ("httpx", "openai", "openai.http_client"):
+        noisy_logger = logging.getLogger(noisy)
+        noisy_logger.setLevel(logging.WARNING)
+        # Detach any stdout/stderr handlers attached directly to these loggers.
+        for handler in list(noisy_logger.handlers):
+            if isinstance(handler, logging.StreamHandler) and not isinstance(
+                handler, logging.FileHandler
+            ):
+                noisy_logger.removeHandler(handler)
+        noisy_logger.propagate = True
 
 
 class CLI:
@@ -47,7 +88,7 @@ class CLI:
             persistence_manager = PersistenceManager()
             while True:
                 try:
-                    user_input = console.input("\n[user]> [/user]").strip()
+                    user_input = (await self.tui.get_input()).strip()
                     if not user_input:
                         continue
 
@@ -374,6 +415,7 @@ def main(
         for error in errors:
             console.print(f"[error]Configuration Error: {error}[/error]")
         sys.exit(1)
+    setup_logging(config)
     cli = CLI(config=config)  # dependency management solution
 
     # messages = [{"role": "user", "content": prompt}]
