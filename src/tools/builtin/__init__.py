@@ -9,6 +9,7 @@ from src.tools.builtin.web_search import WebSearchTool
 from src.tools.builtin.web_fetch import WebFetchTool
 from src.tools.builtin.todo import TodosTool
 from src.tools.builtin.memory import MemoryTool
+from src.tools.builtin.read_artifact import ReadArtifactTool
 
 __all__ = [
     "ReadFileTool",
@@ -21,7 +22,8 @@ __all__ = [
     "WebSearchTool",
     "WebFetchTool",
     "TodosTool",
-    "MemoryTool"
+    "MemoryTool",
+    "ReadArtifactTool"
 ]
 
 def get_all_builtin_tools() -> list[type]:
@@ -37,4 +39,5 @@ def get_all_builtin_tools() -> list[type]:
         WebFetchTool,
         TodosTool,
         MemoryTool,
+        ReadArtifactTool,
     ]
