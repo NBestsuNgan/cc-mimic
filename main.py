@@ -77,7 +77,7 @@ class CLI:
             lines=[
                 f"model: {self.config.model_name}",
                 f"cwd: {self.config.cwd}",
-                f"command: /help /config /approve /model /exit",
+                f"command: /help /skills /config /approve /model /exit",
             ],
         )
         async with Agent(
@@ -236,6 +236,12 @@ class CLI:
             console.print(f"\n[bold]Available tools ({len(tools)}) [/bold]")
             for tool in tools:
                 console.print(f"  •  {tool.name}")
+        elif cmd_name == "/skills":
+            skills = self.agent.session.tool_registry.get_skills()
+            console.print(f"\n[bold]Available skills ({len(skills)}) [/bold]")
+            for skill in skills:
+                console.print(f"  •  [tool.skill]{skill.name}[/tool.skill]")
+                console.print(f"     [dim]{skill.description}[/dim]")
         elif cmd_name == "/mcp":
             mcp_servers = self.agent.session.mcp_manager.get_all_servers()
             console.print(f"\n[bold]MCP Servers ({len(mcp_servers)}) [/bold]")

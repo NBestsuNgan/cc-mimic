@@ -687,6 +687,7 @@ class TUI:
 - `/approval <mode>` - Change approval mode
 - `/stats` - Show session statistics
 - `/tools` - List available tools
+- `/skills` - List available skills
 - `/mcp` - Show MCP server status
 - `/save` - Save current session
 - `/checkpoint [name]` - Create a checkpoint
