@@ -77,7 +77,7 @@ class CLI:
             lines=[
                 f"model: {self.config.model_name}",
                 f"cwd: {self.config.cwd}",
-                f"command: /help /skills /config /approve /model /exit",
+                f"command: /help /skills /config /approve /model /pruning /exit",
             ],
         )
         async with Agent(
@@ -226,6 +226,23 @@ class CLI:
                 console.print(
                     f"Current Approval policy: {self.config.approval.value}"
                 )
+        elif cmd_name == "/pruning":
+            force = cmd_args.strip() == "force"
+            if not self.agent.session.context_manager._messages:
+                console.print("[dim]No messages to prune[/dim]")
+            else:
+                pruned = self.agent.session.context_manager.prune_tool_output(
+                    force=force
+                )
+                if pruned == 0:
+                    console.print(
+                        "[dim]Nothing pruned (not enough old tool output to prune"
+                        + (")" if not force else " — use `/pruning force` to prune anyway)")
+                    )
+                else:
+                    console.print(
+                        f"[success]Pruned {pruned} old tool result(s)[/success]"
+                    )
         elif cmd_name == "/stats":
             stats = self.agent.session.get_stats()
             console.print("\n[bold]Session Statistics [/bold]")

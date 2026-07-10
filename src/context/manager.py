@@ -180,9 +180,9 @@ I'll continue with the REMAINING tasks only, starting from where we left off."""
         )
         self._messages.append(continue_item)
         
-    def prune_tool_output(self) -> int:
+    def prune_tool_output(self, force: bool = False) -> int:
         user_message_count = sum(1 for msg in self._messages if msg.role == "user")
-        
+
         if user_message_count < 2:
             return 0
         
@@ -200,7 +200,7 @@ I'll continue with the REMAINING tasks only, starting from where we left off."""
                     pruned_tokens += tokens
                     to_prune.append(msg)
 
-        if pruned_tokens < self.PRUNE_MINIMUM_TOKENS:
+        if not force and pruned_tokens < self.PRUNE_MINIMUM_TOKENS:
             return 0 # not prune yet
         
         pruned_count = 0
