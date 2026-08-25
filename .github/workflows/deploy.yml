@@ -34,6 +34,10 @@ jobs:
 
       - uses: docker/setup-buildx-action@v3
 
+      # ghcr rejects any uppercase in the path, and GitHub usernames keep their case.
+      - id: img
+        run: echo "repo=ghcr.io/$(echo "$GITHUB_REPOSITORY_OWNER" | tr "A-Z" "a-z")/cc-mimic" >> "$GITHUB_OUTPUT"
+
       - uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -48,11 +52,11 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/cc-mimic:latest
-            ghcr.io/${{ github.repository_owner }}/cc-mimic:${{ github.sha }}
+            ${{ steps.img.outputs.repo }}:latest
+            ${{ steps.img.outputs.repo }}:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
       - run: |
-          echo "### Pushed \`ghcr.io/${{ github.repository_owner }}/cc-mimic:latest\`" >> $GITHUB_STEP_SUMMARY
+          echo "### Pushed \`${{ steps.img.outputs.repo }}:latest\`" >> $GITHUB_STEP_SUMMARY
           echo "The VM's \`cc-mimic-update.timer\` picks this up within 5 minutes." >> $GITHUB_STEP_SUMMARY

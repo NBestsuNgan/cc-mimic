@@ -44,6 +44,9 @@ scp -r deploy <user>@<VM_IP>:~/deploy                            # compose + Cad
 ssh <user>@<VM_IP> 'sudo bash ~/deploy/vm-setup.sh'
 ```
 
+`<you>` must be lowercase even if your GitHub username is not — ghcr rejects
+any uppercase in an image path.
+
 The first run creates two root-owned `0600` files and stops, so you can fill them in:
 
 - `/etc/cc-mimic/env` — `API_KEY`, `BASE_URL`, `ALLOWED_ORIGINS`, `CONVEX_SITE_URL`
