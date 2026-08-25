@@ -59,4 +59,4 @@ jobs:
 
       - run: |
           echo "### Pushed \`${{ steps.img.outputs.repo }}:latest\`" >> $GITHUB_STEP_SUMMARY
-          echo "The VM's \`cc-mimic-update.timer\` picks this up within 5 minutes." >> $GITHUB_STEP_SUMMARY
+          echo "The VM's \`cc-mimic-update.timer\` picks this up within a day; run \`sudo /usr/local/bin/cc-mimic-update\` on the VM to ship it now." >> $GITHUB_STEP_SUMMARY

@@ -166,10 +166,12 @@ sudo docker run --rm -v cc-mimic_workspace:/w alpine \
 ghcr on every push to `main`. No secrets — the built-in `GITHUB_TOKEN` can push to the
 repo's own package.
 
-The VM pulls rather than CI pushing: `cc-mimic-update.timer` runs every 5 minutes,
-does `docker compose pull`, and restarts only if the image digest changed. No SSH key in
-GitHub, no inbound access, and it survives the VM's IP changing. Up to 5 minutes of lag;
-to deploy immediately:
+The VM pulls rather than CI pushing: `cc-mimic-update.timer` runs at boot and once a
+day, does `docker compose pull`, and restarts only if the image digest changed. No SSH
+key in GitHub, no inbound access, and it survives the VM's IP changing.
+
+A daily poll costs almost nothing but means a push can sit unshipped for up to a day, so
+treat the timer as the safety net and deploy on purpose when you want the change live:
 
 ```bash
 gcloud compute ssh <VM_NAME> --zone=<GCP_ZONE> --command 'sudo /usr/local/bin/cc-mimic-update'

@@ -173,11 +173,11 @@ UNIT
 
 cat > /etc/systemd/system/cc-mimic-update.timer <<'UNIT'
 [Unit]
-Description=Check for a new cc-mimic image every 5 minutes
+Description=Check for a new cc-mimic image once a day
 
 [Timer]
 OnBootSec=2min
-OnUnitActiveSec=5min
+OnUnitActiveSec=1d
 
 [Install]
 WantedBy=timers.target
@@ -203,4 +203,5 @@ echo "  2. DNS: point an A record for your domain at this VM's public IP"
 echo "     (Caddy needs it resolving before it can get a certificate)"
 echo
 echo "Auto-deploy is on: pushes to main rebuild the image in CI and this VM"
-echo "picks it up within 5 minutes (systemctl list-timers cc-mimic-update.timer)."
+echo "picks it up within a day (systemctl list-timers cc-mimic-update.timer),"
+echo "or immediately with: sudo bash ~/deploy/update.sh"
