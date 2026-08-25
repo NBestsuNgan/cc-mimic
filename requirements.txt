@@ -13,3 +13,6 @@ prompt_toolkit==3.0.52
 agent-skills==0.1.3
 fastapi==0.141.1
 fastapi[standard]
+pyjwt[crypto]==2.13.0
+uvicorn==0.41.0
+httpx==0.28.1

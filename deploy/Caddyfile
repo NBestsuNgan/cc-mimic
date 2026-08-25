@@ -1,0 +1,8 @@
+{$DOMAIN} {
+	encode zstd gzip
+
+	# SSE must not be buffered or the chat arrives all at once at the end.
+	reverse_proxy api:8000 {
+		flush_interval -1
+	}
+}

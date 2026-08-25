@@ -48,6 +48,17 @@ DANGEROUS_PATTERNS = [
     r"wget\s+.*\|\s*(bash|sh)",
     # Fork bomb
     r":\(\)\s*\{\s*:\|:&\s*\}\s*;",
+
+    # Commands that LOOK read-only but can spawn processes or write files.
+    # Without these, ApprovalPolicy.NEVER auto-approves them via SAFE_PATTERNS,
+    # which is arbitrary code execution for any caller who can reach the agent.
+    r"\bfind\b[^|;]*\s-(exec|execdir|ok|okdir|delete|fprintf|fls|fprint)\b",
+    r"\bawk\b[^|;]*\b(system|ENVIRON)\b",          # awk 'BEGIN{system("...")}'
+    r"\bawk\b[^|;]*\|\s*[\"']",                     # awk 'print | "sh"'
+    r"\bsed\b[^|;]*\s-[a-zA-Z]*[ie]",                # sed -i writes; sed -e/e runs
+    r"\bsed\b[^|;]*[0-9$/]\s*e\s",                   # sed '1e cmd'
+    r"\bsort\b[^|;]*--compress-program",             # runs the named program
+    r"\b(perl|python[0-9.]*|ruby|node|php)\b\s+-[ec]",  # inline interpreters
 ]
 
 # Patterns for safe commands (can be auto-approved)

@@ -1,0 +1,58 @@
+name: Build and publish image
+
+on:
+  push:
+    branches: [main]
+    paths-ignore: ["**.md", "deploy/README.md"]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      # Covers workspace scoping, path traversal, and the shell-approval denylist.
+      - run: python test_app.py
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write        # GITHUB_TOKEN can push to ghcr; no PAT needed
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          # Must match the VM's CPU. GCP e2-micro is x86; switch to linux/arm64
+          # for an Oracle Ampere box.
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/cc-mimic:latest
+            ghcr.io/${{ github.repository_owner }}/cc-mimic:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - run: |
+          echo "### Pushed \`ghcr.io/${{ github.repository_owner }}/cc-mimic:latest\`" >> $GITHUB_STEP_SUMMARY
+          echo "The VM's \`cc-mimic-update.timer\` picks this up within 5 minutes." >> $GITHUB_STEP_SUMMARY

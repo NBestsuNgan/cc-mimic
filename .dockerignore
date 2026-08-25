@@ -1,0 +1,14 @@
+# Secrets must never enter the image — they arrive at runtime via env_file.
+.env
+.env.*
+!.env.example
+
+.git
+.venv
+__pycache__
+**/__pycache__
+*.pyc
+.workspace
+.vscode
+.claude
+.ai-agent

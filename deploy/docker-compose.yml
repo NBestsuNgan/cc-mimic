@@ -1,0 +1,37 @@
+services:
+  api:
+    # Prebuilt image from the registry — the VM never compiles anything.
+    image: ${IMAGE:?set IMAGE in /etc/cc-mimic/deploy.env}
+    restart: unless-stopped
+    # Secrets stay in a root-owned 0600 file on the host; never in the image.
+    env_file: /etc/cc-mimic/env
+    volumes:
+      - workspace:/data/workspace
+    # Not published to the host: only Caddy can reach it, so port 8000 is unreachable
+    # from the internet even if the Oracle security list is wide open.
+    expose:
+      - "8000"
+    security_opt:
+      - no-new-privileges:true
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      # Vercel serves the portfolio over HTTPS, so this must be HTTPS too or the browser
+      # blocks it as mixed content. Caddy gets a Let's Encrypt cert for $DOMAIN.
+      DOMAIN: ${DOMAIN:?set DOMAIN in /etc/cc-mimic/deploy.env}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - api
+
+volumes:
+  workspace:
+  caddy_data:
+  caddy_config:
