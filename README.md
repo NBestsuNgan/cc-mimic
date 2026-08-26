@@ -1,62 +1,53 @@
-# ⌁ cc-mimic
+<h1 align="center">⌁ cc-mimic</h1>
 
-A lightweight Claude Code mimic — forge your own AI coding agent.
+<p align="center">A lightweight Claude Code mimic — forge your own AI coding agent.</p>
+
+<p align="center">
+  <a href="https://portfolio-delta-five-15.vercel.app/"><b>▶ View Live Demo</b></a>
+</p>
+
+<p align="center">
+  <a href="https://portfolio-delta-five-15.vercel.app/">
+    <img src="images/live-demo.png" alt="cc-mimic live demo" width="100%">
+  </a>
+</p>
+
+---
+
+## ⊹ What it does
+
+A terminal AI coding agent that reads, writes, and runs code in your working
+directory — the core loop behind tools like Claude Code, built small enough to
+read in one sitting.
+
+| Status     | Feature                                          |
+| ---------- | ------------------------------------------------ |
+| ✅ Done    | `skill.md` — custom skills                       |
+| ✅ Done    | `.ai-agent` project config, initialized per-cwd  |
+| ◌ Pending  | Sandboxing                                       |
+| ◌ Pending  | LSP (Language Server Protocol)                   |
+| ◌ Pending  | `apply_patch`                                    |
 
 ---
 
 ## ⚡ Quick Start
 
-### Prerequisites
-
 ```bash
-# Create a virtual environment
 python3 -m venv .venv
 source .venv/bin/activate
-```
-
-### 📦 Installation
-
-```bash
-cd ~/Users/user_name/desktop/cc-mimic
 pip3 install -e .
 ```
 
----
-
-## ⊹ Features
-
-| Status    | Feature                                                                    |
-| --------- | -------------------------------------------------------------------------- |
-| ◌ Pending | Sandboxing                                                                 |
-| ◌ Pending | LSP (Language Server Protocol)                                             |
-| ◌ Pending | `apply_patch`                                                              |
-| ✅ Done | `skill.md`                                                                 |
-| ✅ Done | `initialize .ai-agent and it configuration in the cwd() that call myagent` |
-
----
-
-## ⚙ Configuration
-
-Environment variables are resolved from the **current working directory**.
-
-### Environment Variables
-
-Create a `.env` file in the project root with the required variables:
+Add your API key:
 
 ```bash
 cp .env.example .env
+echo "API_KEY=your_key_here" >> .env
 ```
 
-Then edit `.env` and add your API key:
+Get a key from the [OpenRouter Console](https://openrouter.ai/).
 
-```env
-API_KEY=your_key_here
-```
-
-> **Note:** Replace `your_key_here` with your actual API key obtained from the [Openrouter Console](https://openrouter.ai/).
+> Environment variables are resolved from the **current working directory**, so
+> each project can carry its own `.env`.
 
 ---
-
-## ⊕ Contributing
-
-Contributions are welcome! Feel free to open an issue or submit a pull request.
