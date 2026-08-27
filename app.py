@@ -8,6 +8,7 @@ import tomllib
 import uuid
 from contextlib import asynccontextmanager
 from pathlib import Path
+import shutil
 
 import httpx
 import jwt
@@ -253,6 +254,22 @@ def write_config_model(workspace: Path, model: str) -> None:
 class ModelChoice(BaseModel):
     model: str
 
+class ChatRequest(BaseModel):
+    session_id: str | None = None  # omit to start a new conversation
+    message: str
+
+
+# Which key of AgentEvent.data carries the human-readable text, and who "said" it.
+_TEXT = {
+    AgentEventType.AGENT_START: ("message", "user"),
+    AgentEventType.TEXT_DELTA: ("content", "assistant"),
+    AgentEventType.TEXT_COMPLETE: ("content", "assistant"),
+    AgentEventType.TOOL_CALL_START: ("name", "tool"),
+    AgentEventType.TOOL_CALL_COMPLETE: ("output", "tool"),
+    AgentEventType.AGENT_END: ("response", "assistant"),
+    AgentEventType.AGENT_ERROR: ("error", "assistant"),
+}
+
 
 @app.put("/sessions/{session_id}/model")
 async def set_session_model(session_id: str, choice: ModelChoice, user=Depends(current_user)):
@@ -339,22 +356,17 @@ async def download_file(session_id: str, path: str, user=Depends(current_user)):
         raise HTTPException(404, "no such file")
     return FileResponse(target, filename=target.name)
 
-
-class ChatRequest(BaseModel):
-    session_id: str | None = None  # omit to start a new conversation
-    message: str
-
-
-# Which key of AgentEvent.data carries the human-readable text, and who "said" it.
-_TEXT = {
-    AgentEventType.AGENT_START: ("message", "user"),
-    AgentEventType.TEXT_DELTA: ("content", "assistant"),
-    AgentEventType.TEXT_COMPLETE: ("content", "assistant"),
-    AgentEventType.TOOL_CALL_START: ("name", "tool"),
-    AgentEventType.TOOL_CALL_COMPLETE: ("output", "tool"),
-    AgentEventType.AGENT_END: ("response", "assistant"),
-    AgentEventType.AGENT_ERROR: ("error", "assistant"),
-}
+@app.delete("/sessions/{session_id}", status_code=204)
+async def delete_session(session_id: str, user=Depends(current_user)):
+    """Drop the live agent, then remove the workspace. resolve_workspace 404s
+    unless this session belongs to the caller."""
+    workspace, _ = resolve_workspace(user["sub"], session_id)
+    await drop_session(session_id)
+    try:
+        shutil.rmtree(workspace.resolve())
+    except OSError as e:
+        raise HTTPException(500, f"could not delete: {e}")
+    return Response(status_code=204)
 
 
 @app.post("/chat/completions")

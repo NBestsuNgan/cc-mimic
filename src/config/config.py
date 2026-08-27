@@ -9,7 +9,7 @@ from enum import Enum
 load_dotenv(Path.cwd() / ".env")
 
 class ModelConfig(BaseModel): # separate for "Modle" configuration params, easily to extendable in the future
-    name: str = "nvidia/nemotron-3.5-lightning:free" 
+    name: str = "openrouter/free" 
     temperature: float = Field(default=1, ge=0.0, le=2.0) 
     context_window: int = 1_000_000
 
@@ -153,7 +153,7 @@ hooks_enabled=true
 
 # Object
 [model]
-name="nvidia/nemotron-3.5-lightning:free"
+name="openrouter/free"
 temperature=0
 
 # List of Object

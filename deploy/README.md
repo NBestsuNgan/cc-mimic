@@ -135,6 +135,31 @@ gcloud compute instances add-access-config cc-mimic --zone=<GCP_ZONE> \
 A reserved IP that is **not** attached to a running instance is billed at a higher rate —
 so if you ever delete the VM, release the address too.
 
+### Resizing the VM (more RAM)
+
+Nothing new to set up. A machine-type change is a stop → change → start, so it inherits
+exactly the stop/start behaviour above: the boot disk, both volumes, the certificate and
+`/etc/cc-mimic/*` all persist, and `restart: unless-stopped` brings the containers back.
+
+```bash
+gcloud compute instances stop cc-mimic --zone=<GCP_ZONE>
+gcloud compute instances set-machine-type cc-mimic --zone=<GCP_ZONE> --machine-type=e2-small
+gcloud compute instances start cc-mimic --zone=<GCP_ZONE>
+```
+
+The instance must be `TERMINATED` for `set-machine-type` — it fails on a running VM.
+
+Two things to know before you do it:
+
+| | |
+|---|---|
+| **The IP still changes** | Same trap as any stop/start. Confirm the DuckDNS updater is live *first* — `systemctl status duckdns.timer` — or reserve a static IP. Without one of those the site is unreachable after the resize. |
+| **`e2-micro` is the only free shape** | Always Free covers one `e2-micro` in `us-central1`/`us-west1`/`us-east1`. `e2-small` (2 GB) and up are billed — roughly $12–15/month plus the disk — and need a billing account attached. |
+
+The 2 GB swapfile stays; `vm-setup.sh` only creates one when it's missing, so re-running it
+after a resize is safe and changes nothing. Nothing in `docker-compose.yml` caps memory, so
+the container picks up the extra RAM on its own.
+
 ### If you delete the VM (not just stop it)
 
 Then yes, everything goes: disk, volumes, workspaces, certificates, `/etc/cc-mimic`.
