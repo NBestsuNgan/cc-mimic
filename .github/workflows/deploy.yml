@@ -84,6 +84,9 @@ jobs:
       # working when the VM's ephemeral IP changes.
       - name: Pull the new image on the VM
         run: |
+          # Without pipefail the pipe to tee swallows gcloud's exit code and a
+          # failed deploy reports green — the exact silence this job exists to end.
+          set -o pipefail
           gcloud compute ssh "${{ vars.GCP_VM_NAME }}" \
             --project="${{ vars.GCP_PROJECT }}" \
             --zone="${{ vars.GCP_ZONE }}" \
