@@ -82,6 +82,11 @@ jobs:
 
       # Through IAP, so port 22 stays closed to the internet and this keeps
       # working when the VM's ephemeral IP changes.
+      #
+      # This is deploy/update.sh inlined against absolute paths on purpose. The SSH
+      # user here is the service account, whose home is /home/sa_<id> — so `~/deploy`
+      # resolves to a directory that has never existed. /opt/cc-mimic and
+      # /etc/cc-mimic are the same for every user.
       - name: Pull the new image on the VM
         run: |
           # Without pipefail the pipe to tee swallows gcloud's exit code and a
@@ -91,5 +96,5 @@ jobs:
             --project="${{ vars.GCP_PROJECT }}" \
             --zone="${{ vars.GCP_ZONE }}" \
             --tunnel-through-iap --quiet \
-            --command='sudo /usr/local/bin/cc-mimic-update' \
+            --command='sudo bash -c "cd /opt/cc-mimic && set -a && . /etc/cc-mimic/deploy.env && set +a && docker compose pull && docker compose up -d && docker image prune -f"' \
             | tee -a "$GITHUB_STEP_SUMMARY"
