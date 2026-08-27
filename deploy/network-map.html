@@ -1,0 +1,430 @@
+<title>cc-mimic Network Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+
+<style>
+:root{
+  --ground:#EDF1F5; --surface:#FFFFFF; --surface-2:#F4F7FA;
+  --ink:#0F151C; --muted:#5A6673; --line:#C6D2DE; --line-soft:#E1E8EF;
+  --in:#C2410C; --out:#0E7490; --restricted:#6D28D9;
+  --in-tint:rgba(194,65,12,.09); --out-tint:rgba(14,116,144,.09); --restricted-tint:rgba(109,40,217,.09);
+  --shadow:0 1px 2px rgba(15,21,28,.05), 0 8px 24px -12px rgba(15,21,28,.18);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#0A1016; --surface:#141C25; --surface-2:#1A2430;
+    --ink:#E4EAF0; --muted:#93A3B3; --line:#2B3846; --line-soft:#1F2A35;
+    --in:#FB923C; --out:#38D2EC; --restricted:#A78BFA;
+    --in-tint:rgba(251,146,60,.12); --out-tint:rgba(56,210,236,.12); --restricted-tint:rgba(167,139,250,.12);
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0A1016; --surface:#141C25; --surface-2:#1A2430;
+  --ink:#E4EAF0; --muted:#93A3B3; --line:#2B3846; --line-soft:#1F2A35;
+  --in:#FB923C; --out:#38D2EC; --restricted:#A78BFA;
+  --in-tint:rgba(251,146,60,.12); --out-tint:rgba(56,210,236,.12); --restricted-tint:rgba(167,139,250,.12);
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font-family:"Source Serif 4","Iowan Old Style",Georgia,serif;
+  font-size:17px; line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1120px; margin:0 auto; padding:56px 24px 96px}
+h1,h2,h3,.ui{font-family:Archivo,"Helvetica Neue",Arial,sans-serif}
+h1{font-size:clamp(2rem,4.6vw,3rem); line-height:1.06; letter-spacing:-.025em; font-weight:700; margin:0 0 14px; text-wrap:balance}
+h2{font-size:1.34rem; letter-spacing:-.012em; font-weight:600; margin:0 0 10px; text-wrap:balance}
+h3{font-size:1.02rem; letter-spacing:-.005em; font-weight:600; margin:0 0 6px}
+p{margin:0 0 14px; max-width:66ch}
+code,.mono{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace}
+code{font-size:.86em; background:var(--surface-2); border:1px solid var(--line-soft); border-radius:5px; padding:.1em .38em}
+.eyebrow{
+  font-family:"IBM Plex Mono",monospace; font-size:.7rem; font-weight:500;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--muted); margin:0 0 12px;
+}
+.lede{font-size:1.14rem; color:var(--muted); max-width:60ch; margin:0 0 8px}
+header.hero{border-bottom:1px solid var(--line); padding-bottom:34px; margin-bottom:44px}
+section{margin:0 0 52px}
+.stack{display:flex; flex-direction:column; gap:14px}
+
+figure{margin:0 0 10px; background:var(--surface); border:1px solid var(--line);
+  border-radius:16px; padding:22px; box-shadow:var(--shadow); overflow-x:auto}
+figure svg{display:block; width:100%; min-width:660px; height:auto}
+figcaption{font-family:Archivo,sans-serif; font-size:.83rem; color:var(--muted);
+  margin-top:16px; padding-top:14px; border-top:1px solid var(--line-soft); max-width:74ch}
+
+.legend{display:flex; flex-wrap:wrap; gap:8px 20px; margin:0 0 18px; padding:0; list-style:none;
+  font-family:"IBM Plex Mono",monospace; font-size:.76rem; color:var(--muted)}
+.legend li{display:flex; align-items:center; gap:8px}
+.swatch{width:22px; height:3px; border-radius:2px; flex:none}
+
+table{border-collapse:collapse; width:100%; font-size:.93rem; font-family:Archivo,sans-serif}
+.tablewrap{overflow-x:auto; border:1px solid var(--line); border-radius:14px; background:var(--surface); box-shadow:var(--shadow)}
+th,td{text-align:left; padding:12px 16px; border-bottom:1px solid var(--line-soft); vertical-align:top}
+thead th{font-size:.7rem; letter-spacing:.13em; text-transform:uppercase; color:var(--muted); font-weight:600;
+  background:var(--surface-2); border-bottom:1px solid var(--line)}
+tbody tr:last-child td{border-bottom:none}
+td.port{font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums; font-weight:600}
+.pill{display:inline-block; font-family:"IBM Plex Mono",monospace; font-size:.7rem; font-weight:600;
+  padding:2px 9px; border-radius:999px; white-space:nowrap}
+.pill.open{color:var(--in); background:var(--in-tint)}
+.pill.restricted{color:var(--restricted); background:var(--restricted-tint)}
+.pill.closed{color:var(--out); background:var(--out-tint)}
+
+.note{border-left:3px solid var(--in); background:var(--in-tint);
+  border-radius:0 12px 12px 0; padding:16px 20px; margin:0 0 14px}
+.note p:last-child{margin-bottom:0}
+.note strong{font-family:Archivo,sans-serif}
+
+.grid2{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px}
+.card{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:18px 20px; box-shadow:var(--shadow)}
+.card p{font-size:.95rem; margin-bottom:0; color:var(--muted)}
+.card h3{color:var(--ink)}
+@media (max-width:640px){ .wrap{padding:36px 16px 72px} body{font-size:16px} }
+</style>
+
+<div class="wrap">
+
+<header class="hero">
+  <p class="eyebrow">Vercel &middot; GCP e2-micro &middot; cc-mimic</p>
+  <h1>Two clouds that never speak to each other</h1>
+  <p class="lede">The front end runs on Vercel. The agent runs on a free GCP VM. They have no
+  connection between them &mdash; everything is stitched together inside the visitor&rsquo;s browser.</p>
+</header>
+
+<section>
+  <p>That one fact explains nearly every decision below. Vercel serves a page; the page carries a
+  URL pointing at the VM; the browser then opens a <em>second, entirely separate</em> connection.
+  Which is why the back end needs its own domain, its own TLS certificate, and CORS.</p>
+</section>
+
+<section>
+  <h2>The two ways in</h2>
+  <p>Only two paths reach the VM from outside, and they are unequal: one is open to the whole
+  internet, the other only to Google&rsquo;s IAP range.</p>
+
+  <ul class="legend">
+    <li><span class="swatch" style="background:var(--in)"></span> public inbound</li>
+    <li><span class="swatch" style="background:var(--restricted)"></span> restricted inbound</li>
+    <li><span class="swatch" style="background:var(--muted)"></span> supporting traffic</li>
+  </ul>
+
+  <figure>
+    <svg viewBox="0 0 1080 600" role="img" aria-label="Topology showing a browser reaching the VM on TCP 443 through the GCP firewall to Caddy and then the API container, and GitHub Actions reaching port 22 only through Google's IAP range">
+      <defs>
+        <marker id="ah-in" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+          <polygon points="0,1 10,5 0,9" fill="var(--in)"/>
+        </marker>
+        <marker id="ah-res" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+          <polygon points="0,1 10,5 0,9" fill="var(--restricted)"/>
+        </marker>
+        <marker id="ah-mut" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+          <polygon points="0,1 10,5 0,9" fill="var(--muted)"/>
+        </marker>
+      </defs>
+
+      <!-- GCP boundary -->
+      <rect x="430" y="26" width="628" height="548" rx="20" fill="var(--surface-2)" stroke="var(--line)" stroke-dasharray="7 5"/>
+      <text x="452" y="54" class="mono" font-size="12" font-weight="600" fill="var(--muted)" letter-spacing="1.4">GOOGLE CLOUD &middot; VPC DEFAULT</text>
+
+      <!-- firewall band -->
+      <rect x="456" y="72" width="576" height="86" rx="12" fill="var(--surface)" stroke="var(--line)"/>
+      <text x="476" y="97" font-family="Archivo,sans-serif" font-size="13" font-weight="600" fill="var(--ink)">VPC firewall</text>
+      <text x="476" y="118" class="mono" font-size="11.5" fill="var(--in)">cc-mimic-web &middot; tcp 80,443 &larr; 0.0.0.0/0</text>
+      <text x="476" y="137" class="mono" font-size="11.5" fill="var(--restricted)">allow-iap-ssh &middot; tcp 22 &larr; 35.235.240.0/20</text>
+
+      <!-- VM box -->
+      <rect x="456" y="188" width="576" height="360" rx="16" fill="var(--surface)" stroke="var(--line)"/>
+      <g transform="translate(478,214)">
+        <rect x="0" y="-13" width="18" height="18" rx="3" fill="none" stroke="var(--muted)" stroke-width="1.6"/>
+        <line x1="4" y1="-8" x2="14" y2="-8" stroke="var(--muted)" stroke-width="1.6"/>
+        <line x1="4" y1="-4" x2="14" y2="-4" stroke="var(--muted)" stroke-width="1.6"/>
+        <line x1="4" y1="0" x2="9" y2="0" stroke="var(--muted)" stroke-width="1.6"/>
+      </g>
+      <text x="506" y="214" font-family="Archivo,sans-serif" font-size="13.5" font-weight="600" fill="var(--ink)">e2-micro &ldquo;cc-mimic&rdquo;</text>
+      <text x="478" y="236" class="mono" font-size="11" fill="var(--muted)">public 34.60.179.53 &nbsp;&rarr;&nbsp; NIC sees 10.128.0.2 (1:1 NAT)</text>
+
+      <!-- caddy -->
+      <rect x="480" y="262" width="248" height="126" rx="13" fill="var(--in-tint)" stroke="var(--in)" stroke-opacity=".45"/>
+      <g transform="translate(500,290)">
+        <path d="M0,10 L9,-6 L18,10 Z" fill="var(--in)"/>
+      </g>
+      <text x="528" y="294" font-family="Archivo,sans-serif" font-size="14" font-weight="600" fill="var(--ink)">caddy</text>
+      <text x="500" y="320" class="mono" font-size="11.5" fill="var(--ink)">binds host :80 and :443</text>
+      <text x="500" y="340" class="mono" font-size="11.5" fill="var(--in)">TLS terminates here</text>
+      <text x="500" y="362" class="mono" font-size="11" fill="var(--muted)">Let&rsquo;s Encrypt cert in a volume</text>
+
+      <!-- api -->
+      <rect x="762" y="262" width="248" height="126" rx="13" fill="var(--surface-2)" stroke="var(--line)"/>
+      <g transform="translate(782,288)">
+        <rect x="0" y="-10" width="16" height="16" rx="3" fill="none" stroke="var(--out)" stroke-width="1.8"/>
+        <circle cx="8" cy="-2" r="2.6" fill="var(--out)"/>
+      </g>
+      <text x="810" y="294" font-family="Archivo,sans-serif" font-size="14" font-weight="600" fill="var(--ink)">api</text>
+      <text x="782" y="320" class="mono" font-size="11.5" fill="var(--ink)">uvicorn :8000 &middot; 1 worker</text>
+      <text x="782" y="340" class="mono" font-size="11.5" fill="var(--out)">no host binding at all</text>
+      <text x="782" y="362" class="mono" font-size="11" fill="var(--muted)">expose:, never ports:</text>
+
+      <!-- caddy -> api -->
+      <line x1="728" y1="325" x2="756" y2="325" stroke="var(--muted)" stroke-width="2" marker-end="url(#ah-mut)"/>
+      <text x="742" y="410" class="mono" font-size="11" fill="var(--muted)" text-anchor="middle">plaintext HTTP over the docker bridge</text>
+
+      <!-- sshd -->
+      <rect x="480" y="440" width="530" height="76" rx="13" fill="var(--restricted-tint)" stroke="var(--restricted)" stroke-opacity=".4"/>
+      <text x="500" y="468" font-family="Archivo,sans-serif" font-size="13.5" font-weight="600" fill="var(--ink)">sshd :22</text>
+      <text x="500" y="490" class="mono" font-size="11.5" fill="var(--ink)">OS Login &middot; IAM decides who may log in</text>
+      <text x="500" y="508" class="mono" font-size="11" fill="var(--muted)">CI runs docker compose pull &amp; up -d here</text>
+
+      <!-- Browser -->
+      <rect x="24" y="60" width="200" height="118" rx="14" fill="var(--surface)" stroke="var(--line)"/>
+      <g transform="translate(46,92)">
+        <rect x="0" y="-12" width="24" height="19" rx="3.5" fill="none" stroke="var(--ink)" stroke-width="1.7"/>
+        <line x1="0" y1="-6" x2="24" y2="-6" stroke="var(--ink)" stroke-width="1.7"/>
+        <circle cx="4" cy="-9" r="1.2" fill="var(--ink)"/><circle cx="8" cy="-9" r="1.2" fill="var(--ink)"/>
+      </g>
+      <text x="82" y="96" font-family="Archivo,sans-serif" font-size="14.5" font-weight="600" fill="var(--ink)">Browser</text>
+      <text x="46" y="124" class="mono" font-size="11" fill="var(--muted)">holds both connections</text>
+      <text x="46" y="144" class="mono" font-size="11" fill="var(--muted)">and the JWT</text>
+
+      <!-- Vercel -->
+      <rect x="24" y="212" width="200" height="96" rx="14" fill="var(--surface)" stroke="var(--line)"/>
+      <g transform="translate(46,246)"><path d="M0,10 L10,-7 L20,10 Z" fill="var(--ink)"/></g>
+      <text x="78" y="250" font-family="Archivo,sans-serif" font-size="14" font-weight="600" fill="var(--ink)">Vercel</text>
+      <text x="46" y="278" class="mono" font-size="11" fill="var(--muted)">serves the page &amp;</text>
+      <text x="46" y="294" class="mono" font-size="11" fill="var(--muted)">NEXT_PUBLIC_API_URL</text>
+
+      <!-- DuckDNS -->
+      <rect x="24" y="340" width="200" height="96" rx="14" fill="var(--surface)" stroke="var(--line)"/>
+      <g transform="translate(46,374)">
+        <circle cx="10" cy="0" r="10" fill="none" stroke="var(--ink)" stroke-width="1.7"/>
+        <ellipse cx="10" cy="0" rx="4.2" ry="10" fill="none" stroke="var(--ink)" stroke-width="1.4"/>
+        <line x1="0" y1="0" x2="20" y2="0" stroke="var(--ink)" stroke-width="1.4"/>
+      </g>
+      <text x="78" y="378" font-family="Archivo,sans-serif" font-size="14" font-weight="600" fill="var(--ink)">DuckDNS</text>
+      <text x="46" y="406" class="mono" font-size="11" fill="var(--muted)">name &rarr; current IP</text>
+      <text x="46" y="422" class="mono" font-size="11" fill="var(--muted)">updated by hand</text>
+
+      <!-- GitHub Actions -->
+      <rect x="24" y="468" width="200" height="96" rx="14" fill="var(--surface)" stroke="var(--line)"/>
+      <g transform="translate(46,502)">
+        <circle cx="10" cy="0" r="10" fill="none" stroke="var(--restricted)" stroke-width="1.8"/>
+        <path d="M6,-4 L14,0 L6,4 Z" fill="var(--restricted)"/>
+      </g>
+      <text x="78" y="506" font-family="Archivo,sans-serif" font-size="14" font-weight="600" fill="var(--ink)">GitHub Actions</text>
+      <text x="46" y="534" class="mono" font-size="11" fill="var(--muted)">1-hour federated token,</text>
+      <text x="46" y="550" class="mono" font-size="11" fill="var(--muted)">no stored key</text>
+
+      <!-- edges -->
+      <path d="M124,178 L124,206" stroke="var(--muted)" stroke-width="1.8" marker-end="url(#ah-mut)"/>
+      <path d="M150,308 L150,334" stroke="var(--muted)" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#ah-mut)"/>
+      <text x="238" y="330" class="mono" font-size="10.5" fill="var(--muted)">UDP 53</text>
+
+      <path d="M224,105 C320,105 340,112 450,112" stroke="var(--in)" stroke-width="2.6" fill="none" marker-end="url(#ah-in)"/>
+      <text x="336" y="96" class="mono" font-size="11.5" font-weight="600" fill="var(--in)" text-anchor="middle">TCP 443 &middot; TLS 1.3</text>
+      <text x="336" y="79" class="mono" font-size="11" fill="var(--in)" text-anchor="middle">HTTP + SSE</text>
+
+      <path d="M224,516 C330,516 360,146 450,146" stroke="var(--restricted)" stroke-width="2.2" fill="none" marker-end="url(#ah-res)"/>
+      <text x="330" y="452" class="mono" font-size="11.5" font-weight="600" fill="var(--restricted)" text-anchor="middle">TCP 22 via IAP</text>
+
+      <path d="M600,158 L600,184" stroke="var(--in)" stroke-width="2.4" marker-end="url(#ah-in)"/>
+      <path d="M860,158 L860,184" stroke="var(--restricted)" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#ah-res)"/>
+    </svg>
+    <figcaption>Two inbound paths, unequal. Port 443 is open to everyone because it has to be &mdash;
+    it is the website. Port 22 accepts traffic only from <code>35.235.240.0/20</code>, Google&rsquo;s IAP
+    range, which is why CI can reach the VM without the VM having a static IP or an open SSH port.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>Everything else, the VM starts itself</h2>
+  <p>Outbound needs no firewall rule &mdash; GCP permits egress by default. This is what lets the whole
+  design survive an IP that changes every time the machine stops.</p>
+
+  <figure>
+    <svg viewBox="0 0 1080 300" role="img" aria-label="The VM makes four outbound connections: Convex for JWKS, OpenRouter for model calls, ghcr.io for image pulls, and DuckDNS which is not currently installed">
+      <defs>
+        <marker id="ah-out" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+          <polygon points="0,1 10,5 0,9" fill="var(--out)"/>
+        </marker>
+        <marker id="ah-off" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+          <polygon points="0,1 10,5 0,9" fill="var(--muted)"/>
+        </marker>
+      </defs>
+
+      <rect x="24" y="94" width="212" height="112" rx="14" fill="var(--surface-2)" stroke="var(--line)"/>
+      <text x="48" y="132" font-family="Archivo,sans-serif" font-size="14.5" font-weight="600" fill="var(--ink)">the VM</text>
+      <text x="48" y="158" class="mono" font-size="11" fill="var(--muted)">all four are outbound</text>
+      <text x="48" y="176" class="mono" font-size="11" fill="var(--muted)">TCP 443, egress allowed</text>
+
+      <g>
+        <rect x="420" y="12" width="290" height="60" rx="12" fill="var(--surface)" stroke="var(--line)"/>
+        <text x="444" y="38" font-family="Archivo,sans-serif" font-size="13.5" font-weight="600" fill="var(--ink)">Convex</text>
+        <text x="444" y="58" class="mono" font-size="11" fill="var(--muted)">fetch JWKS, verify each JWT &middot; cached</text>
+        <path d="M236,140 C330,140 340,42 414,42" stroke="var(--out)" stroke-width="2.2" fill="none" marker-end="url(#ah-out)"/>
+      </g>
+      <g>
+        <rect x="420" y="86" width="290" height="60" rx="12" fill="var(--surface)" stroke="var(--line)"/>
+        <text x="444" y="112" font-family="Archivo,sans-serif" font-size="13.5" font-weight="600" fill="var(--ink)">OpenRouter</text>
+        <text x="444" y="132" class="mono" font-size="11" fill="var(--muted)">model calls &middot; most of the latency</text>
+        <path d="M236,140 C330,140 340,116 414,116" stroke="var(--out)" stroke-width="2.2" fill="none" marker-end="url(#ah-out)"/>
+      </g>
+      <g>
+        <rect x="420" y="160" width="290" height="60" rx="12" fill="var(--surface)" stroke="var(--line)"/>
+        <text x="444" y="186" font-family="Archivo,sans-serif" font-size="13.5" font-weight="600" fill="var(--ink)">ghcr.io</text>
+        <text x="444" y="206" class="mono" font-size="11" fill="var(--muted)">docker pull &middot; ingress is free</text>
+        <path d="M236,150 C330,150 340,190 414,190" stroke="var(--out)" stroke-width="2.2" fill="none" marker-end="url(#ah-out)"/>
+      </g>
+      <g opacity=".55">
+        <rect x="420" y="234" width="290" height="60" rx="12" fill="var(--surface)" stroke="var(--line)" stroke-dasharray="6 4"/>
+        <text x="444" y="260" font-family="Archivo,sans-serif" font-size="13.5" font-weight="600" fill="var(--ink)">DuckDNS updater</text>
+        <text x="444" y="280" class="mono" font-size="11" fill="var(--muted)">not installed &mdash; you update by hand</text>
+        <path d="M236,160 C330,160 340,264 414,264" stroke="var(--muted)" stroke-width="2" fill="none" stroke-dasharray="6 4" marker-end="url(#ah-off)"/>
+      </g>
+
+      <text x="748" y="150" class="mono" font-size="11.5" fill="var(--muted)">No inbound rule exists</text>
+      <text x="748" y="170" class="mono" font-size="11.5" fill="var(--muted)">for any of these.</text>
+    </svg>
+    <figcaption>Four outbound connections, one of them missing. The greyed row is the DuckDNS
+    updater: without it, stopping the VM releases the public IP and the domain points at an address
+    that now belongs to someone else.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>One chat message, down the stack and back up</h2>
+  <p>The browser opens a single TCP connection and holds it open for the entire reply. That is what
+  SSE is &mdash; not polling, and not one request per token.</p>
+
+  <figure>
+    <svg viewBox="0 0 1080 480" role="img" aria-label="A request descending the protocol stack at the browser and ascending it at the VM: HTTP, TLS, TCP and IP layers with what each one contributes">
+      <defs>
+        <marker id="ah-dn" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+          <polygon points="0,1 10,5 0,9" fill="var(--in)"/>
+        </marker>
+      </defs>
+
+      <text x="196" y="34" font-family="Archivo,sans-serif" font-size="13" font-weight="600" fill="var(--muted)" text-anchor="middle">BROWSER &mdash; wraps</text>
+      <text x="540" y="34" font-family="Archivo,sans-serif" font-size="13" font-weight="600" fill="var(--muted)" text-anchor="middle">LAYER</text>
+      <text x="884" y="34" font-family="Archivo,sans-serif" font-size="13" font-weight="600" fill="var(--muted)" text-anchor="middle">VM &mdash; unwraps</text>
+
+      <g>
+        <rect x="60" y="52" width="272" height="76" rx="12" fill="var(--surface-2)" stroke="var(--line)"/>
+        <text x="80" y="80" class="mono" font-size="11.5" fill="var(--ink)">POST /sessions/&hellip;/messages</text>
+        <text x="80" y="99" class="mono" font-size="11.5" fill="var(--ink)">Authorization: Bearer &lt;JWT&gt;</text>
+        <text x="80" y="118" class="mono" font-size="11.5" fill="var(--in)">Origin: &hellip;vercel.app</text>
+        <rect x="404" y="52" width="272" height="76" rx="12" fill="var(--in-tint)" stroke="var(--in)" stroke-opacity=".4"/>
+        <text x="424" y="82" font-family="Archivo,sans-serif" font-size="15" font-weight="700" fill="var(--ink)">L7 &middot; HTTP</text>
+        <text x="424" y="106" class="mono" font-size="11" fill="var(--muted)">the Origin header is why CORS exists</text>
+        <rect x="748" y="52" width="272" height="76" rx="12" fill="var(--surface-2)" stroke="var(--line)"/>
+        <text x="768" y="80" class="mono" font-size="11.5" fill="var(--ink)">caddy routes to api:8000</text>
+        <text x="768" y="99" class="mono" font-size="11.5" fill="var(--ink)">FastAPI checks the JWT</text>
+        <text x="768" y="118" class="mono" font-size="11.5" fill="var(--muted)">replies text/event-stream</text>
+      </g>
+
+      <g>
+        <rect x="60" y="144" width="272" height="66" rx="12" fill="var(--surface-2)" stroke="var(--line)"/>
+        <text x="80" y="172" class="mono" font-size="11.5" fill="var(--ink)">ClientHello, SNI = the domain</text>
+        <text x="80" y="192" class="mono" font-size="11.5" fill="var(--muted)">ALPN offers h2</text>
+        <rect x="404" y="144" width="272" height="66" rx="12" fill="var(--surface)" stroke="var(--line)"/>
+        <text x="424" y="174" font-family="Archivo,sans-serif" font-size="15" font-weight="700" fill="var(--ink)">L6/L5 &middot; TLS 1.3</text>
+        <text x="424" y="196" class="mono" font-size="11" fill="var(--muted)">everything above this is encrypted</text>
+        <rect x="748" y="144" width="272" height="66" rx="12" fill="var(--surface-2)" stroke="var(--line)"/>
+        <text x="768" y="172" class="mono" font-size="11.5" fill="var(--ink)">SNI selects the certificate</text>
+        <text x="768" y="192" class="mono" font-size="11.5" fill="var(--muted)">caddy decrypts &mdash; api never sees TLS</text>
+      </g>
+
+      <g>
+        <rect x="60" y="226" width="272" height="66" rx="12" fill="var(--surface-2)" stroke="var(--line)"/>
+        <text x="80" y="254" class="mono" font-size="11.5" fill="var(--ink)">one connection to port 443</text>
+        <text x="80" y="274" class="mono" font-size="11.5" fill="var(--muted)">held open for the whole stream</text>
+        <rect x="404" y="226" width="272" height="66" rx="12" fill="var(--surface)" stroke="var(--line)"/>
+        <text x="424" y="256" font-family="Archivo,sans-serif" font-size="15" font-weight="700" fill="var(--ink)">L4 &middot; TCP</text>
+        <text x="424" y="278" class="mono" font-size="11" fill="var(--muted)">buffering here makes SSE arrive in a lump</text>
+        <rect x="748" y="226" width="272" height="66" rx="12" fill="var(--surface-2)" stroke="var(--line)"/>
+        <text x="768" y="254" class="mono" font-size="11.5" fill="var(--ink)">caddy: flush_interval -1</text>
+        <text x="768" y="274" class="mono" font-size="11.5" fill="var(--muted)">forwards each token immediately</text>
+      </g>
+
+      <g>
+        <rect x="60" y="308" width="272" height="66" rx="12" fill="var(--surface-2)" stroke="var(--line)"/>
+        <text x="80" y="336" class="mono" font-size="11.5" fill="var(--ink)">dst 34.60.179.53</text>
+        <text x="80" y="356" class="mono" font-size="11.5" fill="var(--muted)">from DNS, minutes ago</text>
+        <rect x="404" y="308" width="272" height="66" rx="12" fill="var(--surface)" stroke="var(--line)"/>
+        <text x="424" y="338" font-family="Archivo,sans-serif" font-size="15" font-weight="700" fill="var(--ink)">L3 &middot; IP</text>
+        <text x="424" y="360" class="mono" font-size="11" fill="var(--muted)">1:1 NAT happens outside the VM</text>
+        <rect x="748" y="308" width="272" height="66" rx="12" fill="var(--surface-2)" stroke="var(--line)"/>
+        <text x="768" y="336" class="mono" font-size="11.5" fill="var(--ink)">arrives addressed to 10.128.0.2</text>
+        <text x="768" y="356" class="mono" font-size="11.5" fill="var(--muted)">ip addr never shows the public IP</text>
+      </g>
+
+      <path d="M42,60 L42,366" stroke="var(--in)" stroke-width="2.4" marker-end="url(#ah-dn)"/>
+      <path d="M1038,366 L1038,60" stroke="var(--in)" stroke-width="2.4" marker-end="url(#ah-dn)"/>
+      <path d="M42,404 L1038,404" stroke="var(--in)" stroke-width="2.4"/>
+      <path d="M42,366 L42,404" stroke="var(--in)" stroke-width="2.4"/>
+      <path d="M1038,404 L1038,366" stroke="var(--in)" stroke-width="2.4"/>
+      <text x="540" y="428" class="mono" font-size="11.5" fill="var(--in)" text-anchor="middle">the public internet</text>
+    </svg>
+    <figcaption>The browser wraps the request layer by layer on the way down; the VM unwraps it on
+    the way up. The one detail worth remembering: TLS stops at Caddy. Between Caddy and the API
+    container the traffic is plaintext HTTP, which is safe only because it never leaves the machine.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>Ports</h2>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Port</th><th>Listener</th><th>Reachable from</th><th></th></tr></thead>
+      <tbody>
+        <tr><td class="port">443</td><td>caddy, on the host</td><td>Anyone. It is the website.</td><td><span class="pill open">open</span></td></tr>
+        <tr><td class="port">80</td><td>caddy, on the host</td><td>Anyone. Needed for the ACME challenge and the redirect to 443.</td><td><span class="pill open">open</span></td></tr>
+        <tr><td class="port">22</td><td>sshd</td><td><code>35.235.240.0/20</code> &mdash; and <code>0.0.0.0/0</code> while <code>default-allow-ssh</code> still exists.</td><td><span class="pill restricted">iap</span></td></tr>
+        <tr><td class="port">8000</td><td>uvicorn, docker bridge only</td><td>Only the caddy container. No host binding exists.</td><td><span class="pill closed">unreachable</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>Three things that surprise people</h2>
+  <div class="grid2">
+    <div class="card">
+      <h3>Port 8000 cannot be exposed by accident</h3>
+      <p>Compose uses <code>expose:</code>, not <code>ports:</code> &mdash; which creates a
+      docker-network address and no iptables rule. Delete every firewall rule you have and uvicorn
+      is still unreachable, because the packets have nowhere to land.</p>
+    </div>
+    <div class="card">
+      <h3>The VM has never seen its own public IP</h3>
+      <p>Its NIC is configured with <code>10.128.0.2</code>. GCP does 1:1 NAT outside the instance,
+      so <code>ip addr</code> on the box will not show <code>34.60.179.53</code>.</p>
+    </div>
+    <div class="card">
+      <h3>CORS protects browsers, not the API</h3>
+      <p>A wrong <code>ALLOWED_ORIGINS</code> still lets the request arrive, run, and return &mdash;
+      the browser just discards the response afterward. <code>curl</code> ignores it entirely. The
+      real gate is the JWT, checked against Convex&rsquo;s JWKS.</p>
+    </div>
+    <div class="card">
+      <h3>One worker is load-bearing</h3>
+      <p>Sessions live in the process&rsquo;s memory, so a second worker would answer half the
+      requests with &ldquo;no such session&rdquo;. It also means every deploy drops all open streams.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="note">
+    <p><strong>Why the back end needs its own certificate.</strong> The page is served over HTTPS, and
+    a browser refuses to let an HTTPS page open a plain <code>http://</code> connection. A certificate
+    can only be issued for a <em>name</em>, never a bare IP &mdash; which is the entire reason DuckDNS
+    appears in these diagrams at all.</p>
+  </div>
+</section>
+
+</div>
