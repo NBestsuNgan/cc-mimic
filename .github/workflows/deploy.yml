@@ -59,4 +59,34 @@ jobs:
 
       - run: |
           echo "### Pushed \`${{ steps.img.outputs.repo }}:latest\`" >> $GITHUB_STEP_SUMMARY
-          echo "The VM's \`cc-mimic-update.timer\` picks this up within a day; run \`sudo /usr/local/bin/cc-mimic-update\` on the VM to ship it now." >> $GITHUB_STEP_SUMMARY
+          echo "The \`deploy\` job ships it. If that job was skipped, the VM's \`cc-mimic-update.timer\` picks it up within a day, or run \`sudo /usr/local/bin/cc-mimic-update\` on the VM now." >> $GITHUB_STEP_SUMMARY
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    # Skips cleanly until the GCP vars are set, so this file never breaks a push
+    # on a fork or before Workload Identity Federation is wired up.
+    if: ${{ vars.GCP_WIF_PROVIDER != '' }}
+    permissions:
+      contents: read
+      id-token: write        # required to mint the OIDC token WIF verifies
+    steps:
+      # Keyless: GitHub mints an OIDC token, GCP swaps it for a 1-hour access
+      # token. No service-account JSON exists, so there is nothing to leak or rotate.
+      - uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_SERVICE_ACCOUNT }}
+
+      - uses: google-github-actions/setup-gcloud@v3
+
+      # Through IAP, so port 22 stays closed to the internet and this keeps
+      # working when the VM's ephemeral IP changes.
+      - name: Pull the new image on the VM
+        run: |
+          gcloud compute ssh "${{ vars.GCP_VM_NAME }}" \
+            --project="${{ vars.GCP_PROJECT }}" \
+            --zone="${{ vars.GCP_ZONE }}" \
+            --tunnel-through-iap --quiet \
+            --command='sudo /usr/local/bin/cc-mimic-update' \
+            | tee -a "$GITHUB_STEP_SUMMARY"

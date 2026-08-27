@@ -204,4 +204,4 @@ echo "     (Caddy needs it resolving before it can get a certificate)"
 echo
 echo "Auto-deploy is on: pushes to main rebuild the image in CI and this VM"
 echo "picks it up within a day (systemctl list-timers cc-mimic-update.timer),"
-echo "or immediately with: sudo bash ~/deploy/update.sh"
+echo "or immediately with: sudo cc-mimic-update"
